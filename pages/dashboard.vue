@@ -12,7 +12,7 @@ export default {
     },
   },
   mounted () {
-    console.log(process.env.HOST)
+    // console.log(process.env.HOST)
   },
 }
 </script>

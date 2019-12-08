@@ -39,7 +39,6 @@ build_development:
   before_script:
     - npm install
   script:
-    - export
     - ls
     - npm run generate
     - ls
@@ -77,7 +76,6 @@ build_staging:
   before_script:
     - npm install
   script:
-    - export
     - ls
     - npm run generate
     - ls
@@ -115,7 +113,6 @@ build_production:
   before_script:
     - npm install
   script:
-    - export
     - ls
     - npm run generate
     - ls
