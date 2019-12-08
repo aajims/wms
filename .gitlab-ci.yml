@@ -1,0 +1,141 @@
+image: node:latest
+
+# And to cache them as well.
+cache:
+  paths:
+    - node_modules/
+
+.initial_setup: &initial_setup
+  before_script:
+    - sed -i '/jessie-updates/d' /etc/apt/sources.list
+    - apt-get -o Acquire::Check-Valid-Until=false update
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - ssh-add <(echo "$SSH_PRIVATE_KEY")
+    - mkdir -p /root/.ssh
+    - '[[ -f /.dockerenv ]] && echo "$SSH_SERVER_HOSTKEYS" > /root/.ssh/known_hosts'
+    - echo "$SSH_PRIVATE_KEY" > /root/.ssh/id_rsa
+    - chmod 600 /root/.ssh/id_rsa && chmod 700 /root/.ssh
+    - apt-get -y install rsync
+    - apt-get update -qq
+    - apt-get install -y -qq sshpass
+    - apt-get install -y -qq git
+    - sshpass -V
+
+stages:
+  - build
+  - deploy
+
+build_development:
+  stage: build
+  <<: *initial_setup
+  variables:
+    HOST: $DEV_HOST
+    PORT: $DEV_PORT
+    APP_KEY: $DEV_APP_KEY
+    API_URL: $DEV_API_URL
+  only:
+    - dev
+  before_script:
+    - npm install
+  script:
+    - export
+    - ls
+    - npm run generate
+    - ls
+  artifacts:
+    paths:
+      - dist
+
+deploy_development:
+  stage: deploy
+  <<: *initial_setup
+  variables:
+    SSH_USER: $DEV_USER_SSH
+    SSH_PASS: $DEV_USER_PASS
+    SSH_SERVER_HOST: $DEV_SERVER_HOST
+  only:
+    - dev
+  script:
+    - rsync -avzh dist --rsh="sshpass -p $SSH_PASS ssh -o StrictHostKeyChecking=no -l $SSH_USER" $SSH_SERVER_HOST:/var/www/wms
+    - curl -s -X POST https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage -d chat_id=$TELEGRAM_CHAT_ID -d text="[INFO] Dev WMS Deployment Successful !!!"
+  environment:
+    name: development
+    url: http://dev.wms.mospaze.com
+  when: manual
+
+build_staging:
+  stage: build
+  <<: *initial_setup
+  variables:
+    HOST: $STAGING_HOST
+    PORT: $STAGING_PORT
+    APP_KEY: $STAGING_APP_KEY
+    API_URL: $STAGING_API_URL
+  only:
+    - staging
+  before_script:
+    - npm install
+  script:
+    - export
+    - ls
+    - npm run generate
+    - ls
+  artifacts:
+    paths:
+      - dist
+
+deploy_staging:
+  stage: deploy
+  <<: *initial_setup
+  variables:
+    SSH_PASS: $STAGING_USER_PASS
+    SSH_USER: $STAGING_USER_SSH
+    SSH_SERVER_HOST: $STAGING_SERVER_HOST
+  only:
+    - staging
+  script:
+    - rsync -avzh dist --rsh="sshpass -p $SSH_PASS ssh -o StrictHostKeyChecking=no -l $SSH_USER" $SSH_SERVER_HOST:/var/www/wms
+    - curl -s -X POST https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage -d chat_id=$TELEGRAM_CHAT_ID -d text="[INFO] Staging WMS Deployment Successful !!!"
+  environment:
+    name: staging
+    url: http://staging.wms.mospaze.com
+  when: manual
+
+build_production:
+  stage: build
+  <<: *initial_setup
+  variables:
+    HOST: $PROD_HOST
+    PORT: $PROD_PORT
+    APP_KEY: $PROD_APP_KEY
+    API_URL: $PROD_API_URL
+  only:
+    - master
+  before_script:
+    - npm install
+  script:
+    - export
+    - ls
+    - npm run generate
+    - ls
+  artifacts:
+    paths:
+      - dist
+
+deploy_production:
+  stage: deploy
+  <<: *initial_setup
+  variables:
+    SSH_PASS: $PROD_USER_PASS
+    SSH_USER: $PROD_USER_SSH
+    SSH_SERVER_HOST: $PROD_SERVER_HOST
+  only:
+    - master
+  script:
+    - rsync -avzh dist --rsh="sshpass -p $SSH_PASS ssh -o StrictHostKeyChecking=no -l $SSH_USER" $SSH_SERVER_HOST:/var/www/wms
+    - curl -s -X POST https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage -d chat_id=$TELEGRAM_CHAT_ID -d text="[INFO] Production WMS Deployment Successful !!!"
+  environment:
+    name: production
+    url: https://wms.mospaze.com
+  when: manual
