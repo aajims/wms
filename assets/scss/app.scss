@@ -1,29 +1,65 @@
-@import 'variables/variables';
+// global config
+@import 'config';
+// @import 'variables/variables';
 
-// Vendor
-@import 'vendor/bootstrap';
-@import 'vendor/animate';
+// Bootstrap framework includes
+@import "global/integration/frameworks/bootstrap/variables";
+@import "../../node_modules/bootstrap/scss/bootstrap";
+@import "global/integration/frameworks/bootstrap/bootstrap";
 
+// Components include
+@import "global/include";
+
+//
 // Layouts
-@import 'layouts/base';
-@import 'layouts/content';
-@import 'layouts/login';
+//
 
-// Components
-@import 'components/navbar';
-@import 'layouts/sidebar';
-@import 'components/tables';
-@import 'components/logo';
-@import 'components/avatar';
-@import 'components/dropdown';
-@import 'components/breadcrumb';
-@import 'components/button';
-@import 'components/card';
-@import 'components/form';
-@import 'components/widgets';
+// config layout
+@import 'global/layout/config';
+@import 'global/layout/header/config';
+@import 'global/layout/aside/config';
+@import "global/layout/footer/config";
+@import 'global/components/layout/subheader';
+
+// mixin
+@import 'global/mixins';
+
+// layout
+@import 'global/layout/base/base';
+@import 'global/layout/header/header';
+@import "global/layout/header/base-mobile";
+@import "global/layout/header/menu";
+@import "global/layout/header/topbar";
+@import "global/layout/brand/brand";
+@import "global/layout/aside/aside";
+@import "global/layout/content/content";
+@import "global/layout/footer/footer";
+
+
+// layout skins
+@import 'global/layout/header/skins/base/light';
+@import 'global/layout/header/skins/menu/light';
+@import 'global/layout/brand/skins/dark';
+@import 'global/layout/aside/skins/dark';
+
+/* @import 'layouts/content';
+@import 'layouts/login'; */
+
+// Components icons
+@import 'flaticon2/flaticon';
+@import 'line-awesome/line-awesome';
 
 // Pages
 @import 'pages/index';
 
-// Custom Vendor
-@import 'vendor/custom-vendor';
+#__nuxt, #__layout {
+    height: 100%;
+}
+
+.kt-grid--root {
+    min-height: 100%;
+}
+
+.kt-scroll {
+    position: relative;
+}
