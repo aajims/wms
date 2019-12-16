@@ -27,6 +27,7 @@ module.exports = {
       { src: '/js/perfect-scrollbar.min.js', body: true },
       { src: '/js/js.cookie.min.js', body: true },
       { src: '/js/scrolltop.js', body: true },
+      { src: '/js/bootstrap.bundle.min.js', body: true },
       { src: '/js/util.js', body: true },
       { src: '/js/offcanvas.js', body: true },
       { src: '/js/toggle.js', body: true },
