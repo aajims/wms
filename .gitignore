@@ -81,4 +81,4 @@ dist
 .idea
 
 # ignore DS_Store
-echo .DS_Store >> .gitignore
+.DS_Store
