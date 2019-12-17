@@ -1,6 +1,6 @@
 // global config
 @import 'config';
-// @import 'variables/variables';
+@import 'variables/variables';
 
 // Bootstrap framework includes
 @import "global/integration/frameworks/bootstrap/variables";
@@ -42,8 +42,8 @@
 @import 'global/layout/brand/skins/dark';
 @import 'global/layout/aside/skins/dark';
 
-/* @import 'layouts/content';
-@import 'layouts/login'; */
+/* @import 'layouts/content'; */
+@import 'pages/login';
 
 // Components icons
 @import 'flaticon/flaticon';

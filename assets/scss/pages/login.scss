@@ -10,29 +10,8 @@
     padding: 1.5em;
     text-align: center;
 
-    h1 {
-      font-size: 2em;
-      margin-bottom: 0.25em;
-    }
-
-    span {
-      background-color: $white;
-      color: fade-out($black, 0.6);
-      font-size: 0.9em;
-      padding: 0 1em;
-      position: relative;
-      z-index: 10;
-
-      &::after {
-        background-color: fade-out($black, 0.8);
-        bottom: 0.5em;
-        content: '';
-        height: 1px;
-        left: -3em;
-        position: absolute;
-        width: calc(100% + 6em);
-        z-index: -1;
-      }
+    h6 {
+      color: grey;
     }
   }
 
@@ -46,7 +25,7 @@
         height: 3em;
 
         &:focus {
-          border: 1px solid $asphalt;
+          border: 1px solid $color-mospaze;
           box-shadow: none;
         }
 
@@ -68,7 +47,18 @@
     }
 
     a {
+      color: grey;
       text-decoration: none;
+    }
+
+    .btn-outline-warning {
+      color: #F87F21;
+      border-color: #F87F21;
+    }
+
+    .btn-outline-warning:hover {
+      color: $white;
+      background-color: #F87F21;
     }
   }
 }
