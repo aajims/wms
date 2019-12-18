@@ -1179,6 +1179,7 @@ export default {
   methods: {
     async logout () {
       try {
+        this.$nuxt.$loading.start()
         await this.$store.dispatch('logout')
       } catch (error) {
         const parameter = {
@@ -1186,6 +1187,7 @@ export default {
           message   : error.message,
         }
         this.$emit('alertShow', parameter)
+        this.$nuxt.$loading.finish()
       }
     },
   },

@@ -86,13 +86,14 @@ export default {
           this.$refs.password.$el.focus()
           throw new Error('Password is required')
         }
-
+        this.$nuxt.$loading.start()
         await this.$store.dispatch('login', {
           username: this.formUsername,
           password: this.formPassword,
         })
       } catch (error) {
         this.formError = error.message
+        this.$nuxt.$loading.finish()
       }
     },
   },
