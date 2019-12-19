@@ -1,4 +1,5 @@
 import axios from 'axios'
+
 export const state = () => ({ authUser: null })
 
 export const mutations = {
@@ -17,20 +18,21 @@ export const actions = {
   async login ({ commit }, { username, password }) {
     const app = this
     await axios({
-      method: 'post',
-      url   : 'https://private-8d7b3b-mospazewms.apiary-mock.com/v1/auth/login',
-      data  : {
+      method : 'post',
+      url    : `/api/v1/auth/login`,
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      data   : {
         username: username,
         password: password,
       },
-      headers: { 'Content-Type': 'application/json' },
     }).then(function (response) {
-      if (response.status === 200 && response.data.token !== '' && response.data.general_response.response_status === true) {
-        app.$cookies.set('token', response.data.token, {
+      const token = response.data.data.token
+      if (response.status === 200 && token !== '' && response.data.general_response.response_status === true) {
+        app.$cookies.set('token', token, {
           path  : '/',
           maxAge: 60 * 60 * 24 * 7,
         })
-        commit('SET_USER', response.data.token)
+        commit('SET_USER', token)
         // redirect to dashboard
         app.$router.go({ path: '/dashboard' })
       } else
@@ -46,13 +48,13 @@ export const actions = {
     const token = app.$cookies.get('token')
     await axios({
       method : 'post',
-      url    : 'https://private-8d7b3b-mospazewms.apiary-mock.com/v1/auth/logout',
+      url    : '/api/v1/auth/logout',
       headers: {
-        'Content-Type' : 'application/json',
+        'Content-Type' : 'application/x-www-form-urlencoded',
         'Authorization': `Bearer + ${token}`,
       },
     }).then(function (response) {
-      if (response.status === 200 && response.data.general_response.response_status === true) {
+      if (response.status === 200 && response.general_response.response_status === true) {
         app.$cookies.remove('token')
         commit('SET_USER', null)
         // redirect to login

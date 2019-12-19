@@ -54,13 +54,13 @@ module.exports = {
     ['@nuxtjs/moment', { plugin: false }],
     ['bootstrap-vue/nuxt', { css: false }],
   ],
-  axios: { browserBaseURL: '/api', proxy: false },
-  // proxy: {
-  //   '/api': {
-  //     target     : process.env.API_URL,
-  //     pathRewrite: { '^/api': '/' },
-  //   },
-  // },
+  axios: { proxy: true },
+  proxy: {
+    '/api/': {
+      target     : process.env.API_URL,
+      pathRewrite: { '^/api': '' },
+    },
+  },
   build: {
     babel  : { plugins: ['lodash'] },
     loaders: {
