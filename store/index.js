@@ -26,13 +26,12 @@ export const actions = {
         password: password,
       },
     }).then(function (response) {
-      const token = response.data.data.token
-      if (response.status === 200 && token !== '' && response.data.general_response.response_status === true) {
-        app.$cookies.set('token', token, {
+      if (response.status === 200 && response.data.general_response.response_status === true) {
+        app.$cookies.set('token', response.data.result.token, {
           path  : '/',
           maxAge: 60 * 60 * 24 * 7,
         })
-        commit('SET_USER', token)
+        commit('SET_USER', response.data.result.token)
         // redirect to dashboard
         app.$router.go({ path: '/dashboard' })
       } else
@@ -40,7 +39,8 @@ export const actions = {
     }).catch(function (error) {
       if (error.response && error.response.status === 401)
         throw new Error('Bad credentials')
-      throw error
+      else
+        throw new Error('Network Communication Error')
     })
   },
   async logout ({ commit }) {
@@ -64,7 +64,8 @@ export const actions = {
     }).catch(function (error) {
       if (error.response && error.response.status === 401)
         throw new Error('Bad credentials')
-      throw error
+      else
+        throw new Error('Network Communication Error')
     })
   },
 }
