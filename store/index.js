@@ -19,7 +19,7 @@ export const actions = {
     const app = this
     await axios({
       method : 'post',
-      url    : `/api/v1/auth/login`,
+      url    : '/api/v1/auth/login',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       data   : {
         username: username,
