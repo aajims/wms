@@ -34,6 +34,7 @@ build_development:
     PORT: $DEV_PORT
     APP_KEY: $DEV_APP_KEY
     API_URL: $DEV_API_URL
+    APP_ENV: $DEV_APP_ENV
   only:
     - dev
   before_script:
@@ -71,6 +72,7 @@ build_staging:
     PORT: $STAGING_PORT
     APP_KEY: $STAGING_APP_KEY
     API_URL: $STAGING_API_URL
+    APP_ENV: $STAGING_APP_ENV
   only:
     - staging
   before_script:
@@ -108,6 +110,7 @@ build_production:
     PORT: $PROD_PORT
     APP_KEY: $PROD_APP_KEY
     API_URL: $PROD_API_URL
+    APP_ENV: $PROD_APP_ENV
   only:
     - master
   before_script:
