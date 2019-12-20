@@ -37,8 +37,8 @@ export const actions = {
       } else
         throw new Error(response.data.general_response.response_message)
     }).catch(function (error) {
-      if (error.response && error.response.status === 401)
-        throw new Error('Bad credentials')
+      if (error.response === undefined)
+        throw error
       else
         throw new Error('Network Communication Error')
     })
@@ -62,8 +62,8 @@ export const actions = {
       } else
         throw new Error(response.data.general_response.response_message)
     }).catch(function (error) {
-      if (error.response && error.response.status === 401)
-        throw new Error('Bad credentials')
+      if (error.response === undefined)
+        throw error
       else
         throw new Error('Network Communication Error')
     })
