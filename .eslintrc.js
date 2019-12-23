@@ -20,7 +20,7 @@ module.exports = {
     },
     {
       files: ['components/**/*.vue', 'components/*.vue'],
-      rules: { 'unicorn/filename-case': ['error', { case: {'pascalCase': true, 'kebabCase': true }}] },
+      rules: { 'unicorn/filename-case': ['error', { case: 'kebabCase' }] },
     }
   ]
 }
