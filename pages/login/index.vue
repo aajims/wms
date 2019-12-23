@@ -97,7 +97,7 @@ export default {
       }
     },
   },
-  middleware: 'auth',
+  middleware: 'unauthenticated',
 }
 </script>
 
