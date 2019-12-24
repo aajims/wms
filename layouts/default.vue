@@ -30,12 +30,12 @@
 </template>
 
 <script>
-import Sidebar from '@/components/Sidebar.vue'
-import MobileHeader from '@/components/MobileHeader.vue'
-import DesktopHeader from '@/components/Header.vue'
-import SubHeader from '@/components/Subheader.vue'
-import Footers from '@/components/Footer.vue'
-import Alerts from '@/components/Alerts.vue'
+import Sidebar from '@/components/sidebar.vue'
+import MobileHeader from '@/components/mobile-header.vue'
+import DesktopHeader from '@/components/header.vue'
+import SubHeader from '@/components/sub-header.vue'
+import Footers from '@/components/footer.vue'
+import Alerts from '@/components/alerts.vue'
 
 export default {
   components: {
@@ -49,7 +49,7 @@ export default {
       this.emitMessage = message
     },
   },
-  middleware: 'auth',
+  middleware: 'authenticated',
 }
 
 </script>

@@ -1,3 +1,4 @@
+require('dotenv').config()
 const webpack = require('webpack')
 const pkg     = require('./package')
 
@@ -45,9 +46,9 @@ module.exports = {
       ssr: false,
     },
   ],
-  modules: [
+  buildModules: ['@nuxtjs/dotenv'],
+  modules     : [
     '@nuxtjs/axios',
-    '@nuxtjs/dotenv',
     '@nuxtjs/proxy',
     'nuxt-simple-line-icons',
     'cookie-universal-nuxt',
