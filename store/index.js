@@ -11,7 +11,7 @@ export const mutations = {
 export const actions = {
   // nuxtServerInit is called by Nuxt.js before server-rendering every page
   nuxtServerInit ({ commit }) {
-    const token    = this.$cookies.get(`${process.env.APP_ENV}_token`)
+    const token = this.$cookies.get(`${process.env.APP_ENV}_token`)
     if (token)
       commit('SET_TOKEN', token)
   },
@@ -56,10 +56,10 @@ export const actions = {
       url    : '/api/v1/auth/logout',
       headers: {
         'Content-Type' : 'application/x-www-form-urlencoded',
-        'Authorization': `Bearer + ${token}`,
+        'Authorization': `Bearer ${token}`,
       },
     }).then(function (response) {
-      if (response.status === 200 && response.general_response.response_status === true) {
+      if (response.status === 200 && response.data.general_response.response_status === true) {
         app.$cookies.remove(`${process.env.APP_ENV}_token`)
         app.$cookies.remove(`${process.env.APP_ENV}_user`)
         commit('SET_TOKEN', null)
