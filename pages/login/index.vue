@@ -24,15 +24,15 @@
           </div>
         </div>
         <b-form @submit.prevent="login">
-          <b-form-group label="Email">
+          <b-form-group label="Username">
             <b-input-group>
               <b-input-group-text slot="prepend">
                 <i class="icon-lock" />
               </b-input-group-text>
               <b-form-input
-                ref="email"
+                ref="username"
                 v-model="formUsername"
-                placeholder="Enter Your Email"
+                placeholder="Enter Your Username"
               />
             </b-input-group>
           </b-form-group>
@@ -78,8 +78,8 @@ export default {
     async login () {
       try {
         if (this.formUsername.trim() === '') {
-          this.$refs.email.$el.focus()
-          throw new Error('Email is required')
+          this.$refs.username.$el.focus()
+          throw new Error('Username is required')
         }
 
         if (this.formPassword.trim() === '') {
@@ -97,7 +97,7 @@ export default {
       }
     },
   },
-  middleware: 'auth',
+  middleware: 'unauthenticated',
 }
 </script>
 

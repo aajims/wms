@@ -49,7 +49,7 @@ export default {
       this.emitMessage = message
     },
   },
-  middleware: 'auth',
+  middleware: 'authenticated',
 }
 
 </script>
