@@ -33,6 +33,8 @@ module.exports = {
       { src: '/vendors/perfect-scrollbar.min.js', body: true },
       { src: '/vendors/sticky.min.js', body: true },
       { src: '/vendors/wNumb.js', body: true },
+      { src: '/vendors/bootstrap-switch.min.js', body: true },
+      { src: '/vendors/select2.full.min.js', body: true },
       { src: '/js/config.js', body: true },
       { src: '/js/scripts.bundle.min.js', body: true },
     ],
