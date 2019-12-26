@@ -1,44 +1,49 @@
 <template>
   <div class="row">
     <div class="col-lg-12">
-      <div
-        id="kt_page_portlet"
-        class="kt-portlet kt-portlet--last kt-portlet--head-lg kt-portlet--responsive-mobile"
+      <form
+        id="warehouse_form"
+        ref="form"
+        class="kt-form kt-form--label-right"
       >
-        <div class="kt-portlet__head kt-portlet__head--lg">
-          <div class="kt-portlet__head-label">
-            <span class="kt-portlet__head-icon">
-              <i class="kt-font-brand flaticon-add" />
-            </span>
-            <h3 class="kt-portlet__head-title">
-              Add Warehouse
-            </h3>
+        <div
+          id="kt_page_portlet"
+          class="kt-portlet kt-portlet--last kt-portlet--head-lg kt-portlet--responsive-mobile"
+        >
+          <div class="kt-portlet__head kt-portlet__head--lg">
+            <div class="kt-portlet__head-label">
+              <span class="kt-portlet__head-icon">
+                <i class="kt-font-brand flaticon-add" />
+              </span>
+              <h3 class="kt-portlet__head-title">
+                Add Warehouse
+              </h3>
+            </div>
+            <div class="kt-portlet__head-toolbar">
+              <a
+                href="/warehouse"
+                class="btn btn-clean kt-margin-r-10"
+              >
+                <i class="la la-arrow-left" />
+                <span class="kt-hidden-mobile">Back</span>
+              </a>
+              <button
+                type="submit"
+                class="btn btn-brand"
+              >
+                <i class="la la-check" />
+                <span class="kt-hidden-mobile">Save</span>
+              </button>
+            </div>
           </div>
-          <div class="kt-portlet__head-toolbar">
-            <a
-              href="/warehouse"
-              class="btn btn-clean kt-margin-r-10"
-            >
-              <i class="la la-arrow-left" />
-              <span class="kt-hidden-mobile">Back</span>
-            </a>
-            <button
-              type="button"
-              class="btn btn-brand"
-            >
-              <i class="la la-check" />
-              <span class="kt-hidden-mobile">Save</span>
-            </button>
-          </div>
-        </div>
-        <div class="kt-portlet__body">
-          <form class="kt-form kt-form--label-right">
+          <div class="kt-portlet__body">
             <div class="form-group row">
               <div class="col-lg-6">
                 <label>Name <span style="color:red">*</span></label>
                 <input
                   type="text"
                   class="form-control"
+                  name="name"
                   placeholder="Enter warehouse name"
                 >
               </div>
@@ -47,6 +52,7 @@
                 <input
                   type="text"
                   class="form-control"
+                  name="code"
                   placeholder="Enter warehouse code"
                 >
               </div>
@@ -65,6 +71,7 @@
                 <input
                   type="text"
                   class="form-control"
+                  name="phone"
                   placeholder="Enter phone"
                 >
               </div>
@@ -75,6 +82,7 @@
                 <input
                   type="text"
                   class="form-control"
+                  name="capacity"
                   placeholder="Enter warehouse capacity"
                 >
               </div>
@@ -83,6 +91,7 @@
                 <input
                   type="text"
                   class="form-control"
+                  name="pic"
                   placeholder="Enter warehouse pic"
                 >
               </div>
@@ -94,6 +103,7 @@
                   id="address"
                   class="form-control"
                   rows="3"
+                  name="address"
                 />
               </div>
               <div class="col-lg-6">
@@ -102,6 +112,7 @@
                   id="description"
                   class="form-control"
                   rows="3"
+                  name="description"
                 />
               </div>
             </div>
@@ -109,10 +120,11 @@
               <div class="col-lg-6">
                 <label for="country">Country <span style="color:red">*</span></label>
                 <select
-                  id="kt_select2_1"
+                  id="country"
                   class="form-control kt-select2"
-                  name="param"
+                  name="country_id"
                 >
+                  <option />
                   <option value="AK">
                     Alaska
                   </option>
@@ -120,16 +132,18 @@
                     Hawaii
                   </option>
                 </select>
+                <span class="form-text text-muted" />
               </div>
               <div class="col-lg-6">
                 <label for="state">State <span style="color:red">*</span></label>
                 <select
                   id="state"
                   class="form-control kt-select2"
-                  name="param"
+                  name="state_id"
                 >
                   <option />
                 </select>
+                <span class="form-text text-muted">Please select a country </span>
               </div>
             </div>
             <div class="form-group row">
@@ -138,20 +152,22 @@
                 <select
                   id="city"
                   class="form-control kt-select2"
-                  name="param"
+                  name="city_id"
                 >
                   <option />
                 </select>
+                <span class="form-text text-muted">Please select a state </span>
               </div>
               <div class="col-lg-6">
                 <label for="district">District <span style="color:red">*</span></label>
                 <select
                   id="district"
                   class="form-control kt-select2"
-                  name="param"
+                  name="district_id"
                 >
                   <option />
                 </select>
+                <span class="form-text text-muted">Please select a city </span>
               </div>
             </div>
             <div class="form-group row">
@@ -160,28 +176,30 @@
                 <input
                   type="text"
                   class="form-control"
+                  name="zip_code"
                   placeholder="Enter postcode"
                 >
               </div>
               <div class="col-lg-6">
                 <label for="location">Location <span style="color:red">*</span></label>
-                <div>
+                <div class="switch-button">
                   <input
                     id="location"
+                    name="location"
                     data-switch="true"
                     type="checkbox"
-                    checked="checked"
                     data-on-text="Yes"
                     data-off-text="No"
                     data-on-color="brand"
                     data-off-color="danger"
                   >
+                  <span class="form-text text-muted" />
                 </div>
               </div>
             </div>
-          </form>
+          </div>
         </div>
-      </div>
+      </form>
     </div>
     <!-- begin::Scrolltop -->
     <div
@@ -195,5 +213,12 @@
 </template>
 
 <script>
-export default { head: { script: [{ src: '/js/warehouse/add.js', body: true }] } }
+export default {
+  head   : { script: [{ src: '/js/warehouse/add.js', body: true }] },
+  methods: {
+    submit () {
+      this.$refs.form.submit()
+    },
+  },
+}
 </script>
