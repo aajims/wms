@@ -125,11 +125,12 @@
                   name="country_id"
                 >
                   <option />
-                  <option value="AK">
-                    Alaska
-                  </option>
-                  <option value="HI">
-                    Hawaii
+                  <option
+                    v-for="country in countries"
+                    :key="country.id"
+                    :value="country.id"
+                  >
+                    {{ country.name }}
                   </option>
                 </select>
                 <span class="form-text text-muted" />
@@ -188,6 +189,7 @@
                     name="location"
                     data-switch="true"
                     type="checkbox"
+                    checked="checked"
                     data-on-text="Yes"
                     data-off-text="No"
                     data-on-color="brand"
@@ -214,10 +216,23 @@
 
 <script>
 export default {
-  head   : { script: [{ src: '/js/warehouse/add.js', body: true }] },
+  head: { script: [{ src: '/js/warehouse/add.js', body: true }] },
+  data () {
+    return {
+      countries: [],
+      state    : [],
+      city     : [],
+      district : [],
+    }
+  },
+  async created () {
+    await this.getCountry()
+    $('#country').select2({ placeholder: 'Select a country', allowClear: true })
+  },
   methods: {
-    submit () {
-      this.$refs.form.submit()
+    async getCountry () {
+      await this.$store.dispatch('region/getCountry')
+      this.countries = this.$store.getters['region/getCountries']
     },
   },
 }
