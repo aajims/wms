@@ -48,6 +48,14 @@ export default {
       setTimeout(() => this.setVariable(), 5000)
     },
   },
+  created () {
+    this.$nuxt.$on('alertShow', (data) => {
+      this.alertMessage = data.message
+      this.alertClass   = `alert ${data.alertClass}`
+      this.alertShow    = true
+      setTimeout(() => this.setVariable(), 5000)
+    })
+  },
   methods: {
     setVariable () {
       this.$set(this.msg, 'alertClass', '')

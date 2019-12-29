@@ -5,6 +5,7 @@
         id="warehouse_form"
         ref="form"
         class="kt-form kt-form--label-right"
+        @submit.prevent="addWarehouse()"
       >
         <div
           id="kt_page_portlet"
@@ -41,6 +42,7 @@
               <div class="col-lg-6">
                 <label>Name <span style="color:red">*</span></label>
                 <input
+                  v-model="warehouse.name"
                   type="text"
                   class="form-control"
                   name="name"
@@ -50,6 +52,7 @@
               <div class="col-lg-6">
                 <label>Code <span style="color:red">*</span></label>
                 <input
+                  v-model="warehouse.code"
                   type="text"
                   class="form-control"
                   name="code"
@@ -61,6 +64,7 @@
               <div class="col-lg-6">
                 <label>Email <span style="color:red">*</span></label>
                 <input
+                  v-model="warehouse.email"
                   type="email"
                   class="form-control"
                   placeholder="Enter email"
@@ -69,6 +73,7 @@
               <div class="col-lg-6">
                 <label>Phone <span style="color:red">*</span></label>
                 <input
+                  v-model="warehouse.phone"
                   type="text"
                   class="form-control"
                   name="phone"
@@ -80,6 +85,7 @@
               <div class="col-lg-6">
                 <label>Capacity <span style="color:red">*</span></label>
                 <input
+                  v-model="warehouse.capacity"
                   type="text"
                   class="form-control"
                   name="capacity"
@@ -89,6 +95,7 @@
               <div class="col-lg-6">
                 <label>PIC <span style="color:red">*</span></label>
                 <input
+                  v-model="warehouse.pic"
                   type="text"
                   class="form-control"
                   name="pic"
@@ -101,6 +108,7 @@
                 <label for="address">Address <span style="color:red">*</span></label>
                 <textarea
                   id="address"
+                  v-model="warehouse.address"
                   class="form-control"
                   rows="3"
                   name="address"
@@ -110,6 +118,7 @@
                 <label for="description">Description</label>
                 <textarea
                   id="description"
+                  v-model="warehouse.description"
                   class="form-control"
                   rows="3"
                   name="description"
@@ -196,6 +205,7 @@
               <div class="col-lg-6">
                 <label>Postcode <span style="color:red">*</span></label>
                 <input
+                  v-model="warehouse.zip_code"
                   type="text"
                   class="form-control"
                   name="zip_code"
@@ -237,12 +247,27 @@
 
 <script>
 export default {
-  head: { script: [{ src: '/js/warehouse/add.js', body: true }] },
   data () {
     return {
       states   : [],
       cities   : [],
       districts: [],
+      warehouse: {
+        name       : null,
+        code       : null,
+        capacity   : null,
+        location   : null,
+        phone      : null,
+        email      : null,
+        pic        : null,
+        address    : null,
+        country_id : null,
+        state_id   : null,
+        city_id    : null,
+        district_id: null,
+        zip_code   : null,
+        description: null,
+      },
     }
   },
   async fetch ({ store, params }) {
@@ -333,21 +358,13 @@ export default {
           required: true,
           digits  : true,
         },
-        location: { required: true },
       },
-
-      // display error alert on form submit
       invalidHandler: function (event, validator) {
-        const alert = $('#kt_form_1_msg')
-        alert.removeClass('kt--hide').show()
         // eslint-disable-next-line no-undef
         KTUtil.scrollTop()
-
         event.preventDefault()
       },
-
       submitHandler: function (form) {
-        // form[0].submit(); // submit the form
         return false
       },
     })
@@ -391,6 +408,37 @@ export default {
       $('#state').select2({ placeholder: 'Select a state', allowClear: true })
       $('#city').select2({ placeholder: 'Select a city', allowClear: true })
       $('#district').select2({ placeholder: 'Select a district', allowClear: true })
+    },
+    async addWarehouse () {
+      if ($('#warehouse_form').valid()) {
+        this.warehouse.country_id  = parseInt($('#country').val())
+        this.warehouse.state_id    = parseInt($('#state').val())
+        this.warehouse.city_id     = parseInt($('#city').val())
+        this.warehouse.district_id = parseInt($('#district').val())
+        this.warehouse.location    = $('#location').bootstrapSwitch('state') === true ? 1 : 0
+        try {
+          this.$nuxt.$loading.start()
+          await this.$store.dispatch('warehouse/addWarehouse', { data: this.warehouse })
+          const data      = this.$store.getters['warehouse/getAddSuccess']
+          const parameter = {
+            alertClass: 'alert-success',
+            message   : `Warehouse ${data.result.name} has been added`,
+          }
+          this.$nuxt.$emit('alertShow', parameter)
+          this.$nuxt.$loading.finish()
+          // eslint-disable-next-line no-undef
+          KTUtil.scrollTop()
+        } catch (error) {
+          const parameter = {
+            alertClass: 'alert-danger',
+            message   : error.message,
+          }
+          this.$nuxt.$emit('alertShow', parameter)
+          this.$nuxt.$loading.finish()
+          // eslint-disable-next-line no-undef
+          KTUtil.scrollTop()
+        }
+      }
     },
   },
 }
