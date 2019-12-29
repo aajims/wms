@@ -7,7 +7,7 @@
         id="kt_wrapper"
         class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor kt-wrapper"
       >
-        <desktop-header @alertShow="sendMessage" />
+        <desktop-header />
         <div
           id="kt_content"
           class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor"
@@ -19,7 +19,7 @@
             <sub-header />
           </div>
           <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-            <alerts :msg="emitMessage" />
+            <alerts />
             <nuxt />
           </div>
         </div>
@@ -40,14 +40,6 @@ import Alerts from '@/components/alerts.vue'
 export default {
   components: {
     Sidebar, MobileHeader, DesktopHeader, SubHeader, Footers, Alerts,
-  },
-  data: function () {
-    return { emitMessage: { alertClass: '', alertMessage: '' } }
-  },
-  methods: {
-    sendMessage (message) {
-      this.emitMessage = message
-    },
   },
   middleware: 'authenticated',
 }
