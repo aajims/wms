@@ -1067,9 +1067,6 @@
             <div class="kt-user-card__name">
               Admin
             </div>
-            <div class="kt-user-card__badge">
-              <span class="btn btn-success btn-sm btn-bold btn-font-md">23 messages</span>
-            </div>
           </div>
 
           <!--end: Head -->
@@ -1077,7 +1074,7 @@
           <!--begin: Navigation -->
           <div class="kt-notification">
             <a
-              href="custom/apps/user/profile-1/personal-information.html"
+              href="/user/profile"
               class="kt-notification__item"
             >
               <div class="kt-notification__item-icon">
@@ -1089,70 +1086,6 @@
                 </div>
                 <div class="kt-notification__item-time">
                   Account settings and more
-                </div>
-              </div>
-            </a>
-            <a
-              href="custom/apps/user/profile-3.html"
-              class="kt-notification__item"
-            >
-              <div class="kt-notification__item-icon">
-                <i class="flaticon2-mail kt-font-warning" />
-              </div>
-              <div class="kt-notification__item-details">
-                <div class="kt-notification__item-title kt-font-bold">
-                  My Messages
-                </div>
-                <div class="kt-notification__item-time">
-                  Inbox and tasks
-                </div>
-              </div>
-            </a>
-            <a
-              href="custom/apps/user/profile-2.html"
-              class="kt-notification__item"
-            >
-              <div class="kt-notification__item-icon">
-                <i class="flaticon2-rocket-1 kt-font-danger" />
-              </div>
-              <div class="kt-notification__item-details">
-                <div class="kt-notification__item-title kt-font-bold">
-                  My Activities
-                </div>
-                <div class="kt-notification__item-time">
-                  Logs and notifications
-                </div>
-              </div>
-            </a>
-            <a
-              href="custom/apps/user/profile-3.html"
-              class="kt-notification__item"
-            >
-              <div class="kt-notification__item-icon">
-                <i class="flaticon2-hourglass kt-font-brand" />
-              </div>
-              <div class="kt-notification__item-details">
-                <div class="kt-notification__item-title kt-font-bold">
-                  My Tasks
-                </div>
-                <div class="kt-notification__item-time">
-                  latest tasks and projects
-                </div>
-              </div>
-            </a>
-            <a
-              href="custom/apps/user/profile-1/overview.html"
-              class="kt-notification__item"
-            >
-              <div class="kt-notification__item-icon">
-                <i class="flaticon2-cardiogram kt-font-warning" />
-              </div>
-              <div class="kt-notification__item-details">
-                <div class="kt-notification__item-title kt-font-bold">
-                  Billing
-                </div>
-                <div class="kt-notification__item-time">
-                  billing & statements <span class="kt-badge kt-badge--danger kt-badge--inline kt-badge--pill kt-badge--rounded">2 pending</span>
                 </div>
               </div>
             </a>
