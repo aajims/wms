@@ -39,7 +39,7 @@ export const actions = {
         status  : 1,
         sort_by : 'name',
         sort    : 'asc',
-        keyword : 'indo',
+        keyword : '',
       },
     }).then(function (response) {
       if (response.status === 200 && response.data.general_response.response_status === true)
@@ -68,6 +68,8 @@ export const actions = {
     }).then(function (response) {
       if (response.status === 200 && response.data.general_response.response_status === true)
         commit('SET_STATES_BY_COUNTRY', response.data.result)
+      else
+        commit('SET_STATES_BY_COUNTRY', [])
     }).catch(function () {
       throw new Error('Network Communication Error')
     })
@@ -92,6 +94,8 @@ export const actions = {
     }).then(function (response) {
       if (response.status === 200 && response.data.general_response.response_status === true)
         commit('SET_CITIES_BY_STATE', response.data.result)
+      else
+        commit('SET_CITIES_BY_STATE', [])
     }).catch(function () {
       throw new Error('Network Communication Error')
     })
@@ -116,6 +120,8 @@ export const actions = {
     }).then(function (response) {
       if (response.status === 200 && response.data.general_response.response_status === true)
         commit('SET_DISTRICTS_BY_CITY', response.data.result)
+      else
+        commit('SET_DISTRICTS_BY_CITY', [])
     }).catch(function () {
       throw new Error('Network Communication Error')
     })
