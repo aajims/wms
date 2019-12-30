@@ -1119,7 +1119,7 @@ export default {
           alertClass: 'alert-danger',
           message   : error.message,
         }
-        this.$emit('alertShow', parameter)
+        this.$nuxt.$emit('alertShow', parameter)
         this.$nuxt.$loading.finish()
       }
     },

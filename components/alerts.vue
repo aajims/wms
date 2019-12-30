@@ -25,14 +25,6 @@
 
 <script>
 export default {
-  props: {
-    msg: {
-      type   : Object,
-      default: function () {
-        return { alertClass: '', alertMessage: '' }
-      },
-    },
-  },
   data () {
     return {
       alertShow   : false,
@@ -40,25 +32,16 @@ export default {
       alertClass  : '',
     }
   },
-  watch: {
-    msg: function () {
-      this.alertMessage = this.msg.message
-      this.alertClass   = `alert ${this.msg.alertClass}`
+  created () {
+    this.$nuxt.$on('alertShow', (data) => {
+      this.alertMessage = data.message
+      this.alertClass   = `alert ${data.alertClass}`
       this.alertShow    = true
-      setTimeout(() => this.setVariable(), 5000)
-    },
+      setTimeout(() => this.reset(), 5000)
+    })
   },
   methods: {
-    setVariable () {
-      this.$set(this.msg, 'alertClass', '')
-      this.$set(this.msg, 'message', '')
-      this.alertShow    = false
-      this.alertMessage = ''
-      this.alertClass   = ''
-    },
     reset () {
-      this.$set(this.msg, 'alertClass', '')
-      this.$set(this.msg, 'message', '')
       this.alertShow    = false
       this.alertMessage = ''
       this.alertClass   = ''
