@@ -276,14 +276,12 @@ export default {
   mounted () {
     const app = this
     $('[data-switch=true]').bootstrapSwitch()
-    $('[data-switch=true]').on('switchChange.bootstrapSwitch', function () {
-      validator.element($(this)) // validate element
-    })
 
     $('#country').select2({ placeholder: 'Select a country', allowClear: true })
     $('#country').on('change', function () {
       validator.element($(this))
       if ($('#country').val()) {
+        $('#state').val(null).trigger('change')
         $('#state').prop('disabled', false)
         app.getStatesByCountry()
       } else {
@@ -302,6 +300,7 @@ export default {
     $('#state').on('change', function () {
       validator.element($(this))
       if ($('#state').val()) {
+        $('#city').val(null).trigger('change')
         $('#city').prop('disabled', false)
         app.getCitiesByState()
       } else {
@@ -318,6 +317,7 @@ export default {
     $('#city').on('change', function () {
       validator.element($(this))
       if ($('#city').val()) {
+        $('#district').val(null).trigger('change')
         $('#district').prop('disabled', false)
         app.getDistrictsByCity()
       } else {
@@ -371,6 +371,7 @@ export default {
   },
   methods: {
     async getStatesByCountryModel () {
+      this.states = []
       await this.$store.dispatch('region/getStatesByCountry', { countryId: $('#country').val() })
       this.states = this.$store.getters['region/getStatesByCountry']
     },
@@ -386,6 +387,7 @@ export default {
       })
     },
     async getCitiesByStateModel () {
+      this.cities = []
       await this.$store.dispatch('region/getCitiesByState', { stateId: $('#state').val() })
       this.cities = this.$store.getters['region/getCitiesByState']
     },
@@ -399,6 +401,7 @@ export default {
       })
     },
     async getDistrictsByCityModel () {
+      this.districts = []
       await this.$store.dispatch('region/getDistrictsByCity', { cityId: $('#city').val() })
       this.districts = this.$store.getters['region/getDistrictsByCity']
     },
