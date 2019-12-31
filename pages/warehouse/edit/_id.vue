@@ -212,21 +212,6 @@
                   placeholder="Enter postcode"
                 >
               </div>
-              <div class="col-lg-6">
-                <label for="location">Location</label>
-                <div class="switch-button">
-                  <input
-                    id="location"
-                    name="location"
-                    data-switch="true"
-                    type="checkbox"
-                    data-on-text="Yes"
-                    data-off-text="No"
-                    data-on-color="brand"
-                    data-off-color="danger"
-                  >
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -254,7 +239,6 @@ export default {
         name       : null,
         code       : null,
         capacity   : null,
-        location   : null,
         phone      : null,
         email      : null,
         pic        : null,
@@ -288,13 +272,9 @@ export default {
     this.warehouse.state_id    = warehouseDetail.state_id
     this.warehouse.city_id     = warehouseDetail.city_id
     this.warehouse.district_id = warehouseDetail.district_id
-    this.warehouse.location    = warehouseDetail.location
   },
   async mounted () {
     const app = this
-    $('[data-switch=true]').bootstrapSwitch()
-    $('#location').bootstrapSwitch('state', this.warehouse.location)
-
     await app.getStatesByCountry(this.warehouse.country_id)
     await app.getCitiesByState(this.warehouse.state_id)
     await app.getDistrictsByCity(this.warehouse.city_id)
@@ -420,7 +400,6 @@ export default {
         this.warehouse.state_id    = parseInt($('#state').val())
         this.warehouse.city_id     = parseInt($('#city').val())
         this.warehouse.district_id = parseInt($('#district').val())
-        this.warehouse.location    = $('#location').bootstrapSwitch('state') === true ? 1 : 0
         this.warehouse.status      = 1
         try {
           this.$nuxt.$loading.start()

@@ -146,23 +146,6 @@
                 readonly
               >
             </div>
-            <div class="col-lg-6">
-              <label for="location">Location</label>
-              <input
-                v-if="$store.state.warehouse.warehouseDetail.result.location === 1"
-                value="Yes"
-                type="text"
-                class="form-control"
-                readonly
-              >
-              <input
-                v-else
-                value="No"
-                type="text"
-                class="form-control"
-                readonly
-              >
-            </div>
           </div>
         </div>
       </div>

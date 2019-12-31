@@ -212,22 +212,6 @@
                   placeholder="Enter postcode"
                 >
               </div>
-              <div class="col-lg-6">
-                <label for="location">Location</label>
-                <div class="switch-button">
-                  <input
-                    id="location"
-                    name="location"
-                    data-switch="true"
-                    type="checkbox"
-                    checked="checked"
-                    data-on-text="Yes"
-                    data-off-text="No"
-                    data-on-color="brand"
-                    data-off-color="danger"
-                  >
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -255,7 +239,6 @@ export default {
         name       : null,
         code       : null,
         capacity   : null,
-        location   : null,
         phone      : null,
         email      : null,
         pic        : null,
@@ -274,8 +257,6 @@ export default {
   },
   mounted () {
     const app = this
-    $('[data-switch=true]').bootstrapSwitch()
-
     $('#country').select2({ placeholder: 'Select a country', allowClear: true })
     $('#country').on('change', function () {
       validator.element($(this))
@@ -417,7 +398,6 @@ export default {
         this.warehouse.state_id    = parseInt($('#state').val())
         this.warehouse.city_id     = parseInt($('#city').val())
         this.warehouse.district_id = parseInt($('#district').val())
-        this.warehouse.location    = $('#location').bootstrapSwitch('state') === true ? 1 : 0
         try {
           this.$nuxt.$loading.start()
           await this.$store.dispatch('warehouse/addWarehouse', { data: this.warehouse })
