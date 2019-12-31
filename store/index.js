@@ -1,16 +1,26 @@
 import axios from 'axios'
+const atob = require('atob')
 
-export const state = () => ({ authToken: null })
+export const state = () => ({ authToken: null, userProfile: null })
 
 export const mutations = {
   SET_TOKEN (state, token) {
     state.authToken = token
+  },
+  SET_USER_PROFILE (state, userProfile) {
+    state.userProfile = userProfile
   },
 }
 
 export const actions = {
   // nuxtServerInit is called by Nuxt.js before server-rendering every page
   nuxtServerInit ({ commit }) {
+    let userProfile = this.$cookies.get(`${process.env.APP_ENV}_user`)
+    if (userProfile) {
+      userProfile     = JSON.parse(atob(userProfile))
+      commit('SET_USER_PROFILE', userProfile)
+    }
+
     const token = this.$cookies.get(`${process.env.APP_ENV}_token`)
     if (token)
       commit('SET_TOKEN', token)
@@ -73,5 +83,11 @@ export const actions = {
       else
         throw new Error('Network Communication Error')
     })
+  },
+}
+
+export const getters = {
+  getUserData: (state) => {
+    return state.userProfile
   },
 }
