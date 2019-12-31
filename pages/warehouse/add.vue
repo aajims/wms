@@ -213,7 +213,7 @@
                 >
               </div>
               <div class="col-lg-6">
-                <label for="location">Location <span style="color:red">*</span></label>
+                <label for="location">Location</label>
                 <div class="switch-button">
                   <input
                     id="location"
@@ -226,7 +226,6 @@
                     data-on-color="brand"
                     data-off-color="danger"
                   >
-                  <span class="form-text text-muted" />
                 </div>
               </div>
             </div>
