@@ -22,7 +22,7 @@
               <input
                 type="text"
                 class="form-control"
-                :value="$store.state.user.userProfile.username"
+                :value="$store.state.userProfile.username"
                 readonly
               >
             </div>
@@ -31,7 +31,7 @@
               <input
                 type="text"
                 class="form-control"
-                :value="$store.state.user.userProfile.full_name"
+                :value="$store.state.userProfile.full_name"
                 readonly
               >
             </div>
@@ -42,7 +42,7 @@
               <input
                 type="text"
                 class="form-control"
-                :value="$store.state.user.userProfile.email"
+                :value="$store.state.userProfile.email"
                 readonly
               >
             </div>
@@ -51,7 +51,7 @@
               <input
                 type="text"
                 class="form-control"
-                :value="$store.state.user.userProfile.phone"
+                :value="$store.state.userProfile.phone"
                 readonly
               >
             </div>
@@ -60,7 +60,7 @@
             <div class="col-lg-6">
               <label>Address</label>
               <textarea
-                v-model="$store.state.user.userProfile.address"
+                v-model="$store.state.userProfile.address"
                 class="form-control"
                 rows="3"
                 readonly
@@ -71,7 +71,7 @@
               <input
                 type="text"
                 class="form-control"
-                :value="$store.state.user.userProfile.company_name"
+                :value="$store.state.userProfile.company_name"
                 readonly
               >
             </div>
@@ -82,7 +82,7 @@
               <input
                 type="text"
                 class="form-control"
-                :value="$store.state.user.userProfile.country_name"
+                :value="$store.state.userProfile.country_name"
                 readonly
               >
             </div>
@@ -91,7 +91,7 @@
               <input
                 type="text"
                 class="form-control"
-                :value="$store.state.user.userProfile.state_name"
+                :value="$store.state.userProfile.state_name"
                 readonly
               >
             </div>
@@ -102,7 +102,7 @@
               <input
                 type="text"
                 class="form-control"
-                :value="$store.state.user.userProfile.city_name"
+                :value="$store.state.userProfile.city_name"
                 readonly
               >
             </div>
@@ -111,7 +111,7 @@
               <input
                 type="text"
                 class="form-control"
-                :value="$store.state.user.userProfile.district_name"
+                :value="$store.state.userProfile.district_name"
                 readonly
               >
             </div>
@@ -121,11 +121,3 @@
     </div>
   </div>
 </template>
-
-<script>
-export default {
-  async fetch ({ store, params }) {
-    await store.dispatch('user/userProfile')
-  },
-}
-</script>
