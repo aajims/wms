@@ -73,7 +73,11 @@ export const actions = {
         app.$cookies.remove(`${process.env.APP_ENV}_token`)
         app.$cookies.remove(`${process.env.APP_ENV}_user`)
         commit('SET_TOKEN', null)
-        // redirect to login
+        app.$router.go({ path: '/login' })
+      } else if (response.data.general_response.response_code === 4003) {
+        app.$cookies.remove(`${process.env.APP_ENV}_token`)
+        app.$cookies.remove(`${process.env.APP_ENV}_user`)
+        commit('SET_TOKEN', null)
         app.$router.go({ path: '/login' })
       } else
         throw new Error(response.data.general_response.response_message)

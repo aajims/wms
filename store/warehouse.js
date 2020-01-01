@@ -23,20 +23,21 @@ export const mutations = {
 }
 
 export const actions = {
-  async list ({ commit }) {
+  async list ({ commit }, { params }) {
     const app   = this
     const token = app.$cookies.get(`${process.env.APP_ENV}_token`)
     await axios({
       method : 'get',
-      url    : '/api/v1/warehouse?page=1&per_page=1&status=1&sort_by=id&sort=asc&keyword=',
+      url    : '/api/v1/warehouse',
       headers: {
         'Content-Type' : 'application/x-www-form-urlencoded',
         'Authorization': `Bearer ${token}`,
       },
+      params: params,
     }).then(function (response) {
       if (response.status === 200 && response.data.general_response.response_status === true) {
         commit('SET_WAREHOUSE', response.data)
-        console.log(response.data.result)
+        console.log(response.data)
       } else
         throw new Error(response.data.general_response.response_message)
     }).catch(function (error) {
@@ -119,7 +120,7 @@ export const actions = {
 
 export const getters = {
   getWarehouse: (state) => {
-    return state.warehouse.result
+    return state.warehouse
   },
   getAddSuccess: (state) => {
     return state.addWarehouse

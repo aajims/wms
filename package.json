@@ -32,6 +32,7 @@
     "nuxt-simple-line-icons": "^1.0.2",
     "vue-good-table": "^2.18.1",
     "vuejs-datepicker": "^1.6.2",
+    "vuejs-paginate": "^2.1.0",
     "vuex-easy-access": "^3.1.8"
   },
   "devDependencies": {

@@ -42,9 +42,13 @@ module.exports = {
     ],
     bodyAttrs: { class: 'kt-quick-panel--right kt-demo-panel--right kt-offcanvas-panel--right kt-header--fixed kt-header-mobile--fixed kt-subheader--enabled kt-subheader--fixed kt-subheader--solid kt-aside--enabled kt-aside--fixed kt-page--loading' },
   },
-  loading     : '~/components/loading.vue',
-  css         : ['@/assets/scss/app.scss', '@/assets/css/style.bundle.min.css'],
-  plugins     : [{ src: '@/plugins/datepicker', ssr: false }, { src: '@/plugins/vue-good-table', ssr: false }],
+  loading: '~/components/loading.vue',
+  css    : ['@/assets/scss/app.scss', '@/assets/css/style.bundle.min.css'],
+  plugins: [
+    { src: '@/plugins/datepicker', ssr: false },
+    { src: '@/plugins/vue-good-table', ssr: false },
+    { src: '@/plugins/pagination', ssr: false },
+  ],
   buildModules: ['@nuxtjs/dotenv'],
   modules     : [
     '@nuxtjs/axios',
