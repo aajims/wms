@@ -58,7 +58,7 @@ export const actions = {
         throw new Error('Network Communication Error')
     })
   },
-  async logout ({ commit }) {
+  async logout ({ commit, dispatch }) {
     const app   = this
     const token = app.$cookies.get(`${process.env.APP_ENV}_token`)
     await axios({
@@ -69,24 +69,26 @@ export const actions = {
         'Authorization': `Bearer ${token}`,
       },
     }).then(function (response) {
-      if (response.status === 200 && response.data.general_response.response_status === true) {
-        app.$cookies.remove(`${process.env.APP_ENV}_token`)
-        app.$cookies.remove(`${process.env.APP_ENV}_user`)
-        commit('SET_TOKEN', null)
-        app.$router.go({ path: '/login' })
-      } else if (response.data.general_response.response_code === 4003) {
-        app.$cookies.remove(`${process.env.APP_ENV}_token`)
-        app.$cookies.remove(`${process.env.APP_ENV}_user`)
-        commit('SET_TOKEN', null)
-        app.$router.go({ path: '/login' })
-      } else
+      if (response.status === 200 && response.data.general_response.response_status === true)
+        dispatch('removeToken')
+      else if (response.data.general_response.response_code === 4003)
+        dispatch('removeToken')
+      else
         throw new Error(response.data.general_response.response_message)
     }).catch(function (error) {
       if (error.response === undefined)
         throw error
+      else if (error.response.status === 403)
+        dispatch('removeToken')
       else
         throw new Error('Network Communication Error')
     })
+  },
+  removeToken ({ commit }) {
+    this.$cookies.remove(`${process.env.APP_ENV}_token`)
+    this.$cookies.remove(`${process.env.APP_ENV}_user`)
+    commit('SET_TOKEN', null)
+    this.$router.go({ path: '/login' })
   },
 }
 

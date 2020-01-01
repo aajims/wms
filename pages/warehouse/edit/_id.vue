@@ -254,8 +254,8 @@ export default {
     }
   },
   async fetch ({ store, params }) {
-    await store.dispatch('region/getCountries')
     await store.dispatch('warehouse/getWarehouseDetail', { idWarehouse: params.id })
+    await store.dispatch('region/getCountries')
   },
   created () {
     const warehouseDetail      = this.$store.getters['warehouse/getWarehouseDetail'].result

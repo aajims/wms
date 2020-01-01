@@ -23,7 +23,7 @@ export const mutations = {
 }
 
 export const actions = {
-  async list ({ commit }, { params }) {
+  async list ({ commit, dispatch }, { params }) {
     const app   = this
     const token = app.$cookies.get(`${process.env.APP_ENV}_token`)
     await axios({
@@ -35,19 +35,22 @@ export const actions = {
       },
       params: params,
     }).then(function (response) {
-      if (response.status === 200 && response.data.general_response.response_status === true) {
+      if (response.status === 200 && response.data.general_response.response_status === true)
         commit('SET_WAREHOUSE', response.data)
-        console.log(response.data)
-      } else
+      else if (response.data.general_response.response_code === 4003)
+        dispatch('removeToken', null, { root: true })
+      else
         throw new Error(response.data.general_response.response_message)
     }).catch(function (error) {
       if (error.response === undefined)
         throw error
+      else if (error.response.status === 403)
+        dispatch('removeToken', null, { root: true })
       else
         throw new Error('Network Communication Error')
     })
   },
-  async addWarehouse ({ commit }, { data }) {
+  async addWarehouse ({ commit, dispatch }, { data }) {
     const app   = this
     const token = app.$cookies.get(`${process.env.APP_ENV}_token`)
     await axios({
@@ -62,16 +65,20 @@ export const actions = {
       if (response.status === 200 && response.data.general_response.response_status === true) {
         commit('ADD_WAREHOUSE', response.data)
         setTimeout(() => app.$router.go({ path: '/warehouse' }), 3000)
-      } else
+      } else if (response.data.general_response.response_code === 4003)
+        dispatch('removeToken', null, { root: true })
+      else
         throw new Error(response.data.general_response.response_message)
     }).catch(function (error) {
       if (error.response === undefined)
         throw error
+      else if (error.response.status === 403)
+        dispatch('removeToken', null, { root: true })
       else
         throw new Error('Network Communication Error')
     })
   },
-  async editWarehouse ({ commit }, { idWarehouse, data }) {
+  async editWarehouse ({ commit, dispatch }, { idWarehouse, data }) {
     const app   = this
     const token = app.$cookies.get(`${process.env.APP_ENV}_token`)
     await axios({
@@ -85,16 +92,20 @@ export const actions = {
     }).then(function (response) {
       if (response.status === 200 && response.data.general_response.response_status === true)
         commit('EDIT_WAREHOUSE', response.data)
+      else if (response.data.general_response.response_code === 4003)
+        dispatch('removeToken', null, { root: true })
       else
         throw new Error(response.data.general_response.response_message)
     }).catch(function (error) {
       if (error.response === undefined)
         throw error
+      else if (error.response.status === 403)
+        dispatch('removeToken', null, { root: true })
       else
         throw new Error('Network Communication Error')
     })
   },
-  async getWarehouseDetail ({ commit }, { idWarehouse }) {
+  async getWarehouseDetail ({ commit, dispatch }, { idWarehouse }) {
     const app   = this
     const token = app.$cookies.get(`${process.env.APP_ENV}_token`)
     await axios({
@@ -107,11 +118,15 @@ export const actions = {
     }).then(function (response) {
       if (response.status === 200 && response.data.general_response.response_status === true)
         commit('SET_WAREHOUSE_DETAIL', response.data)
+      else if (response.data.general_response.response_code === 4003)
+        dispatch('removeToken', null, { root: true })
       else
         throw new Error(response.data.general_response.response_message)
     }).catch(function (error) {
       if (error.response === undefined)
         throw error
+      else if (error.response.status === 403)
+        dispatch('removeToken', null, { root: true })
       else
         throw new Error('Network Communication Error')
     })
