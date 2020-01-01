@@ -14,6 +14,15 @@
               Warehouse Detail
             </h3>
           </div>
+          <div class="kt-portlet__head-toolbar">
+            <a
+              href="/warehouse"
+              class="btn btn-clean kt-margin-r-10"
+            >
+              <i class="la la-arrow-left" />
+              <span class="kt-hidden-mobile">Back</span>
+            </a>
+          </div>
         </div>
         <div class="kt-portlet__body">
           <div class="form-group row">
