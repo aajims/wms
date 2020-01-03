@@ -1,7 +1,7 @@
 <template>
   <div
     id="kt_subheader"
-    class="kt-subheader   kt-grid__item"
+    class="kt-subheader kt-grid__item"
   >
     <div class="kt-container  kt-container--fluid ">
       <div
@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import menus from '@/menu'
+import menus from '@/data/menu'
 export default {
   data () {
     return {

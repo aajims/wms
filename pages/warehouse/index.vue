@@ -81,26 +81,53 @@
       </div>
     </div>
     <div class="kt-portlet__body">
-      <div class="row align-items-center">
-        <div class="col-xl-8 order-2 order-xl-1">
-          <div class="row align-items-center">
-            <div class="col-md-4 kt-margin-b-20-tablet-and-mobile">
-              <div class="kt-input-icon kt-input-icon--left">
-                <input
-                  v-model="params.keyword"
-                  type="text"
-                  class="form-control"
-                  placeholder="Search..."
-                  @keyup="getWarehouse(page)"
-                >
-                <span class="kt-input-icon__icon kt-input-icon__icon--left">
-                  <span><i class="la la-search" /></span>
-                </span>
+      <!--begin: Search Form -->
+      <div class="kt-form kt-form--label-right kt-margin-t-20 kt-margin-b-10">
+        <div class="row align-items-center">
+          <div class="col-xl-8 order-2 order-xl-1">
+            <div class="row align-items-center">
+              <div class="col-md-4 kt-margin-b-20-tablet-and-mobile">
+                <div class="kt-input-icon kt-input-icon--left">
+                  <input
+                    v-model="params.keyword"
+                    type="text"
+                    class="form-control"
+                    placeholder="Search..."
+                    @keyup="getWarehouse(page)"
+                  >
+                  <span class="kt-input-icon__icon kt-input-icon__icon--left">
+                    <span><i class="la la-search" /></span>
+                  </span>
+                </div>
+              </div>
+              <div class="col-md-4 kt-margin-b-20-tablet-and-mobile">
+                <div class="kt-form__group kt-form__group--inline">
+                  <div class="kt-form__label">
+                    <label>Status:</label>
+                  </div>
+                  <div class="kt-form__control">
+                    <select
+                      id="kt_form_status"
+                      class="form-control bootstrap-select"
+                    >
+                      <option value="">
+                        All
+                      </option>
+                      <option value="1">
+                        Active
+                      </option>
+                      <option value="0">
+                        Inactive
+                      </option>
+                    </select>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+      <!--end: Search Form -->
     </div>
     <vue-good-table
       style-class="vgt-table table-hover"
@@ -134,6 +161,11 @@
             title="Edit warehouse"
             class="btn btn-sm btn-clean btn-icon btn-icon-md"
           ><i class="la la-edit" /></a>
+          <a
+            :title="[props.row.status === 1 ? 'Deactivate' : 'Activate']"
+            class="btn btn-sm btn-clean btn-icon btn-icon-md"
+            @click="setStatus(props.row)"
+          ><i class="la la-power-off" /></a>
         </span>
       </template>
     </vue-good-table>
@@ -201,21 +233,22 @@ export default {
           field           : 'created_at',
           type            : 'date',
           dateInputFormat : "yyyy-MM-dd'T'HH:mm:ss'Z'",
-          dateOutputFormat: 'd/M/Y HH:mm:ss',
+          dateOutputFormat: 'dd/MM/Y HH:mm:ss',
           sortable        : false,
         },
         {
           label   : 'Action',
           field   : 'action',
-          tdClass : 'text-center',
+          thClass : 'text-center',
           sortable: false,
+          width   : '150px',
         },
       ],
       rows  : [],
       params: {
         page    : 1,
         per_page: 10,
-        status  : 1,
+        status  : '',
         sort_by : 'id',
         sort    : 'asc',
         keyword : '',
@@ -228,6 +261,12 @@ export default {
     }
   },
   async mounted () {
+    const app = this
+    $('#kt_form_status').select2({ minimumResultsForSearch: -1 })
+    $('#kt_form_status').on('change', function () {
+      app.params.status = $('#kt_form_status').val()
+      app.getWarehouse(1)
+    })
     this.getWarehouse(this.page)
   },
   methods: {
@@ -244,6 +283,50 @@ export default {
       this.totalItem = data.pagination.total
       this.from      = data.pagination.from
       this.to        = data.pagination.to
+    },
+    async setStatus (row) {
+      const app         = this
+      const statusText  = row.status === 1 ? 'Deactivated' : 'Activated'
+      const buttonClass = row.status === 1 ? 'btn btn-danger' : 'btn btn-success'
+      row.status        = row.status === 1 ? 0 : 1
+      // eslint-disable-next-line no-undef
+      swal.fire({
+        title             : 'Are you sure?',
+        text              : `Warehouse "${row.name}" ${statusText}`,
+        type              : 'question',
+        showCancelButton  : true,
+        confirmButtonText : statusText,
+        buttonsStyling    : false,
+        confirmButtonClass: buttonClass,
+        cancelButtonClass : 'btn btn-default',
+      }).then(function (result) {
+        if (result.value)
+          app.updateStatus(row.id, row)
+      })
+    },
+    async updateStatus (idWarehouse, param) {
+      try {
+        this.$nuxt.$loading.start()
+        await this.$store.dispatch('warehouse/editWarehouse', { idWarehouse: idWarehouse, data: param })
+        const data      = this.$store.getters['warehouse/getEditWarehouse']
+        const parameter = {
+          alertClass: 'alert-success',
+          message   : `Warehouse ${data.result.name} has been edited`,
+        }
+        this.$nuxt.$emit('alertShow', parameter)
+        this.$nuxt.$loading.finish()
+        // eslint-disable-next-line no-undef
+        KTUtil.scrollTop()
+      } catch (error) {
+        const parameter = {
+          alertClass: 'alert-danger',
+          message   : error.message,
+        }
+        this.$nuxt.$emit('alertShow', parameter)
+        this.$nuxt.$loading.finish()
+        // eslint-disable-next-line no-undef
+        KTUtil.scrollTop()
+      }
     },
   },
 }

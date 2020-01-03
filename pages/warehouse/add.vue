@@ -83,7 +83,7 @@
             </div>
             <div class="form-group row">
               <div class="col-lg-6">
-                <label>Capacity <span style="color:red">*</span></label>
+                <label>Capacity</label>
                 <input
                   v-model="warehouse.capacity"
                   type="text"
@@ -327,7 +327,6 @@ export default {
           required: true,
           digits  : true,
         },
-        capacity   : { required: true },
         pic        : { required: true },
         address    : { required: true },
         country_id : { required: true },
