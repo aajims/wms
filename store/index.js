@@ -1,16 +1,26 @@
 import axios from 'axios'
+const atob = require('atob')
 
-export const state = () => ({ authToken: null })
+export const state = () => ({ authToken: null, userProfile: null })
 
 export const mutations = {
   SET_TOKEN (state, token) {
     state.authToken = token
+  },
+  SET_USER_PROFILE (state, userProfile) {
+    state.userProfile = userProfile
   },
 }
 
 export const actions = {
   // nuxtServerInit is called by Nuxt.js before server-rendering every page
   nuxtServerInit ({ commit }) {
+    let userProfile = this.$cookies.get(`${process.env.APP_ENV}_user`)
+    if (userProfile) {
+      userProfile     = JSON.parse(atob(userProfile))
+      commit('SET_USER_PROFILE', userProfile)
+    }
+
     const token = this.$cookies.get(`${process.env.APP_ENV}_token`)
     if (token)
       commit('SET_TOKEN', token)
@@ -48,7 +58,7 @@ export const actions = {
         throw new Error('Network Communication Error')
     })
   },
-  async logout ({ commit }) {
+  async logout ({ commit, dispatch }) {
     const app   = this
     const token = app.$cookies.get(`${process.env.APP_ENV}_token`)
     await axios({
@@ -59,19 +69,31 @@ export const actions = {
         'Authorization': `Bearer ${token}`,
       },
     }).then(function (response) {
-      if (response.status === 200 && response.data.general_response.response_status === true) {
-        app.$cookies.remove(`${process.env.APP_ENV}_token`)
-        app.$cookies.remove(`${process.env.APP_ENV}_user`)
-        commit('SET_TOKEN', null)
-        // redirect to login
-        app.$router.go({ path: '/login' })
-      } else
+      if (response.status === 200 && response.data.general_response.response_status === true)
+        dispatch('removeToken')
+      else if (response.data.general_response.response_code === 4003)
+        dispatch('removeToken')
+      else
         throw new Error(response.data.general_response.response_message)
     }).catch(function (error) {
       if (error.response === undefined)
         throw error
+      else if (error.response.status === 403)
+        dispatch('removeToken')
       else
         throw new Error('Network Communication Error')
     })
+  },
+  removeToken ({ commit }) {
+    this.$cookies.remove(`${process.env.APP_ENV}_token`)
+    this.$cookies.remove(`${process.env.APP_ENV}_user`)
+    commit('SET_TOKEN', null)
+    this.$router.go({ path: '/login' })
+  },
+}
+
+export const getters = {
+  getUserData: (state) => {
+    return state.userProfile
   },
 }

@@ -27,9 +27,12 @@
     "cookie-universal-nuxt": "^2.1.0",
     "cross-env": "^5.2.1",
     "express": "^4.17.1",
+    "jquery": "^3.4.1",
     "nuxt": "^2.10.2",
     "nuxt-simple-line-icons": "^1.0.2",
+    "vue-good-table": "^2.18.1",
     "vuejs-datepicker": "^1.6.2",
+    "vuejs-paginate": "^2.1.0",
     "vuex-easy-access": "^3.1.8"
   },
   "devDependencies": {

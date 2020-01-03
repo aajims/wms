@@ -1,5 +1,4 @@
 require('dotenv').config()
-const webpack = require('webpack')
 const pkg     = require('./package')
 
 module.exports = {
@@ -33,18 +32,22 @@ module.exports = {
       { src: '/vendors/perfect-scrollbar.min.js', body: true },
       { src: '/vendors/sticky.min.js', body: true },
       { src: '/vendors/wNumb.js', body: true },
+      { src: '/vendors/bootstrap-switch.min.js', body: true },
+      { src: '/vendors/select2.full.min.js', body: true },
+      { src: '/vendors/jquery.validate.min.js', body: true },
+      { src: '/vendors/additional-methods.min.js', body: true },
       { src: '/js/config.js', body: true },
       { src: '/js/scripts.bundle.min.js', body: true },
+      { src: '/js/jquery-validation.init.js', body: true },
     ],
     bodyAttrs: { class: 'kt-quick-panel--right kt-demo-panel--right kt-offcanvas-panel--right kt-header--fixed kt-header-mobile--fixed kt-subheader--enabled kt-subheader--fixed kt-subheader--solid kt-aside--enabled kt-aside--fixed kt-page--loading' },
   },
   loading: '~/components/loading.vue',
   css    : ['@/assets/scss/app.scss', '@/assets/css/style.bundle.min.css'],
   plugins: [
-    {
-      src: '@/plugins/datepicker',
-      ssr: false,
-    },
+    { src: '@/plugins/datepicker', ssr: false },
+    { src: '@/plugins/vue-good-table', ssr: false },
+    { src: '@/plugins/pagination', ssr: false },
   ],
   buildModules: ['@nuxtjs/dotenv'],
   modules     : [
@@ -79,6 +82,5 @@ module.exports = {
         },
       },
     },
-    plugins: [new webpack.ProvidePlugin({ $: 'jquery', jQuery: 'jquery' })],
   },
 }
