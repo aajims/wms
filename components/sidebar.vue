@@ -170,7 +170,7 @@
 </template>
 
 <script>
-import menus from '@/menu'
+import menus from '@/data/menu'
 export default {
   data () {
     return {
