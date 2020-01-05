@@ -1,60 +1,3 @@
-<style lang="scss">
-  .vgt-table {
-    font-size: 14px !important;
-    border-color: #fff !important;
-    padding: 10px;
-
-    thead th{
-      background: #fff;
-      border-bottom: 2px solid #ebedf2 !important;
-      padding-left: 25px;
-    }
-
-    th.line-numbers {
-      background: #fff;
-      border-bottom: 1px solid #ebedf2;
-      border-right: #fff !important;
-    }
-
-    .vgt-checkbox-col {
-      background: #fff !important;
-      border-bottom: 1px solid #ebedf2 !important;
-      border-right: #fff !important;
-      padding-left: 25px;
-    }
-
-    td {
-      border-bottom: 1px solid #ebedf2 !important;
-    }
-
-    th:first-child, td:first-child { padding-left: 25px; }
-
-    td:last-child { padding-right: 25px; }
-    th:last-child { padding-right: 40px; }
-
-    th:last-child.sortable:before, th:last-child.sortable:after {
-      right: 25px;
-    }
-  }
-
-  .vgt-wrap__footer {
-    background: #fff;
-    border: #fff;
-    border-top: 1px solid #ebedf2;
-    padding-left: 25px;
-    padding-right: 25px;
-  }
-
-  .actions {
-    overflow: visible;
-    position: relative;
-  }
-
-  .actions a {
-    cursor: pointer;
-  }
-</style>
-
 <template>
   <div class="kt-portlet kt-portlet--mobile">
     <div class="kt-portlet__head kt-portlet__head--lg">
@@ -93,7 +36,7 @@
                     type="text"
                     class="form-control"
                     placeholder="Search..."
-                    @keyup="getWarehouse(page)"
+                    @keyup="getWarehouse(params.page)"
                   >
                   <span class="kt-input-icon__icon kt-input-icon__icon--left">
                     <span><i class="la la-search" /></span>
@@ -134,8 +77,8 @@
       :columns="columns"
       :rows="rows"
       max-height="400px"
-      :line-numbers="true"
       :fixed-header="true"
+      :pagination="true"
     >
       <template
         slot="table-row"
@@ -169,33 +112,32 @@
         </span>
       </template>
     </vue-good-table>
-    <div class="kt-portlet__body">
-      <div class="kt-pagination kt-pagination--brand">
-        <paginate
-          :page-count="totalPage"
-          :prev-text="'<'"
-          :next-text="'>'"
-          :container-class="'kt-pagination__links'"
-          :active-class="'kt-pagination__link--active'"
-          :next-class="'kt-pagination__link--next'"
-          :prev-class="'kt-pagination__link--prev'"
-          :click-handler="clickCallback"
-        />
-        <div class="kt-pagination__toolbar">
-          <div class="pagination__desc">
-            Showing {{ from }} - {{ to }} of {{ totalItem }}
-          </div>
-        </div>
-      </div>
-    </div>
+    <pagination
+      :total-page="totalPage"
+      :from="from"
+      :to="to"
+      :total-item="totalItem"
+      :click-handler="clickCallback"
+      :per-page-dropdown="[3, 5, 10]"
+      @changePerpage="changePerPage"
+    />
   </div>
 </template>
 
 <script>
+import pagination from '@/pages/elements/pagination.vue'
+import { addLineNumber } from '@/utils'
+
 export default {
+  components: { pagination },
   data () {
     return {
       columns: [
+        {
+          label   : '#',
+          field   : 'lineNumber',
+          sortable: false,
+        },
         {
           label   : 'Name',
           field   : 'name',
@@ -247,13 +189,12 @@ export default {
       rows  : [],
       params: {
         page    : 1,
-        per_page: 10,
+        per_page: 3,
         status  : '',
         sort_by : 'id',
         sort    : 'asc',
         keyword : '',
       },
-      page     : 1,
       totalPage: 0,
       totalItem: 0,
       from     : 0,
@@ -267,28 +208,39 @@ export default {
       app.params.status = $('#kt_form_status').val()
       app.getWarehouse(1)
     })
-    this.getWarehouse(this.page)
+    this.getWarehouse(this.params.page)
   },
   methods: {
     clickCallback (pageNumber) {
       this.getWarehouse(pageNumber)
     },
+    changePerPage (value) {
+      this.params.per_page = value
+      this.getWarehouse(1)
+    },
     async getWarehouse (page) {
-      const app      = this
-      this.page      = page
-      await this.$store.dispatch('warehouse/list', { params: app.params })
-      const data     = this.$store.getters['warehouse/getWarehouse']
-      this.rows      = data.result
-      this.totalPage = data.pagination.last_page
-      this.totalItem = data.pagination.total
-      this.from      = data.pagination.from
-      this.to        = data.pagination.to
+      this.params.page = page
+      let data         = []
+      try {
+        await this.$store.dispatch('warehouse/list', { params: this.params })
+        data           = this.$store.getters['warehouse/getWarehouse']
+        this.totalPage = data.pagination.last_page
+        this.totalItem = data.pagination.total
+        this.from      = data.pagination.from
+        this.to        = data.pagination.to
+        this.rows      = addLineNumber(data.result, this.from)
+      } catch (error) {
+        this.rows      = []
+        this.totalPage = 0
+        this.totalItem = 0
+        this.from      = 0
+        this.to        = 0
+      }
     },
     async setStatus (row) {
       const app         = this
       const statusText  = row.status === 1 ? 'Deactivated' : 'Activated'
       const buttonClass = row.status === 1 ? 'btn btn-danger' : 'btn btn-success'
-      row.status        = row.status === 1 ? 0 : 1
       // eslint-disable-next-line no-undef
       swal.fire({
         title             : 'Are you sure?',
@@ -307,6 +259,7 @@ export default {
     async updateStatus (idWarehouse, param) {
       try {
         this.$nuxt.$loading.start()
+        param.status    = param.status === 1 ? 0 : 1
         await this.$store.dispatch('warehouse/editWarehouse', { idWarehouse: idWarehouse, data: param })
         const data      = this.$store.getters['warehouse/getEditWarehouse']
         const parameter = {
@@ -318,6 +271,7 @@ export default {
         // eslint-disable-next-line no-undef
         KTUtil.scrollTop()
       } catch (error) {
+        param.status    = param.status === 1 ? 0 : 1
         const parameter = {
           alertClass: 'alert-danger',
           message   : error.message,
