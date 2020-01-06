@@ -2,6 +2,7 @@
   <div class="kt-portlet__body">
     <div class="kt-pagination kt-pagination--brand">
       <paginate
+        v-model="currentPage"
         :page-count="totalPage"
         :prev-text="'<'"
         :next-text="'>'"
@@ -40,6 +41,7 @@ export default {
     from           : Number,
     to             : Number,
     totalItem      : Number,
+    page           : Number,
     clickHandler   : { type: Function },
     perPageDropdown: {
       type   : Array,
@@ -51,6 +53,16 @@ export default {
           50,
           100,
         ]
+      },
+    },
+  },
+  data () {
+    return { currentPage: this.page }
+  },
+  watch: {
+    page: {
+      handler (newValue, oldValue) {
+        this.currentPage = newValue
       },
     },
   },

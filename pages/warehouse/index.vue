@@ -73,12 +73,14 @@
       <!--end: Search Form -->
     </div>
     <vue-good-table
+      mode="remote"
       style-class="vgt-table table-hover"
       :columns="columns"
       :rows="rows"
       max-height="400px"
       :fixed-header="true"
-      :pagination="true"
+      :is-loading="isLoading"
+      @on-sort-change="onSortChange"
     >
       <template
         slot="table-row"
@@ -111,8 +113,14 @@
           ><i class="la la-power-off" /></a>
         </span>
       </template>
+      <template slot="loadingContent">
+        <div class="loading-table">
+          <span>Please wait...</span><span><div class="kt-spinner kt-spinner--v2 kt-spinner--success " /></span>
+        </div>
+      </template>
     </vue-good-table>
     <pagination
+      :page="params.page"
       :total-page="totalPage"
       :from="from"
       :to="to"
@@ -131,21 +139,20 @@ export default {
   components: { pagination },
   data () {
     return {
-      columns: [
+      isLoading: false,
+      columns  : [
         {
           label   : '#',
           field   : 'lineNumber',
           sortable: false,
         },
         {
-          label   : 'Name',
-          field   : 'name',
-          sortable: false,
+          label: 'Name',
+          field: 'name',
         },
         {
-          label   : 'Code',
-          field   : 'code',
-          sortable: false,
+          label: 'Code',
+          field: 'code',
         },
         {
           label   : 'Address',
@@ -159,10 +166,9 @@ export default {
           sortable: false,
         },
         {
-          label   : 'Status',
-          field   : 'status',
-          tdClass : 'text-center',
-          sortable: false,
+          label  : 'Status',
+          field  : 'status',
+          tdClass: 'text-center',
         },
         {
           label   : 'Create By',
@@ -175,7 +181,6 @@ export default {
           type            : 'date',
           dateInputFormat : "yyyy-MM-dd'T'HH:mm:ss'Z'",
           dateOutputFormat: 'dd/MM/Y HH:mm:ss',
-          sortable        : false,
         },
         {
           label   : 'Action',
@@ -188,10 +193,10 @@ export default {
       rows  : [],
       params: {
         page    : 1,
-        per_page: 10,
+        per_page: 3,
         status  : '',
-        sort_by : 'id',
-        sort    : 'asc',
+        sort_by : 'created_at',
+        sort    : 'desc',
         keyword : '',
       },
       totalPage: 0,
@@ -217,10 +222,16 @@ export default {
       this.params.per_page = value
       this.getWarehouse(1)
     },
+    onSortChange (params) {
+      this.params.sort_by = params[0].field
+      this.params.sort    = params[0].type
+      this.getWarehouse(1)
+    },
     async getWarehouse (page) {
       this.params.page = page
       let data         = []
       try {
+        this.isLoading = true
         await this.$store.dispatch('warehouse/list', { params: this.params })
         data           = this.$store.getters['warehouse/getWarehouse']
         this.totalPage = data.pagination.last_page
@@ -228,12 +239,14 @@ export default {
         this.from      = data.pagination.from
         this.to        = data.pagination.to
         this.rows      = addLineNumber(data.result, this.from)
+        this.isLoading = false
       } catch (error) {
         this.rows      = []
         this.totalPage = 0
         this.totalItem = 0
         this.from      = 0
         this.to        = 0
+        this.isLoading = false
       }
     },
     async setStatus (row) {

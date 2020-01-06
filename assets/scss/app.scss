@@ -85,3 +85,27 @@
 .actions a {
   cursor: pointer;
 }
+
+
+// loading table
+.loading-table {
+  background: #fff;
+  box-shadow: 0 0 20px 0 rgba(0,0,0,.1);
+  display: table;
+  table-layout: fixed;
+  border-radius: 4px;
+  margin-left: 45%;
+}
+
+.loading-table>span {
+  color: #74788d;
+  display: table-cell;
+  vertical-align: middle;
+  padding: .75rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.loading-table>span>.kt-spinner {
+  margin-right: 1.25rem;
+}
