@@ -118,7 +118,6 @@
       :to="to"
       :total-item="totalItem"
       :click-handler="clickCallback"
-      :per-page-dropdown="[3, 5, 10]"
       @changePerpage="changePerPage"
     />
   </div>
@@ -189,7 +188,7 @@ export default {
       rows  : [],
       params: {
         page    : 1,
-        per_page: 3,
+        per_page: 10,
         status  : '',
         sort_by : 'id',
         sort    : 'asc',
