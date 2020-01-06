@@ -109,3 +109,17 @@
 .loading-table>span>.kt-spinner {
   margin-right: 1.25rem;
 }
+
+// table column-indicator
+.capacity-indicator-success {
+  background-color: #0abb87;
+}
+.capacity-indicator-info {
+  background-color: #5578eb;
+}
+.capacity-indicator-warning {
+  background-color: #ffb822;
+}
+.capacity-indicator-danger {
+  background-color: #fd397a;
+}
