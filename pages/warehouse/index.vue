@@ -193,7 +193,7 @@ export default {
       rows  : [],
       params: {
         page    : 1,
-        per_page: 3,
+        per_page: 10,
         status  : '',
         sort_by : 'created_at',
         sort    : 'desc',
