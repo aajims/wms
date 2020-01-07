@@ -153,6 +153,82 @@
         <br>
         <div class="row align-items-center">
           <div class="col-xl-8 order-2 order-xl-1">
+            <div class="row align-items-center">
+              <div class="col-md-3 kt-margin-b-20-tablet-and-mobile">
+                <div class="kt-form__group">
+                  <div class="kt-form__label">
+                    <label>Stock Quarantine:</label>
+                  </div>
+                  <div class="kt-form__control">
+                    <select
+                      id="kt_form_quarantine"
+                      class="form-control bootstrap-select"
+                    >
+                      <option value="">
+                        All
+                      </option>
+                      <option value="1">
+                        Yes
+                      </option>
+                      <option value="0">
+                        No
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 kt-margin-b-20-tablet-and-mobile">
+                <div class="kt-form__group">
+                  <div class="kt-form__label">
+                    <label>Bonded Location:</label>
+                  </div>
+                  <div class="kt-form__control">
+                    <select
+                      id="kt_form_bonded"
+                      class="form-control bootstrap-select"
+                    >
+                      <option value="">
+                        All
+                      </option>
+                      <option value="1">
+                        Yes
+                      </option>
+                      <option value="0">
+                        No
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 kt-margin-b-20-tablet-and-mobile">
+                <div class="kt-form__group">
+                  <div class="kt-form__label">
+                    <label>Blocked Location:</label>
+                  </div>
+                  <div class="kt-form__control">
+                    <select
+                      id="kt_form_blocked"
+                      class="form-control bootstrap-select"
+                    >
+                      <option value="">
+                        All
+                      </option>
+                      <option value="1">
+                        Yes
+                      </option>
+                      <option value="0">
+                        No
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <br>
+        <div class="row align-items-center">
+          <div class="col-xl-8 order-2 order-xl-1">
             <a
               style="margin-top: 5px"
               href="javascript:void(0)"
@@ -177,27 +253,6 @@
               class="kt-badge kt-badge--inline kt-badge--md kt-badge--danger"
               @click="getLocationCapacity('>=90')"
             >Hit the Maximum Capacity 90%</a>
-          </div>
-          <div class="col-xl-4 order-1 order-xl-2 ">
-            <div
-              style="margin-top: 5px"
-              class="kt-checkbox-inline"
-            >
-              <label class="kt-checkbox kt-checkbox--tick kt-checkbox--brand">
-                <input
-                  type="checkbox"
-                  @change="changeCheckBox('stock_quarantine', $event)"
-                > Stock Quarantine
-                <span />
-              </label>
-              <label class="kt-checkbox kt-checkbox--tick kt-checkbox--brand">
-                <input
-                  type="checkbox"
-                  @change="changeCheckBox('bonded_location', $event)"
-                > Bonded Location
-                <span />
-              </label>
-            </div>
           </div>
         </div>
       </div>
@@ -365,12 +420,43 @@ export default {
     $('#kt_form_status').on('change', function () {
       if ($('#kt_form_status').val() !== '' && $('#kt_form_status').val() !== null)
         app.params['filter[status]'] = $('#kt_form_status').val()
+      else
+        app.$delete(app.params, 'filter[status]')
       if ($('#kt_form_status').val() !== null)
+        app.getLocation(1)
+    })
+    $('#kt_form_quarantine').select2({ minimumResultsForSearch: -1, width: '100%' })
+    $('#kt_form_quarantine').on('change', function () {
+      if ($('#kt_form_quarantine').val() !== '' && $('#kt_form_quarantine').val() !== null)
+        app.params['filter[stock_quarantine]'] = $('#kt_form_quarantine').val()
+      else
+        app.$delete(app.params, 'filter[stock_quarantine]')
+      if ($('#kt_form_quarantine').val() !== null)
+        app.getLocation(1)
+    })
+    $('#kt_form_bonded').select2({ minimumResultsForSearch: -1, width: '100%' })
+    $('#kt_form_bonded').on('change', function () {
+      if ($('#kt_form_bonded').val() !== '' && $('#kt_form_bonded').val() !== null)
+        app.params['filter[bonded_location]'] = $('#kt_form_bonded').val()
+      else
+        app.$delete(app.params, 'filter[bonded_location]')
+      if ($('#kt_form_bonded').val() !== null)
+        app.getLocation(1)
+    })
+    $('#kt_form_blocked').select2({ minimumResultsForSearch: -1, width: '100%' })
+    $('#kt_form_blocked').on('change', function () {
+      if ($('#kt_form_blocked').val() !== '' && $('#kt_form_blocked').val() !== null)
+        app.params['filter[blocked_status]'] = $('#kt_form_blocked').val()
+      else
+        app.$delete(app.params, 'filter[blocked_status]')
+      if ($('#kt_form_blocked').val() !== null)
         app.getLocation(1)
     })
     $('#kt_form_warehouse').on('change', function () {
       if ($('#kt_form_warehouse').val() !== '' && $('#kt_form_warehouse').val() !== null)
         app.params['filter[warehouse_id]'] = $('#kt_form_warehouse').val()
+      else
+        app.$delete(app.params, 'filter[warehouse_id]')
       if ($('#kt_form_warehouse').val() !== null)
         app.getLocation(1)
     })
@@ -489,7 +575,7 @@ export default {
           'filter[status]': 1,
         }
         await this.$store.dispatch('warehouse/list', { params: warehouseParams })
-        $('#kt_form_warehouse').select2()
+        $('#kt_form_warehouse').select2({ width: '100%' })
         this.warehouseData    = this.$store.getters['warehouse/getWarehouse'].result
       } catch (error) {
         this.warehouseData = []
