@@ -5,7 +5,7 @@
         id="location_form"
         ref="form"
         class="kt-form kt-form--label-right"
-        @submit.prevent="addLocation()"
+        @submit.prevent="editLocation()"
       >
         <div
           id="kt_page_portlet"
@@ -14,10 +14,10 @@
           <div class="kt-portlet__head kt-portlet__head--lg">
             <div class="kt-portlet__head-label">
               <span class="kt-portlet__head-icon">
-                <i class="kt-font-brand flaticon-add" />
+                <i class="kt-font-brand flaticon-edit-1" />
               </span>
               <h3 class="kt-portlet__head-title">
-                Add Location
+                Edit Location
               </h3>
             </div>
             <div class="kt-portlet__head-toolbar">
@@ -208,8 +208,7 @@ import { DIMENSION_TYPE, WEIGHT_TYPE } from '@/utils/constants'
 export default {
   data () {
     return {
-      warehouseData: [],
-      location     : {
+      location: {
         name                   : null,
         code                   : null,
         level                  : null,
@@ -226,7 +225,23 @@ export default {
       },
     }
   },
-  mounted () {
+  async mounted () {
+    await this.$store.dispatch('location/getLocationDetail', { idLocation: this.$route.params.id })
+    const locationDetail                  = this.$store.getters['location/getLocationDetail'].result
+    this.location.name                    = locationDetail.name
+    this.location.code                    = locationDetail.code
+    this.location.level                   = locationDetail.level
+    this.location.capacity_dimension_type = locationDetail.capacity_dimension_type
+    this.location.capacity_max            = locationDetail.capacity_max
+    this.location.capacity                = locationDetail.capacity
+    this.location.weight_type             = locationDetail.weight_type
+    this.location.weight_max              = locationDetail.weight_max
+    this.location.bonded_location         = locationDetail.bonded_location
+    this.location.stock_quarantine        = locationDetail.stock_quarantine
+    this.location.warehouse_id            = locationDetail.warehouse_id
+    this.location.company_id              = locationDetail.company_id
+    this.location.description             = locationDetail.description
+
     $('#warehouse').select2({
       placeholder       : 'Select warehouse',
       minimumInputLength: 1,
@@ -248,6 +263,8 @@ export default {
         },
       },
     })
+    const newOptionWarehouse = new Option(locationDetail.warehouse_name, locationDetail.warehouse_id, true, true)
+    $('#warehouse').append(newOptionWarehouse).trigger('change')
     $('#warehouse').on('change', function () {
       validator.element($(this))
     })
@@ -255,6 +272,7 @@ export default {
     $('#capacity_dimension_type').select2({
       data: DIMENSION_TYPE, placeholder: 'Select a capacity dimension type', allowClear: true,
     })
+    $('#capacity_dimension_type').val(this.location.capacity_dimension_type).trigger('change')
     $('#capacity_dimension_type').on('change', function () {
       validator.element($(this))
     })
@@ -262,6 +280,7 @@ export default {
     $('#weight_type').select2({
       data: WEIGHT_TYPE, placeholder: 'Select a weight type', allowClear: true,
     })
+    $('#weight_type').val(this.location.weight_type).trigger('change')
 
     $('#blocked_by').select2({
       placeholder       : 'Select company',
@@ -284,6 +303,8 @@ export default {
         },
       },
     })
+    const newOptionCompany = new Option(locationDetail.company_name, locationDetail.company_id, true, true)
+    $('#blocked_by').append(newOptionCompany).trigger('change')
     $('#blocked_by').on('change', function () {
       validator.element($(this))
     })
@@ -312,7 +333,7 @@ export default {
     })
   },
   methods: {
-    async addLocation () {
+    async editLocation () {
       if ($('#location_form').valid()) {
         this.location.capacity_max            = parseInt(this.location.capacity_max)
         this.location.capacity                = parseInt(this.location.capacity)
@@ -323,13 +344,14 @@ export default {
         this.location.capacity_dimension_type = $('#capacity_dimension_type').val()
         this.location.bonded_location         = this.location.bonded_location ? 1 : 0
         this.location.stock_quarantine        = this.location.stock_quarantine ? 1 : 0
+        this.location.status                  = 1
         try {
           this.$nuxt.$loading.start()
-          await this.$store.dispatch('location/addLocation', { data: this.location })
-          const data      = this.$store.getters['location/getAddSuccess']
+          await this.$store.dispatch('location/editLocation', { idLocation: this.$route.params.id, data: this.location })
+          const data      = this.$store.getters['location/getEditLocation']
           const parameter = {
             alertClass: 'alert-success',
-            message   : `Location ${data.result.name} has been added`,
+            message   : `Location ${data.result.name} has been edited`,
           }
           this.$nuxt.$emit('alertShow', parameter)
           this.$nuxt.$loading.finish()

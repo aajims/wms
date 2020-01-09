@@ -466,13 +466,6 @@ export default {
       this.params.usage_percentage = value
       this.getLocation(1)
     },
-    changeCheckBox (index, event) {
-      if (event.target.checked === true)
-        this.params[`filter[${index}]`] = 1
-      else
-        this.$delete(this.params, `filter[${index}]`)
-      this.getLocation(1)
-    },
     tdClassFunc (row) {
       if (row.usage_percentage === 0)
         return 'capacity-indicator-success'
@@ -567,7 +560,7 @@ export default {
       try {
         const warehouseParams = {
           'page'          : 1,
-          'per_page'      : 1000,
+          'per_page'      : 10000,
           'status'        : '',
           'sort_by'       : 'name',
           'sort'          : 'asc',

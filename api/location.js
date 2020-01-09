@@ -39,4 +39,21 @@ app.get('/location/detail', (request, response) => {
   })
 })
 
+app.put('/location/edit', (request, response) => {
+  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  axios({
+    method : 'put',
+    url    : `${process.env.API_URL}/v1/location/${request.body.id_location}`,
+    headers: {
+      'Content-Type' : 'application/x-www-form-urlencoded',
+      'Authorization': `Bearer ${token}`,
+    },
+    data: request.body.data,
+  }).then(function (responseApi) {
+    response.send(responseApi.data)
+  }).catch(function (error) {
+    response.status(error.response.status).send(error.response.data)
+  })
+})
+
 module.exports = app

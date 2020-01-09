@@ -72,16 +72,12 @@ export const actions = {
     })
   },
   async editLocation ({ commit, dispatch }, { idLocation, data }) {
-    const app   = this
-    const token = app.$cookies.get(`${process.env.APP_ENV}_token`)
+    const dataPut = { id_location: idLocation, data: data }
     await axios({
-      method : 'put',
-      url    : `/api/v1/location/${idLocation}`,
-      headers: {
-        'Content-Type' : 'application/x-www-form-urlencoded',
-        'Authorization': `Bearer ${token}`,
-      },
-      data: data,
+      method: 'put',
+      url   : '/api/location/edit',
+      params: { id_location: idLocation },
+      data  : dataPut,
     }).then(function (response) {
       if (response.status === 200 && response.data.general_response.response_status === true)
         commit('EDIT_LOCATION', response.data)
