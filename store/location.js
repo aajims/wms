@@ -99,15 +99,11 @@ export const actions = {
     })
   },
   async getLocationDetail ({ commit, dispatch }, { idLocation }) {
-    const app   = this
-    const token = app.$cookies.get(`${process.env.APP_ENV}_token`)
     await axios({
       method : 'get',
-      url    : `${process.env.API_URL}/v1/location/${idLocation}`,
-      headers: {
-        'Content-Type' : 'application/x-www-form-urlencoded',
-        'Authorization': `Bearer ${token}`,
-      },
+      url    : '/api/location/detail',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      params : { id_location: idLocation },
     }).then(function (response) {
       if (response.status === 200 && response.data.general_response.response_status === true)
         commit('SET_LOCATION_DETAIL', response.data)
