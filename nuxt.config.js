@@ -58,7 +58,7 @@ module.exports = {
     '@nuxtjs/proxy',
     'nuxt-simple-line-icons',
     'cookie-universal-nuxt',
-    ['@nuxtjs/moment', { plugin: false }],
+    '@nuxtjs/moment',
     ['bootstrap-vue/nuxt', { css: false }],
   ],
   axios: { proxy: true },
