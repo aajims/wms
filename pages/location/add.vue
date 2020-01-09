@@ -2,10 +2,10 @@
   <div class="row">
     <div class="col-lg-12">
       <form
-        id="warehouse_form"
+        id="location_form"
         ref="form"
         class="kt-form kt-form--label-right"
-        @submit.prevent="addWarehouse()"
+        @submit.prevent="addLocation()"
       >
         <div
           id="kt_page_portlet"
@@ -22,7 +22,7 @@
             </div>
             <div class="kt-portlet__head-toolbar">
               <a
-                href="/warehouse"
+                href="/location"
                 class="btn btn-clean kt-margin-r-10"
               >
                 <i class="la la-arrow-left" />
@@ -42,175 +42,148 @@
               <div class="col-lg-6">
                 <label>Name <span style="color:red">*</span></label>
                 <input
-                  v-model="warehouse.name"
+                  v-model="location.name"
                   type="text"
                   class="form-control"
                   name="name"
-                  placeholder="Enter warehouse name"
+                  placeholder="Enter location name"
                 >
               </div>
               <div class="col-lg-6">
                 <label>Code <span style="color:red">*</span></label>
                 <input
-                  v-model="warehouse.code"
+                  v-model="location.code"
                   type="text"
                   class="form-control"
                   name="code"
-                  placeholder="Enter warehouse code"
+                  placeholder="Enter code"
                 >
               </div>
             </div>
             <div class="form-group row">
               <div class="col-lg-6">
-                <label>Email <span style="color:red">*</span></label>
-                <input
-                  v-model="warehouse.email"
-                  type="email"
-                  class="form-control"
-                  placeholder="Enter email"
+                <label>Capacity Dimension <span style="color:red">*</span></label>
+                <select
+                  id="capacity_dimension_type"
+                  class="form-control kt-select2"
+                  name="capacity_dimension_type"
                 >
+                  <option />
+                </select>
+                <span class="form-text text-muted" />
               </div>
               <div class="col-lg-6">
-                <label>Phone <span style="color:red">*</span></label>
+                <label>Capacity<span style="color:red">*</span></label>
                 <input
-                  v-model="warehouse.phone"
-                  type="text"
-                  class="form-control"
-                  name="phone"
-                  placeholder="Enter phone"
-                >
-              </div>
-            </div>
-            <div class="form-group row">
-              <div class="col-lg-6">
-                <label>Capacity</label>
-                <input
-                  v-model="warehouse.capacity"
+                  v-model="location.capacity"
                   type="text"
                   class="form-control"
                   name="capacity"
-                  placeholder="Enter warehouse capacity"
+                  placeholder="Enter capacity"
+                >
+                <span class="form-text text-muted">CMB Calculator : <a
+                  href="http://www.cbmcalculator.com/"
+                  target="_blank"
+                >Click Here!</a></span>
+              </div>
+            </div>
+            <div class="form-group row">
+              <div class="col-lg-6">
+                <label>Level <span style="color:red">*</span></label>
+                <input
+                  v-model="location.level"
+                  type="text"
+                  class="form-control"
+                  placeholder="Enter level"
+                  name="level"
                 >
               </div>
               <div class="col-lg-6">
-                <label>PIC <span style="color:red">*</span></label>
+                <label>Capacity max <span style="color:red">*</span></label>
                 <input
-                  v-model="warehouse.pic"
+                  v-model="location.capacity_max"
                   type="text"
                   class="form-control"
-                  name="pic"
-                  placeholder="Enter warehouse pic"
+                  name="capacity_max"
+                  placeholder="Enter capacity max"
                 >
               </div>
             </div>
             <div class="form-group row">
               <div class="col-lg-6">
-                <label for="address">Address <span style="color:red">*</span></label>
-                <textarea
-                  id="address"
-                  v-model="warehouse.address"
-                  class="form-control"
-                  rows="3"
-                  name="address"
-                />
+                <label>Weight Type <span style="color:red">*</span></label>
+                <select
+                  id="weight_type"
+                  class="form-control kt-select"
+                  name="weight_type"
+                >
+                  <option />
+                </select>
+                <span class="form-text text-muted" />
               </div>
+              <div class="col-lg-6">
+                <label>Max Weight <span style="color:red">*</span></label>
+                <input
+                  v-model="location.weight_max"
+                  type="text"
+                  class="form-control"
+                  name="weight_max"
+                  placeholder="Enter max weight"
+                >
+              </div>
+            </div>
+            <div class="form-group row">
+              <div class="col-lg-6">
+                <label for="country">Warehouse <span style="color:red">*</span></label>
+                <select
+                  id="warehouse"
+                  class="form-control kt-select2"
+                  name="warehouse_id"
+                >
+                  <option />
+                </select>
+                <span class="form-text text-muted" />
+              </div>
+              <div class="col-lg-6">
+                <label for="country">Blocked By</label>
+                <select
+                  id="blocked_by"
+                  class="form-control kt-select2"
+                  name="company_id"
+                >
+                  <option />
+                </select>
+              </div>
+            </div>
+            <div class="form-group row">
               <div class="col-lg-6">
                 <label for="description">Description</label>
                 <textarea
                   id="description"
-                  v-model="warehouse.description"
+                  v-model="location.description"
                   class="form-control"
                   rows="3"
                   name="description"
                 />
               </div>
-            </div>
-            <div class="form-group row">
               <div class="col-lg-6">
-                <label for="country">Country <span style="color:red">*</span></label>
-                <select
-                  id="country"
-                  class="form-control kt-select2"
-                  name="country_id"
-                >
-                  <option />
-                  <option
-                    v-for="country in $store.state.region.countries"
-                    :key="country.id"
-                    :value="country.id"
-                  >
-                    {{ country.name }}
-                  </option>
-                </select>
-                <span class="form-text text-muted" />
-              </div>
-              <div class="col-lg-6">
-                <label for="state">State <span style="color:red">*</span></label>
-                <select
-                  id="state"
-                  class="form-control kt-select2"
-                  name="state_id"
-                >
-                  <option />
-                  <option
-                    v-for="state in states"
-                    :key="state.id"
-                    :value="state.id"
-                  >
-                    {{ state.name }}
-                  </option>
-                </select>
-                <span class="form-text text-muted">Please select a country </span>
-              </div>
-            </div>
-            <div class="form-group row">
-              <div class="col-lg-6">
-                <label for="city">City <span style="color:red">*</span></label>
-                <select
-                  id="city"
-                  class="form-control kt-select2"
-                  name="city_id"
-                >
-                  <option />
-                  <option
-                    v-for="city in cities"
-                    :key="city.id"
-                    :value="city.id"
-                  >
-                    {{ city.name }}
-                  </option>
-                </select>
-                <span class="form-text text-muted">Please select a state </span>
-              </div>
-              <div class="col-lg-6">
-                <label for="district">District <span style="color:red">*</span></label>
-                <select
-                  id="district"
-                  class="form-control kt-select2"
-                  name="district_id"
-                >
-                  <option />
-                  <option
-                    v-for="district in districts"
-                    :key="district.id"
-                    :value="district.id"
-                  >
-                    {{ district.name }}
-                  </option>
-                </select>
-                <span class="form-text text-muted">Please select a city </span>
-              </div>
-            </div>
-            <div class="form-group row">
-              <div class="col-lg-6">
-                <label>Postcode <span style="color:red">*</span></label>
-                <input
-                  v-model="warehouse.zip_code"
-                  type="text"
-                  class="form-control"
-                  name="zip_code"
-                  placeholder="Enter postcode"
-                >
+                <label>&nbsp;</label>
+                <div class="kt-checkbox-list">
+                  <label class="kt-checkbox kt-checkbox--brand">
+                    <input
+                      v-model="location.bonded_location"
+                      type="checkbox"
+                    > Bonded Location
+                    <span />
+                  </label>
+                  <label class="kt-checkbox kt-checkbox--brand">
+                    <input
+                      v-model="location.stock_quarantine"
+                      type="checkbox"
+                    > Stock Quarantine
+                    <span />
+                  </label>
+                </div>
               </div>
             </div>
           </div>
@@ -229,114 +202,103 @@
 </template>
 
 <script>
+// eslint-disable-next-line node/no-deprecated-api
+import { DIMENSION_TYPE, WEIGHT_TYPE } from '@/utils/constants'
+
 export default {
   data () {
     return {
-      states   : [],
-      cities   : [],
-      districts: [],
-      warehouse: {
-        name       : null,
-        code       : null,
-        capacity   : null,
-        phone      : null,
-        email      : null,
-        pic        : null,
-        address    : null,
-        country_id : null,
-        state_id   : null,
-        city_id    : null,
-        district_id: null,
-        zip_code   : null,
-        description: null,
+      warehouseData: [],
+      location     : {
+        name                   : null,
+        level                  : null,
+        capacity_dimension_type: null,
+        capacity_max           : null,
+        capacity               : null,
+        weight_max             : null,
+        weight_type            : null,
+        bonded_location        : null,
+        stock_quarantine       : null,
+        warehouse_id           : null,
+        company_id             : null,
+        description            : null,
       },
     }
   },
-  async fetch ({ store, params }) {
-    await store.dispatch('region/getCountries')
-  },
   mounted () {
-    const app = this
-    $('#country').select2({ placeholder: 'Select a country', allowClear: true })
-    $('#country').on('change', function () {
-      validator.element($(this))
-      if ($('#country').val()) {
-        $('#state').val(null).trigger('change')
-        $('#state').prop('disabled', false)
-        app.getStatesByCountry()
-      } else {
-        $('#state').val(null).trigger('change')
-        $('#city').val(null).trigger('change')
-        $('#district').val(null).trigger('change')
-        $('#state').prop('disabled', true)
-        $('#city').prop('disabled', true)
-        $('#district').prop('disabled', true)
-      }
+    $('#warehouse').select2({
+      placeholder       : 'Select warehouse',
+      minimumInputLength: 1,
+      width             : '100%',
+      allowClear        : true,
+      ajax              : {
+        type          : 'GET',
+        url           : '/api/warehouse/select',
+        cache         : true,
+        processResults: function (data) {
+          return {
+            results: $.map(data.result, function (object) {
+              return {
+                id  : object.id,
+                text: object.name,
+              }
+            }),
+          }
+        },
+      },
     })
-
-    $('#state').select2({
-      placeholder: 'Select a state', allowClear: true, disabled: true,
-    })
-    $('#state').on('change', function () {
-      validator.element($(this))
-      if ($('#state').val()) {
-        $('#city').val(null).trigger('change')
-        $('#city').prop('disabled', false)
-        app.getCitiesByState()
-      } else {
-        $('#city').val(null).trigger('change')
-        $('#district').val(null).trigger('change')
-        $('#city').prop('disabled', true)
-        $('#district').prop('disabled', true)
-      }
-    })
-
-    $('#city').select2({
-      placeholder: 'Select a city', allowClear: true, disabled: true,
-    })
-    $('#city').on('change', function () {
-      validator.element($(this))
-      if ($('#city').val()) {
-        $('#district').val(null).trigger('change')
-        $('#district').prop('disabled', false)
-        app.getDistrictsByCity()
-      } else {
-        $('#district').val(null).trigger('change')
-        $('#district').prop('disabled', true)
-      }
-    })
-
-    $('#district').select2({
-      placeholder: 'Select a district', allowClear: true, disabled: true,
-    })
-    $('#district').on('change', function () {
+    $('#warehouse').on('change', function () {
       validator.element($(this))
     })
 
-    const validator = $('#warehouse_form').validate({
+    $('#capacity_dimension_type').select2({
+      data: DIMENSION_TYPE, placeholder: 'Select a capacity dimension type', allowClear: true,
+    })
+    $('#capacity_dimension_type').on('change', function () {
+      validator.element($(this))
+    })
+
+    $('#weight_type').select2({
+      data: WEIGHT_TYPE, placeholder: 'Select a weight type', allowClear: true,
+    })
+
+    $('#blocked_by').select2({
+      placeholder       : 'Select company',
+      minimumInputLength: 1,
+      width             : '100%',
+      allowClear        : true,
+      ajax              : {
+        type          : 'GET',
+        url           : '/api/company/select',
+        cache         : true,
+        processResults: function (data) {
+          return {
+            results: $.map(data.result, function (object) {
+              return {
+                id  : object.id,
+                text: object.name,
+              }
+            }),
+          }
+        },
+      },
+    })
+    $('#blocked_by').on('change', function () {
+      validator.element($(this))
+    })
+
+    const validator = $('#location_form').validate({
       // define validation rules
       rules: {
-        name : { required: true },
-        code : { required: true },
-        email: {
-          required : true,
-          email    : true,
-          minlength: 10,
-        },
-        phone: {
-          required: true,
-          digits  : true,
-        },
-        pic        : { required: true },
-        address    : { required: true },
-        country_id : { required: true },
-        state_id   : { required: true },
-        city_id    : { required: true },
-        district_id: { required: true },
-        zip_code   : {
-          required: true,
-          digits  : true,
-        },
+        name                   : { required: true },
+        code                   : { required: true },
+        level                  : { required: true },
+        warehouse_id           : { required: true },
+        capacity               : { required: true, digits: true },
+        capacity_dimension_type: { required: true },
+        capacity_max           : { required: true, digits: true },
+        weight_max             : { required: true, digits: true },
+        weight_type            : { required: true },
       },
       invalidHandler: function (event, validator) {
         // eslint-disable-next-line no-undef
@@ -349,66 +311,30 @@ export default {
     })
   },
   methods: {
-    async getStatesByCountryModel () {
-      this.states = []
-      await this.$store.dispatch('region/getStatesByCountry', { countryId: $('#country').val() })
-      this.states = this.$store.getters['region/getStatesByCountry']
-    },
-    async getStatesByCountry () {
-      await this.getStatesByCountryModel()
-      $('#country').select2({ placeholder: 'Select a country', allowClear: true })
-      $('#state').select2({ placeholder: 'Select a state', allowClear: true })
-      $('#city').select2({
-        placeholder: 'Select a city', allowClear: true, disabled: true,
-      })
-      $('#district').select2({
-        placeholder: 'Select a district', allowClear: true, disabled: true,
-      })
-    },
-    async getCitiesByStateModel () {
-      this.cities = []
-      await this.$store.dispatch('region/getCitiesByState', { stateId: $('#state').val() })
-      this.cities = this.$store.getters['region/getCitiesByState']
-    },
-    async getCitiesByState () {
-      await this.getCitiesByStateModel()
-      $('#country').select2({ placeholder: 'Select a country', allowClear: true })
-      $('#state').select2({ placeholder: 'Select a state', allowClear: true })
-      $('#city').select2({ placeholder: 'Select a city', allowClear: true })
-      $('#district').select2({
-        placeholder: 'Select a district', allowClear: true, disabled: true,
-      })
-    },
-    async getDistrictsByCityModel () {
-      this.districts = []
-      await this.$store.dispatch('region/getDistrictsByCity', { cityId: $('#city').val() })
-      this.districts = this.$store.getters['region/getDistrictsByCity']
-    },
-    async getDistrictsByCity () {
-      await this.getDistrictsByCityModel()
-      $('#country').select2({ placeholder: 'Select a country', allowClear: true })
-      $('#state').select2({ placeholder: 'Select a state', allowClear: true })
-      $('#city').select2({ placeholder: 'Select a city', allowClear: true })
-      $('#district').select2({ placeholder: 'Select a district', allowClear: true })
-    },
-    async addWarehouse () {
-      if ($('#warehouse_form').valid()) {
-        this.warehouse.country_id  = parseInt($('#country').val())
-        this.warehouse.state_id    = parseInt($('#state').val())
-        this.warehouse.city_id     = parseInt($('#city').val())
-        this.warehouse.district_id = parseInt($('#district').val())
+    async addLocation () {
+      if ($('#location_form').valid()) {
+        this.location.capacity_max            = parseInt(this.location.capacity_max)
+        this.location.capacity                = parseInt(this.location.capacity)
+        this.location.weight_max              = parseInt(this.location.weight_max)
+        this.location.warehouse_id            = parseInt($('#warehouse').val())
+        this.location.company_id              = parseInt($('#blocked_by').val())
+        this.location.weight_type             = $('#weight_type').val()
+        this.location.capacity_dimension_type = $('#capacity_dimension_type').val()
+        this.location.bonded_location         = this.location.bonded_location ? 1 : 0
+        this.location.stock_quarantine        = this.location.stock_quarantine ? 1 : 0
         try {
           this.$nuxt.$loading.start()
-          await this.$store.dispatch('warehouse/addWarehouse', { data: this.warehouse })
-          const data      = this.$store.getters['warehouse/getAddSuccess']
+          await this.$store.dispatch('location/addLocation', { data: this.location })
+          const data      = this.$store.getters['location/getAddSuccess']
           const parameter = {
             alertClass: 'alert-success',
-            message   : `Warehouse ${data.result.name} has been added`,
+            message   : `Location ${data.result.name} has been added`,
           }
           this.$nuxt.$emit('alertShow', parameter)
           this.$nuxt.$loading.finish()
           // eslint-disable-next-line no-undef
           KTUtil.scrollTop()
+          setTimeout(function () { window.location.href = '/location' }, 3000)
         } catch (error) {
           const parameter = {
             alertClass: 'alert-danger',
