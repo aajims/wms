@@ -50,22 +50,15 @@ export const actions = {
         throw new Error('Network Communication Error')
     })
   },
-  async addWarehouse ({ commit, dispatch }, { data }) {
-    const app   = this
-    const token = app.$cookies.get(`${process.env.APP_ENV}_token`)
+  async addLocation ({ commit, dispatch }, { data }) {
     await axios({
-      method : 'post',
-      url    : '/api/v1/warehouse',
-      headers: {
-        'Content-Type' : 'application/x-www-form-urlencoded',
-        'Authorization': `Bearer ${token}`,
-      },
-      data: data,
+      method: 'post',
+      url   : '/api/location/add',
+      data  : data,
     }).then(function (response) {
-      if (response.status === 200 && response.data.general_response.response_status === true) {
-        commit('ADD_WAREHOUSE', response.data)
-        setTimeout(() => app.$router.go({ path: '/warehouse' }), 3000)
-      } else if (response.data.general_response.response_code === 4003)
+      if (response.status === 200 && response.data.general_response.response_status === true)
+        commit('ADD_LOCATION', response.data)
+      else if (response.data.general_response.response_code === 4003)
         dispatch('removeToken', null, { root: true })
       else
         throw new Error(response.data.general_response.response_message)
@@ -105,19 +98,19 @@ export const actions = {
         throw new Error('Network Communication Error')
     })
   },
-  async getWarehouseDetail ({ commit, dispatch }, { idWarehouse }) {
+  async getLocationDetail ({ commit, dispatch }, { idLocation }) {
     const app   = this
     const token = app.$cookies.get(`${process.env.APP_ENV}_token`)
     await axios({
       method : 'get',
-      url    : `${process.env.API_URL}/v1/warehouse/${idWarehouse}`,
+      url    : `${process.env.API_URL}/v1/location/${idLocation}`,
       headers: {
         'Content-Type' : 'application/x-www-form-urlencoded',
         'Authorization': `Bearer ${token}`,
       },
     }).then(function (response) {
       if (response.status === 200 && response.data.general_response.response_status === true)
-        commit('SET_WAREHOUSE_DETAIL', response.data)
+        commit('SET_LOCATION_DETAIL', response.data)
       else if (response.data.general_response.response_code === 4003)
         dispatch('removeToken', null, { root: true })
       else

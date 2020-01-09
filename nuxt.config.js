@@ -51,8 +51,9 @@ module.exports = {
     { src: '@/plugins/vue-good-table', ssr: false },
     { src: '@/plugins/pagination', ssr: false },
   ],
-  buildModules: ['@nuxtjs/dotenv'],
-  modules     : [
+  serverMiddleware: [{ path: '/api', handler: '~/api/index.js' }],
+  buildModules    : ['@nuxtjs/dotenv'],
+  modules         : [
     '@nuxtjs/axios',
     '@nuxtjs/proxy',
     'nuxt-simple-line-icons',
