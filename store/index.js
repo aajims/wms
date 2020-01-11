@@ -28,10 +28,9 @@ export const actions = {
   async login ({ commit }, { username, password }) {
     const app = this
     await axios({
-      method : 'post',
-      url    : '/api/v1/auth/login',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      data   : {
+      method: 'post',
+      url   : '/api/login',
+      data  : {
         username: username,
         password: password,
       },
@@ -59,15 +58,9 @@ export const actions = {
     })
   },
   async logout ({ commit, dispatch }) {
-    const app   = this
-    const token = app.$cookies.get(`${process.env.APP_ENV}_token`)
     await axios({
-      method : 'post',
-      url    : '/api/v1/auth/logout',
-      headers: {
-        'Content-Type' : 'application/x-www-form-urlencoded',
-        'Authorization': `Bearer ${token}`,
-      },
+      method: 'post',
+      url   : '/api/logout',
     }).then(function (response) {
       if (response.status === 200 && response.data.general_response.response_status === true)
         dispatch('removeToken')
