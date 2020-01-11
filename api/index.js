@@ -4,11 +4,13 @@ const express = require('express')
 const app = express()
 
 // Require API routes
+const login     = require('./login')
 const warehouse = require('./warehouse')
 const company   = require('./company')
 const location  = require('./location')
 
 // Import API Routes
+app.use(login)
 app.use(warehouse)
 app.use(company)
 app.use(location)
