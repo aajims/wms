@@ -27,14 +27,15 @@
               class="btn btn-brand btn-elevate btn-icon-sm"
             >
               <i class="la la-cloud-download" />
-              <span class="kt-hidden-mobile">Import Excel</span>
+              <span class="kt-hidden-mobile">Import</span>
             </a>
             <a
-              href="/location/export"
+              href="javascript:void(0)"
               class="btn btn-brand btn-elevate btn-icon-sm"
+              @click="exportLocation"
             >
               <i class="la la-file-excel-o" />
-              <span class="kt-hidden-mobile">Export Excel</span>
+              <span class="kt-hidden-mobile">Export</span>
             </a>
           </div>
         </div>
@@ -611,6 +612,38 @@ export default {
       $('#kt_form_bonded').val('')
       $('#kt_form_blocked').val('')
       $('.selectpicker').selectpicker('refresh')
+    },
+    async exportLocation () {
+      try {
+        this.$nuxt.$loading.start()
+        this.params.sort_by = 'id'
+        this.params.sort    = 'asc'
+        await this.$store.dispatch('location/exportLocation', { params: this.params })
+        const rawData       = this.$store.getters['location/getExportLocation']
+
+        // get data export csv
+        let csvContent = 'data:text/csv;charset=utf-8,'
+        csvContent     += rawData
+        const data     = encodeURI(csvContent)
+        const link     = document.createElement('a')
+        link.setAttribute('href', data)
+        link.setAttribute('download', `export_location_${moment().format('YYYY-MM-DD_HHmmss')}.csv`)
+        link.click()
+
+        this.$nuxt.$loading.finish()
+        await this.$store.dispatch('location/setExportLocationNull')
+        // eslint-disable-next-line no-undef
+        KTUtil.scrollTop()
+      } catch (error) {
+        const parameter = {
+          alertClass: 'alert-danger',
+          message   : error.message,
+        }
+        this.$nuxt.$emit('alertShow', parameter)
+        this.$nuxt.$loading.finish()
+        // eslint-disable-next-line no-undef
+        KTUtil.scrollTop()
+      }
     },
   },
 }
