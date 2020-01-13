@@ -79,7 +79,8 @@ app.put('/location/edit', (request, response) => {
 })
 
 app.get('/location/export', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const params = library.generateParameter(request.query)
+  const token  = request.cookies[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
     url    : `${process.env.API_URL}/v1/location/data/export`,
@@ -88,7 +89,7 @@ app.get('/location/export', (request, response) => {
       'Content-Type' : 'application/octet-stream',
       'Authorization': `Bearer ${token}`,
     },
-    params: request.query,
+    params: params,
   }).then(function (responseApi) {
     response.send(responseApi.data)
   }).catch(function (error) {

@@ -45,7 +45,25 @@ function generateDatatableResult (response) {
   return data
 }
 
+function generateParameter (requestQuery) {
+  let params = Object.assign({})
+  for (const parameterKey in requestQuery) {
+    if (parameterKey !== 'filter')
+      params[parameterKey] = requestQuery[parameterKey]
+  }
+
+  const requestFilter = JSON.parse(requestQuery.filter)
+  const filter = Object.assign({})
+  for (const requestKey in requestFilter)
+    filter[`filter[${requestKey}]`] = requestFilter[requestKey]
+  const resultParams = Object.assign({}, params, filter)
+  params = resultParams
+
+  return params
+}
+
 module.exports = {
   generateDatatableParameter: generateDatatableParameter,
   generateDatatableResult   : generateDatatableResult,
+  generateParameter         : generateParameter,
 }
