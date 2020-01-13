@@ -1,0 +1,11 @@
+name,code,level,capacity_dimension_type,capacity,capacity_max,usage,weight_type,weight_max,bonded_location,stock_quarantine,blocked_by_company_id,blocked_by_company_name,description,status
+JKL026,JKL026,26,pallet,50,20,0,kg,60000,yes,no,1,PT DGW,n/a,active
+JKL027,JKL027,27,pallet,50,20,0,kg,60000,yes,no,1,PT DGW,n/a,active
+JKL028,JKL028,28,pallet,50,20,0,kg,60000,yes,no,1,PT DGW,n/a,active
+JKL029,JKL029,29,pallet,50,20,0,kg,60000,yes,no,1,PT DGW,n/a,active
+JKL030,JKL030,30,pallet,50,20,0,kg,60000,yes,no,1,PT DGW,n/a,active
+JKL031,JKL031,31,pallet,50,20,0,kg,60000,yes,no,1,PT DGW,n/a,active
+JKL032,JKL032,32,pallet,50,20,0,kg,60000,yes,no,1,PT DGW,n/a,active
+JKL033,JKL033,33,pallet,50,20,0,kg,60000,yes,no,1,PT DGW,n/a,active
+JKL034,JKL034,34,pallet,50,20,0,kg,60000,yes,no,1,PT DGW,n/a,active
+JKL035,JKL035,35,pallet,50,20,0,kg,60000,yes,no,1,PT DGW,n/a,active
