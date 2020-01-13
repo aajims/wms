@@ -1,7 +1,10 @@
 // mandatory css
+@import '../css/datatables.bundle.min';
+@import '../css/bootstrap-select.min';
 @import '../css/perfect-scrollbar';
 @import '../css/bootstrap-switch.min';
 @import '../css/select2.min';
+@import '../css/sweetalert2.min';
 @import '../css/header/base/light.min';
 @import '../css/header/menu/light.min';
 @import '../css/brand/dark.min';
@@ -13,17 +16,112 @@
 @import '../css/line-awesome/line-awesome';
 
 #__nuxt, #__layout {
-    height: 100%;
+  height: 100%;
 }
 
 .kt-grid--root {
-    min-height: 100%;
+  min-height: 100%;
 }
 
 .kt-scroll {
-    position: relative;
+  position: relative;
 }
 
 .kt-user-card {
-    background-image: url(~assets/images/bg-user-menu.jpg);
+  background-image: url(~assets/images/bg-user-menu.jpg);
+}
+
+
+// override css table
+.vgt-table {
+  font-size: 14px !important;
+  border-color: #fff !important;
+  padding: 10px !important;
+
+  thead th{
+    background: #fff !important;
+    border-bottom: 2px solid #ebedf2 !important;
+    padding-left: 25px !important;
+  }
+
+  th.line-numbers {
+    background: #fff !important;
+    border-bottom: 1px solid #ebedf2 !important;
+    border-right: #fff !important;
+  }
+
+  .vgt-checkbox-col {
+    background: #fff !important;
+    border-bottom: 1px solid #ebedf2 !important;
+    border-right: #fff !important;
+    padding-left: 25px !important;
+  }
+
+  td {
+    border-bottom: 1px solid #ebedf2 !important;
+  }
+
+  th:first-child, td:first-child { padding-left: 25px !important; }
+
+  td:last-child { padding-right: 25px !important; }
+  th:last-child { padding-right: 40px !important; }
+
+  th:last-child.sortable:before, th:last-child.sortable:after {
+    right: 25px !important;
+  }
+}
+
+.vgt-wrap__footer {
+  background: #fff !important;
+  border: #fff !important;
+  border-top: 1px solid #ebedf2 !important;
+  padding-left: 25px !important;
+  padding-right: 25px !important;
+}
+
+.actions {
+  overflow: visible;
+  position: relative;
+}
+
+.actions a {
+  cursor: pointer;
+}
+
+
+// loading table
+.loading-table {
+  background: #fff;
+  box-shadow: 0 0 20px 0 rgba(0,0,0,.1);
+  display: table;
+  table-layout: fixed;
+  border-radius: 4px;
+  margin-left: 45%;
+}
+
+.loading-table>span {
+  color: #74788d;
+  display: table-cell;
+  vertical-align: middle;
+  padding: .75rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.loading-table>span>.kt-spinner {
+  margin-right: 1.25rem;
+}
+
+// table column-indicator
+.capacity-indicator-success {
+  background-color: #0abb87;
+}
+.capacity-indicator-info {
+  background-color: #5578eb;
+}
+.capacity-indicator-warning {
+  background-color: #ffb822;
+}
+.capacity-indicator-danger {
+  background-color: #fd397a;
 }
