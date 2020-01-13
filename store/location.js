@@ -5,6 +5,7 @@ export const state = () => ({
   locationDetail: null,
   editLocation  : null,
   exportLocation: null,
+  importLocation: null,
 })
 
 export const mutations = {
@@ -19,6 +20,9 @@ export const mutations = {
   },
   EXPORT_LOCATION (state, exportLocation) {
     state.exportLocation = exportLocation
+  },
+  IMPORT_LOCATION (state, importLocation) {
+    state.importLocation = importLocation
   },
 }
 
@@ -105,6 +109,31 @@ export const actions = {
         throw new Error('Network Communication Error')
     })
   },
+  async importLocation ({ commit, dispatch }, { data }) {
+    const formData = new FormData()
+    formData.append('warehouse_id', data.warehouse_id)
+    formData.append('file', data.file)
+    await axios({
+      method : 'post',
+      url    : '/api/location/import',
+      headers: { 'Content-Type': 'multipart/form-data' },
+      data   : formData,
+    }).then(function (response) {
+      if (response.status === 200 && response.data.general_response.response_status === true)
+        commit('IMPORT_LOCATION', response.data)
+      else if (response.data.general_response.response_code === 4003)
+        dispatch('removeToken', null, { root: true })
+      else
+        throw new Error(response.data.general_response.response_message)
+    }).catch(function (error) {
+      if (error.response === undefined)
+        throw error
+      else if (error.response.status === 403)
+        dispatch('removeToken', null, { root: true })
+      else
+        throw new Error('Network Communication Error')
+    })
+  },
   async setExportLocationNull ({ commit }) {
     commit('EXPORT_LOCATION', null)
   },
@@ -122,5 +151,8 @@ export const getters = {
   },
   getExportLocation: (state) => {
     return state.exportLocation
+  },
+  getImportLocation: (state) => {
+    return state.importLocation
   },
 }
