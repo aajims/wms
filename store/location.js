@@ -1,16 +1,13 @@
 import axios from 'axios'
 
 export const state = () => ({
-  location      : null,
   addLocation   : null,
   locationDetail: null,
   editLocation  : null,
+  exportLocation: null,
 })
 
 export const mutations = {
-  SET_LOCATION (state, location) {
-    state.location = location
-  },
   SET_LOCATION_DETAIL (state, locationDetail) {
     state.locationDetail = locationDetail
   },
@@ -20,36 +17,12 @@ export const mutations = {
   EDIT_LOCATION (state, editLocation) {
     state.editLocation = editLocation
   },
+  EXPORT_LOCATION (state, exportLocation) {
+    state.exportLocation = exportLocation
+  },
 }
 
 export const actions = {
-  async list ({ commit, dispatch }, { params }) {
-    const app   = this
-    const token = app.$cookies.get(`${process.env.APP_ENV}_token`)
-    await axios({
-      method : 'get',
-      url    : '/api/v1/location',
-      headers: {
-        'Content-Type' : 'application/x-www-form-urlencoded',
-        'Authorization': `Bearer ${token}`,
-      },
-      params: params,
-    }).then(function (response) {
-      if (response.status === 200 && response.data.general_response.response_status === true)
-        commit('SET_LOCATION', response.data)
-      else if (response.data.general_response.response_code === 4003)
-        dispatch('removeToken', null, { root: true })
-      else
-        throw new Error(response.data.general_response.response_message)
-    }).catch(function (error) {
-      if (error.response === undefined)
-        throw error
-      else if (error.response.status === 403)
-        dispatch('removeToken', null, { root: true })
-      else
-        throw new Error('Network Communication Error')
-    })
-  },
   async addLocation ({ commit, dispatch }, { data }) {
     await axios({
       method: 'post',
@@ -116,12 +89,28 @@ export const actions = {
         throw new Error('Network Communication Error')
     })
   },
+  async exportLocation ({ commit, dispatch }, { params }) {
+    await axios({
+      method: 'get',
+      url   : '/api/location/export',
+      params: params,
+    }).then(function (response) {
+      commit('EXPORT_LOCATION', response.data)
+    }).catch(function (error) {
+      if (error.response === undefined)
+        throw error
+      else if (error.response.status === 403)
+        dispatch('removeToken', null, { root: true })
+      else
+        throw new Error('Network Communication Error')
+    })
+  },
+  async setExportLocationNull ({ commit }) {
+    commit('EXPORT_LOCATION', null)
+  },
 }
 
 export const getters = {
-  getLocation: (state) => {
-    return state.location
-  },
   getAddSuccess: (state) => {
     return state.addLocation
   },
@@ -130,5 +119,8 @@ export const getters = {
   },
   getEditLocation: (state) => {
     return state.editLocation
+  },
+  getExportLocation: (state) => {
+    return state.exportLocation
   },
 }

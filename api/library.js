@@ -33,7 +33,6 @@ function generateDatatableResult (response) {
     // generate row number
     for (let i = 0; i < response.data.result.length; i++)
       response.data.result[i].row_number = i + response.data.pagination.from
-    console.log(response.data.result)
     data = {
       iTotalRecords       : response.data.pagination.total,
       iTotalDisplayRecords: response.data.pagination.total,
