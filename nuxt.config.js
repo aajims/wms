@@ -52,6 +52,7 @@ module.exports = {
     { src: '@/plugins/datepicker', ssr: false },
     { src: '@/plugins/vue-good-table', ssr: false },
     { src: '@/plugins/pagination', ssr: false },
+    { src: '@/plugins/qrcode', ssr: false },
   ],
   serverMiddleware: [{ path: '/api', handler: '~/api/index.js' }],
   buildModules    : ['@nuxtjs/dotenv'],
