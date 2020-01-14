@@ -53,7 +53,6 @@ export const actions = {
     await axios({
       method: 'put',
       url   : '/api/location/edit',
-      params: { id_location: idLocation },
       data  : dataPut,
     }).then(function (response) {
       if (response.status === 200 && response.data.general_response.response_status === true)
@@ -73,10 +72,9 @@ export const actions = {
   },
   async getLocationDetail ({ commit, dispatch }, { idLocation }) {
     await axios({
-      method : 'get',
-      url    : '/api/location/detail',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      params : { id_location: idLocation },
+      method: 'get',
+      url   : '/api/location/detail',
+      params: { id_location: idLocation },
     }).then(function (response) {
       if (response.status === 200 && response.data.general_response.response_status === true)
         commit('SET_LOCATION_DETAIL', response.data)

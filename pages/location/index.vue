@@ -411,7 +411,7 @@ export default {
     })
 
     // begin first table
-    this.datatable        = $('#location_table').DataTable({
+    this.datatable = $('#location_table').DataTable({
       responsive: true,
       searching : false,
       processing: true,
@@ -537,7 +537,6 @@ export default {
     this.datatable.on('draw.dt', function () {
       $('.action-button-status').click(function () {
         const rowData = app.datatable.row($(this).data('index')).data()
-        // app.$delete(rowData, 'unique_code')
         app.setStatus(rowData)
       })
     })
