@@ -6,20 +6,18 @@ const axios        = require('axios')
 app.use(cookieParser())
 app.use(bodyParser.urlencoded({ extended: true }))
 
-const library = require('./library.js')
-
-app.get('/warehouse/select', (request, response) => {
+app.get('/country/select', (request, response) => {
   const token = request.cookies[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
-    url    : `${process.env.API_URL}/v1/warehouse`,
+    url    : `${process.env.API_URL}/v1/master/country`,
     headers: {
       'Content-Type' : 'application/x-www-form-urlencoded',
       'Authorization': `Bearer ${token}`,
     },
     params: {
       'page'          : 1,
-      'per_page'      : 100,
+      'per_page'      : 300,
       'sort_by'       : 'name',
       'sort'          : 'asc',
       'search_by'     : 'name',
@@ -33,36 +31,22 @@ app.get('/warehouse/select', (request, response) => {
   })
 })
 
-app.post('/warehouse/list', (request, response) => {
-  const params = library.generateDatatableParameter(request.body)
-  const token  = request.cookies[`${process.env.APP_ENV}_token`]
-  axios({
-    method : 'get',
-    url    : `${process.env.API_URL}/v1/warehouse/`,
-    headers: {
-      'Content-Type' : 'application/x-www-form-urlencoded',
-      'Authorization': `Bearer ${token}`,
-    },
-    params: params,
-  }).then(function (responseApi) {
-    // formating data for metronic datatable
-    const data = library.generateDatatableResult(responseApi)
-    response.send(data)
-  }).catch(function (error) {
-    response.status(error.response.status).send(error.response.data)
-  })
-})
-
-app.post('/warehouse/add', (request, response) => {
+app.get('/state-by-country/select', (request, response) => {
   const token = request.cookies[`${process.env.APP_ENV}_token`]
   axios({
-    method : 'post',
-    url    : `${process.env.API_URL}/v1/warehouse`,
+    method : 'get',
+    url    : `${process.env.API_URL}/v1/master/state-by-country`,
     headers: {
       'Content-Type' : 'application/x-www-form-urlencoded',
       'Authorization': `Bearer ${token}`,
     },
-    data: request.body,
+    params: {
+      country_id: request.query.country_id,
+      status    : 1,
+      sort_by   : 'name',
+      sort      : 'asc',
+      keyword   : '',
+    },
   }).then(function (responseApi) {
     response.send(responseApi.data)
   }).catch(function (error) {
@@ -70,16 +54,22 @@ app.post('/warehouse/add', (request, response) => {
   })
 })
 
-app.put('/warehouse/edit', (request, response) => {
+app.get('/city-by-state/select', (request, response) => {
   const token = request.cookies[`${process.env.APP_ENV}_token`]
   axios({
-    method : 'put',
-    url    : `${process.env.API_URL}/v1/warehouse/${request.body.id_warehouse}`,
+    method : 'get',
+    url    : `${process.env.API_URL}/v1/master/city-by-state`,
     headers: {
       'Content-Type' : 'application/x-www-form-urlencoded',
       'Authorization': `Bearer ${token}`,
     },
-    data: request.body.data,
+    params: {
+      state_id: request.query.state_id,
+      status  : 1,
+      sort_by : 'name',
+      sort    : 'asc',
+      keyword : '',
+    },
   }).then(function (responseApi) {
     response.send(responseApi.data)
   }).catch(function (error) {
@@ -87,14 +77,21 @@ app.put('/warehouse/edit', (request, response) => {
   })
 })
 
-app.get('/warehouse/detail', (request, response) => {
+app.get('/district-by-city/select', (request, response) => {
   const token = request.cookies[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
-    url    : `${process.env.API_URL}/v1/warehouse/${request.query.id_warehouse}`,
+    url    : `${process.env.API_URL}/v1/master/district-by-city`,
     headers: {
       'Content-Type' : 'application/x-www-form-urlencoded',
       'Authorization': `Bearer ${token}`,
+    },
+    params: {
+      city_id: request.query.city_id,
+      status : 1,
+      sort_by: 'name',
+      sort   : 'asc',
+      keyword: '',
     },
   }).then(function (responseApi) {
     response.send(responseApi.data)

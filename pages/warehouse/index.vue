@@ -30,9 +30,9 @@
       <!--begin: Search Form -->
       <div class="kt-form kt-form--label-right kt-margin-t-20 kt-margin-b-10">
         <div class="row align-items-center">
-          <div class="col-xl-8 order-2 order-xl-1">
+          <div class="col-xl-10 order-2 order-xl-1">
             <div class="row align-items-center">
-              <div class="col-md-4 kt-margin-b-20-tablet-and-mobile">
+              <div class="col-md-3 kt-margin-b-20-tablet-and-mobile">
                 <div class="kt-form__group">
                   <div class="kt-form__label">
                     <label>Filter By:</label>
@@ -40,7 +40,7 @@
                   <div class="kt-form__control">
                     <select
                       id="kt_form_filter"
-                      class="form-control bootstrap-select"
+                      class="form-control bootstrap-select selectpicker"
                     >
                       <option value="name">
                         Warehouse
@@ -65,7 +65,7 @@
                     type="text"
                     class="form-control"
                     placeholder="Search..."
-                    @keyup="getWarehouse(params.page)"
+                    @keyup="getWarehouse()"
                   >
                   <span class="kt-input-icon__icon kt-input-icon__icon--left">
                     <span><i class="la la-search" /></span>
@@ -80,7 +80,7 @@
                   <div class="kt-form__control">
                     <select
                       id="kt_form_status"
-                      class="form-control bootstrap-select"
+                      class="form-control bootstrap-select selectpicker"
                     >
                       <option value="">
                         All
@@ -95,70 +95,52 @@
                   </div>
                 </div>
               </div>
+              <div class="col-md-2 kt-margin-b-20-tablet-and-mobile">
+                <div class="kt-form__group">
+                  <div class="kt-form__label">
+                    <label>&nbsp;</label>
+                  </div>
+                  <div class="kt-form__control">
+                    <a
+                      href="javascript:void(0)"
+                      class="btn btn-default"
+                      @click="clearForm"
+                    >
+                      <i class="flaticon2-circular-arrow" /> Clear
+                    </a>
+                    <div class="kt-separator d-xl-none" />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
       <!--end: Search Form -->
     </div>
-    <client-only>
-      <vue-good-table
-        mode="remote"
-        style-class="vgt-table table-hover"
-        :columns="columns"
-        :rows="rows"
-        max-height="400px"
-        :fixed-header="true"
-        :is-loading="isLoading"
-        @on-sort-change="onSortChange"
+
+    <div class="kt-portlet__body">
+      <!--begin: Datatable -->
+      <table
+        id="warehouse_table"
+        class="table table-hover table-checkable"
       >
-        <template
-          slot="table-row"
-          slot-scope="props"
-        >
-          <span v-if="props.column.field == 'status' && props.row.status === 1">
-            <span class="kt-badge kt-badge--inline kt-badge--success">Active</span>
-          </span>
-          <span v-else-if="props.column.field == 'status' && props.row.status === 0">
-            <span class="kt-badge kt-badge--inline kt-badge--danger">Inactive</span>
-          </span>
-          <span
-            v-else-if="props.column.field == 'action'"
-            class="actions"
-          >
-            <a
-              :href="'/warehouse/detail/' + props.row.id"
-              title="Warehouse Detail"
-              class="btn btn-sm btn-clean btn-icon btn-icon-md"
-            ><i class="la la-search" /></a>
-            <a
-              :href="'/warehouse/edit/' + props.row.id"
-              title="Edit warehouse"
-              class="btn btn-sm btn-clean btn-icon btn-icon-md"
-            ><i class="la la-edit" /></a>
-            <a
-              :title="[props.row.status === 1 ? 'Deactivate' : 'Activate']"
-              class="btn btn-sm btn-clean btn-icon btn-icon-md"
-              @click="setStatus(props.row)"
-            ><i class="la la-power-off" /></a>
-          </span>
-        </template>
-        <template slot="loadingContent">
-          <div class="loading-table">
-            <span>Please wait...</span><span><div class="kt-spinner kt-spinner--v2 kt-spinner--success " /></span>
-          </div>
-        </template>
-      </vue-good-table>
-      <pagination
-        :page="params.page"
-        :total-page="totalPage"
-        :from="from"
-        :to="to"
-        :total-item="totalItem"
-        :click-handler="clickCallback"
-        @changePerpage="changePerPage"
-      />
-    </client-only>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Code</th>
+            <th>Address</th>
+            <th>Country</th>
+            <th>Status</th>
+            <th>Created</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+      </table>
+    <!--end: Datatable -->
+    </div>
+
     <!-- begin::Scrolltop -->
     <div
       id="kt_scrolltop"
@@ -171,123 +153,123 @@
 </template>
 
 <script>
-import pagination from '@/pages/elements/pagination.vue'
-import { addLineNumber } from '@/utils'
+import moment from 'moment'
 
 export default {
-  components: { pagination },
   data () {
     return {
-      isLoading: false,
-      columns  : [
-        {
-          label   : '#',
-          field   : 'lineNumber',
-          sortable: false,
-        },
-        {
-          label: 'Name',
-          field: 'name',
-        },
-        {
-          label: 'Code',
-          field: 'code',
-        },
-        {
-          label   : 'Address',
-          field   : 'address',
-          sortable: false,
-        },
-        {
-          label   : 'Country',
-          field   : 'country_name',
-          tdClass : 'text-center',
-          sortable: false,
-        },
-        {
-          label  : 'Status',
-          field  : 'status',
-          tdClass: 'text-center',
-        },
-        {
-          label   : 'Create By',
-          field   : 'created_by_name',
-          sortable: false,
-        },
-        {
-          label           : 'Create Date',
-          field           : 'created_at',
-          type            : 'date',
-          dateInputFormat : "yyyy-MM-dd'T'HH:mm:ss'Z'",
-          dateOutputFormat: 'dd/MM/Y HH:mm:ss',
-        },
-        {
-          label   : 'Action',
-          field   : 'action',
-          thClass : 'text-center',
-          sortable: false,
-          width   : '150px',
-        },
-      ],
-      rows  : [],
-      params: {
-        page    : 1,
-        per_page: 10,
-        sort_by : 'created_at',
-        sort    : 'desc',
-        keyword : '',
+      datatable: [],
+      params   : {
+        keyword  : '',
+        search_by: '',
+        filter   : {},
       },
-      totalPage: 0,
-      totalItem: 0,
-      from     : 0,
-      to       : 0,
     }
   },
   async mounted () {
     const app = this
-    $('#kt_form_filter').select2({ minimumResultsForSearch: -1, width: '100%' })
-    $('#kt_form_status').select2({ minimumResultsForSearch: -1, width: '100%' })
     $('#kt_form_status').on('change', function () {
-      app.params['filter[status]'] = $('#kt_form_status').val()
-      app.getWarehouse(1)
+      if ($('#kt_form_status').val() !== '' && $('#kt_form_status').val() !== null)
+        app.params.filter.status = $('#kt_form_status').val()
+      else
+        app.$delete(app.params.filter, 'status')
+      app.getWarehouse()
     })
-    this.getWarehouse(this.params.page)
+
+    // begin first table
+    this.datatable = $('#warehouse_table').DataTable({
+      responsive: true,
+      searching : false,
+      processing: true,
+      serverSide: true,
+      ajax      : {
+        url : '/api/warehouse/list',
+        type: 'POST',
+        data: function (d) {
+          d.params = app.params
+        },
+      },
+      order  : [[6, 'desc']],
+      columns: [
+        { data: 'row_number' },
+        { data: 'name' },
+        { data: 'code' },
+        { data: 'address' },
+        { data: 'country_name' },
+        { data: 'status' },
+        { data: 'created_at' },
+        { data: 'actions', responsivePriority: -1 },
+      ],
+      columnDefs: [
+        {
+          targets  : 0,
+          orderable: false,
+        },
+        {
+          targets  : 4,
+          orderable: false,
+        },
+        {
+          targets  : -1,
+          title    : 'Actions',
+          className: 'dt-center',
+          width    : '110px',
+          orderable: false,
+          render   : function (data, type, full, meta) {
+            return `
+                        <a href="/warehouse/detail/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
+                          <i class="la la-eye"></i>
+                        </a>
+                        <a href="/warehouse/edit/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
+                          <i class="la la-edit"></i>
+                        </a>
+                        <span class="dropdown">
+                            <a href="javascript:void(0)" class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="dropdown" aria-expanded="true">
+                              <i class="la la-ellipsis-h"></i>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item action-button-status" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-power-off"></i> Update Status</a>
+                                <a class="dropdown-item" href="javascript:void(0)"><i class="la la-search"></i> Manage Location</a>
+                                <a class="dropdown-item" href="javascript:void(0)"><i class="la la-qrcode"></i> Print QR Code</a>
+                            </div>
+                        </span>`
+          },
+        },
+        {
+          targets  : -3,
+          className: 'dt-center',
+          render   : function (data, type, full, meta) {
+            const status = {
+              0: { title: 'Inactive', class: ' kt-badge--danger' },
+              1: { title: 'Active', class: ' kt-badge--success' },
+            }
+            if (typeof status[data] === 'undefined')
+              return data
+
+            return `<span class="kt-badge ${status[data].class} kt-badge--inline">${status[data].title}</span>`
+          },
+        },
+        {
+          targets  : -2,
+          className: 'dt-center',
+          render   : function (data, type, full, meta) {
+            return moment(data).format('DD/MM/Y HH:mm:ss')
+          },
+        },
+      ],
+    })
+
+    this.datatable.on('draw.dt', function () {
+      $('.action-button-status').click(function () {
+        const rowData = app.datatable.row($(this).data('index')).data()
+        app.setStatus(rowData)
+      })
+    })
   },
   methods: {
-    clickCallback (pageNumber) {
-      this.getWarehouse(pageNumber)
-    },
-    changePerPage (value) {
-      this.params.per_page = value
-      this.getWarehouse(1)
-    },
-    onSortChange (params) {
-      this.params.sort_by = params[0].field
-      this.params.sort    = params[0].type
-      this.getWarehouse(1)
-    },
-    async getWarehouse (page) {
+    async getWarehouse () {
       this.params.search_by = $('#kt_form_filter').val()
-      this.params.page      = page
-      let data              = []
-      try {
-        this.isLoading = true
-        await this.$store.dispatch('warehouse/list', { params: this.params })
-        data           = this.$store.getters['warehouse/getWarehouse']
-        this.totalPage = data.pagination.last_page
-        this.totalItem = data.pagination.total
-        this.from      = data.pagination.from
-        this.to        = data.pagination.to
-        this.rows      = addLineNumber(data.result, this.from)
-        this.isLoading = false
-      } catch (error) {
-        this.rows      = []
-        this.totalPage = 0
-        this.totalItem = 0
-        this.from      = 0
-        this.to        = 0
-        this.isLoading = false
-      }
+      this.datatable.ajax.reload()
     },
     async setStatus (row) {
       const app         = this
@@ -322,6 +304,7 @@ export default {
         this.$nuxt.$loading.finish()
         // eslint-disable-next-line no-undef
         KTUtil.scrollTop()
+        this.datatable.ajax.reload()
       } catch (error) {
         param.status    = param.status === 1 ? 0 : 1
         const parameter = {
@@ -333,6 +316,17 @@ export default {
         // eslint-disable-next-line no-undef
         KTUtil.scrollTop()
       }
+    },
+    async clearForm () {
+      this.params = {
+        keyword  : '',
+        search_by: '',
+        filter   : {},
+      }
+      this.datatable.ajax.reload()
+      $('#kt_form_filter').val('name')
+      $('#kt_form_status').val('')
+      $('.selectpicker').selectpicker('refresh')
     },
   },
 }
