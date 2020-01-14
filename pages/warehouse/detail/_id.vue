@@ -220,10 +220,8 @@ export default {
       updatedDate: '',
     }
   },
-  async fetch ({ store, params }) {
-    await store.dispatch('warehouse/getWarehouseDetail', { idWarehouse: params.id })
-  },
-  created () {
+  async mounted () {
+    await this.$store.dispatch('warehouse/getWarehouseDetail', { idWarehouse: this.$route.params.id })
     this.warehouse   = this.$store.getters['warehouse/getWarehouseDetail'].result
     this.createdDate = moment(this.warehouse.created_at).format('DD/MM/Y HH:mm:ss')
     this.updatedDate = moment(this.warehouse.updated_at).format('DD/MM/Y HH:mm:ss')

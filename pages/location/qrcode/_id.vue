@@ -23,11 +23,11 @@
               style="width:20%;"
             >
               <qrcode-vue
-                :value="location.code"
+                :value="location.unique_code"
                 :size="size"
                 level="H"
               />
-              <br><h5>{{ location.code }}</h5>
+              <br><h5>{{ location.unique_code }}</h5>
             </td>
           </tr>
         </tbody>

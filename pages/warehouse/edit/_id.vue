@@ -134,13 +134,6 @@
                   name="country_id"
                 >
                   <option />
-                  <option
-                    v-for="country in $store.state.region.countries"
-                    :key="country.id"
-                    :value="country.id"
-                  >
-                    {{ country.name }}
-                  </option>
                 </select>
                 <span class="form-text text-muted" />
               </div>
@@ -152,13 +145,6 @@
                   name="state_id"
                 >
                   <option />
-                  <option
-                    v-for="state in states"
-                    :key="state.id"
-                    :value="state.id"
-                  >
-                    {{ state.name }}
-                  </option>
                 </select>
                 <span class="form-text text-muted">Please select a country </span>
               </div>
@@ -172,13 +158,6 @@
                   name="city_id"
                 >
                   <option />
-                  <option
-                    v-for="city in cities"
-                    :key="city.id"
-                    :value="city.id"
-                  >
-                    {{ city.name }}
-                  </option>
                 </select>
                 <span class="form-text text-muted">Please select a state </span>
               </div>
@@ -190,13 +169,6 @@
                   name="district_id"
                 >
                   <option />
-                  <option
-                    v-for="district in districts"
-                    :key="district.id"
-                    :value="district.id"
-                  >
-                    {{ district.name }}
-                  </option>
                 </select>
                 <span class="form-text text-muted">Please select a city </span>
               </div>
@@ -251,13 +223,13 @@ export default {
         description: null,
         status     : null,
       },
+      stateOption   : null,
+      cityOption    : null,
+      districtOption: null,
     }
   },
-  async fetch ({ store, params }) {
-    await store.dispatch('warehouse/getWarehouseDetail', { idWarehouse: params.id })
-    await store.dispatch('region/getCountries')
-  },
-  created () {
+  async mounted () {
+    await this.$store.dispatch('warehouse/getWarehouseDetail', { idWarehouse: this.$route.params.id })
     const warehouseDetail      = this.$store.getters['warehouse/getWarehouseDetail'].result
     this.warehouse.name        = warehouseDetail.name
     this.warehouse.code        = warehouseDetail.code
@@ -272,14 +244,17 @@ export default {
     this.warehouse.state_id    = warehouseDetail.state_id
     this.warehouse.city_id     = warehouseDetail.city_id
     this.warehouse.district_id = warehouseDetail.district_id
-  },
-  async mounted () {
-    const app = this
-    await app.getStatesByCountry(this.warehouse.country_id)
-    await app.getCitiesByState(this.warehouse.state_id)
-    await app.getDistrictsByCity(this.warehouse.city_id)
 
-    $('#country').select2({ placeholder: 'Select a country', allowClear: true })
+    const customAdapter = $.fn.select2.amd.require('select2/data/customAdapter')
+    const app           = this
+
+    await this.$store.dispatch('region/getCountries')
+    this.countries = this.$store.getters['region/getCountries']
+    $('#country').select2({
+      placeholder: 'Select a country',
+      allowClear : true,
+      data       : this.countries,
+    })
     $('#country').val(this.warehouse.country_id).trigger('change')
     $('#country').on('change', function () {
       validator.element($(this))
@@ -297,7 +272,13 @@ export default {
       }
     })
 
-    $('#state').select2({ placeholder: 'Select a state', allowClear: true })
+    this.stateOption = $('#state').select2({
+      placeholder: 'Select a state',
+      allowClear : true,
+      dataAdapter: customAdapter,
+      data       : this.states,
+    })
+    await app.getStatesByCountry(this.warehouse.country_id)
     $('#state').val(this.warehouse.state_id).trigger('change')
     $('#state').on('change', function () {
       validator.element($(this))
@@ -313,7 +294,13 @@ export default {
       }
     })
 
-    $('#city').select2({ placeholder: 'Select a city', allowClear: true })
+    this.cityOption = $('#city').select2({
+      placeholder: 'Select a city',
+      allowClear : true,
+      dataAdapter: customAdapter,
+      data       : this.cities,
+    })
+    await app.getCitiesByState(this.warehouse.state_id)
     $('#city').val(this.warehouse.city_id).trigger('change')
     $('#city').on('change', function () {
       validator.element($(this))
@@ -327,7 +314,13 @@ export default {
       }
     })
 
-    $('#district').select2({ placeholder: 'Select a district', allowClear: true })
+    this.districtOption = $('#district').select2({
+      placeholder: 'Select a district',
+      allowClear : true,
+      dataAdapter: customAdapter,
+      data       : this.states,
+    })
+    await app.getDistrictsByCity(this.warehouse.city_id)
     $('#district').val(this.warehouse.district_id).trigger('change')
     $('#district').on('change', function () {
       validator.element($(this))
@@ -369,29 +362,23 @@ export default {
     })
   },
   methods: {
-    async getStatesByCountryModel (countryId) {
+    async getStatesByCountry (id) {
       this.states = []
-      await this.$store.dispatch('region/getStatesByCountry', { countryId: countryId })
+      await this.$store.dispatch('region/getStatesByCountry', { countryId: id })
       this.states = this.$store.getters['region/getStatesByCountry']
+      this.stateOption.data('select2').dataAdapter.updateOptions(this.states)
     },
-    async getStatesByCountry (countryId) {
-      await this.getStatesByCountryModel(countryId)
-    },
-    async getCitiesByStateModel (stateId) {
+    async getCitiesByState (id) {
       this.cities = []
-      await this.$store.dispatch('region/getCitiesByState', { stateId: stateId })
+      await this.$store.dispatch('region/getCitiesByState', { stateId: id })
       this.cities = this.$store.getters['region/getCitiesByState']
+      this.cityOption.data('select2').dataAdapter.updateOptions(this.cities)
     },
-    async getCitiesByState (stateId) {
-      await this.getCitiesByStateModel(stateId)
-    },
-    async getDistrictsByCityModel (cityId) {
+    async getDistrictsByCity (id) {
       this.districts = []
-      await this.$store.dispatch('region/getDistrictsByCity', { cityId: cityId })
+      await this.$store.dispatch('region/getDistrictsByCity', { cityId: id })
       this.districts = this.$store.getters['region/getDistrictsByCity']
-    },
-    async getDistrictsByCity (cityId) {
-      await this.getDistrictsByCityModel(cityId)
+      this.districtOption.data('select2').dataAdapter.updateOptions(this.districts)
     },
     async editWarehouse () {
       if ($('#warehouse_form').valid()) {
