@@ -3,8 +3,15 @@ const app          = express()
 const cookieParser = require('cookie-parser')
 const bodyParser   = require('body-parser')
 const axios        = require('axios')
+const fileUpload   = require('express-fileupload')
+const FormData     = require('form-data')
+const fileStream   = require('fs')
 app.use(cookieParser())
 app.use(bodyParser.urlencoded({ extended: true }))
+app.use(fileUpload({
+  useTempFiles: true,
+  tempFileDir : '/tmp/',
+}))
 
 const library = require('./library.js')
 
@@ -94,6 +101,28 @@ app.get('/location/export', (request, response) => {
     response.send(responseApi.data)
   }).catch(function (error) {
     response.status(error.response.status).send(error.response.data)
+  })
+})
+
+app.post('/location/import', (request, response) => {
+  const formData = new FormData()
+  const stream   = fileStream.createReadStream(request.files.file.tempFilePath)
+  formData.append('warehouse_id', request.body.warehouse_id)
+  formData.append('file', stream)
+  const token    = request.cookies[`${process.env.APP_ENV}_token`]
+  const headers  = Object.assign({}, formData.getHeaders(), { Authorization: `Bearer ${token}` })
+  axios({
+    method : 'post',
+    url    : `${process.env.API_URL}/v1/location/import`,
+    headers: headers,
+    data   : formData,
+  }).then(function (responseApi) {
+    response.send(responseApi.data)
+  }).catch(function (error) {
+    if (error.response !== undefined)
+      response.status(error.response.status).send(error.response.data)
+    else
+      response.status(500).send('Error')
   })
 })
 
