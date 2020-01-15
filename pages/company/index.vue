@@ -152,6 +152,13 @@ export default {
   },
   mounted () {
     const app = this
+    $('#kt_form_status').on('change', function () {
+      if ($('#kt_form_status').val() !== '' && $('#kt_form_status').val() !== null)
+        app.params.filter.status = $('#kt_form_status').val()
+      else
+        app.$delete(app.params.filter, 'status')
+      app.getCompany()
+    })
     // begin first table
     this.datatable = $('#company_table').DataTable({
       responsive: true,
@@ -210,7 +217,7 @@ export default {
                             </a>
                             <div class="dropdown-menu dropdown-menu-right">
                                 <a class="dropdown-item action-button-status" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-power-off"></i> Update Status</a>
-                                <a class="dropdown-item" href="javascript:void(0)"><i class="la la-search"></i> View Location Product</a>
+                                <a class="dropdown-item" href="javascript:void(0)"><i class="la la-search"></i> Product List</a>
                                 <a class="dropdown-item" href="javascript:void(0)"><i class="la la-qrcode"></i> Print QR Code</a>
                             </div>
                         </span>`
@@ -299,6 +306,15 @@ export default {
       this.params.search_by = $('#kt_form_filter').val()
       this.datatable.ajax.reload()
     },
+    async clearForm () {
+      this.params = {
+        keyword  : '',
+        search_by: '',
+        filter   : {},
+      }
+      this.datatable.ajax.reload()
+      $('#kt_form_status').val('')
+    }
   },
 }
 </script>

@@ -27,29 +27,37 @@ app.post('/company/list', (request, response) => {
     response.status(error.response.status).send(error.response.data)
   })
 })
-// app.post('/company/list', (request, response) => {
-//   const token = request.cookies[`${process.env.APP_ENV}_token`]
-//   axios({
-//     method : 'get',
-//     url    : `${process.env.API_URL}/v1/company`,
-//     headers: {
-//       'Content-Type' : 'application/x-www-form-urlencoded',
-//       'Authorization': `Bearer ${token}`,
-//     },
-//     params: {
-//       'page'          : 1,
-//       'per_page'      : 100,
-//       'sort_by'       : 'name',
-//       'sort'          : 'asc',
-//       'search_by'     : 'name',
-//       'keyword'       : request.query.term,
-//       'filter[status]': 1,
-//     },
-//   }).then(function (responseApi) {
-//     response.send(responseApi.data)
-//   }).catch(function (error) {
-//     response.status(error.response.status).send(error.response.data)
-//   })
-// })
+app.get('/company/detail', (request, response) => {
+  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  axios({
+    method : 'get',
+    url    : `${process.env.API_URL}/v1/company/${request.query.id_company}`,
+    headers: {
+      'Content-Type' : 'application/x-www-form-urlencoded',
+      'Authorization': `Bearer ${token}`,
+    },
+  }).then(function (responseApi) {
+    response.send(responseApi.data)
+  }).catch(function (error) {
+    response.status(error.response.status).send(error.response.data)
+  })
+})
+
+app.put('/company/edit', (request, response) => {
+  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  axios({
+    method : 'put',
+    url    : `${process.env.API_URL}/v1/company/${request.body.id_company}`,
+    headers: {
+      'Content-Type' : 'application/x-www-form-urlencoded',
+      'Authorization': `Bearer ${token}`,
+    },
+    data: request.body.data,
+  }).then(function (responseApi) {
+    response.send(responseApi.data)
+  }).catch(function (error) {
+    response.status(error.response.status).send(error.response.data)
+  })
+})
 
 module.exports = app
