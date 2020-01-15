@@ -32,6 +32,29 @@
         <div class="row align-items-center">
           <div class="col-xl-8 order-2 order-xl-1">
             <div class="row align-items-center">
+              <div class="col-md-3 kt-margin-b-20-tablet-and-mobile">
+                <div class="kt-form__group">
+                  <div class="kt-form__label">
+                    <label>Filter By:</label>
+                  </div>
+                  <div class="kt-form__control">
+                    <select
+                      id="kt_form_filter"
+                      class="form-control bootstrap-select selectpicker"
+                    >
+                      <option value="name">
+                        Name
+                      </option>
+                      <option value="code">
+                        Code
+                      </option>
+                      <option value="description">
+                        Description
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
               <div class="col-md-4 kt-margin-b-20-tablet-and-mobile">
                 <div class="kt-form__label">
                   <label>Search:</label>
@@ -69,6 +92,23 @@
                         Inactive
                       </option>
                     </select>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-2 kt-margin-b-20-tablet-and-mobile">
+                <div class="kt-form__group">
+                  <div class="kt-form__label">
+                    <label>&nbsp;</label>
+                  </div>
+                  <div class="kt-form__control">
+                    <a
+                      href="javascript:void(0)"
+                      class="btn btn-default"
+                      @click="clearForm"
+                    >
+                      <i class="flaticon2-circular-arrow" /> Clear
+                    </a>
+                    <div class="kt-separator d-xl-none" />
                   </div>
                 </div>
               </div>
@@ -274,6 +314,9 @@ export default {
       }
       this.datatable.ajax.reload()
       $('#kt_form_status').val('')
+      $('#kt_form_filter').val('name')
+      $('#kt_form_filter').val('code')
+      $('#kt_form_filter').val('description')
     }
   },
 }

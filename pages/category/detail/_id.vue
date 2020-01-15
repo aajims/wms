@@ -57,18 +57,16 @@
               />
             </div>
             <div class="col-lg-6">
-              <label>Status</label>
+              <label>Updated By</label>
               <input
-                v-model="category.status"
+                v-model="category.updated_by_name"
                 type="text"
                 class="form-control"
-                placeholder="Enter Status"
-                name="level"
                 readonly
               >
             </div>
           </div>
-          <!-- <div class="form-group row">
+          <div class="form-group row">
             <div class="col-lg-6">
               <label>Created By</label>
               <input
@@ -90,15 +88,6 @@
           </div>
           <div class="form-group row">
             <div class="col-lg-6">
-              <label>Updated By</label>
-              <input
-                v-model="category.updated_by_name"
-                type="text"
-                class="form-control"
-                readonly
-              >
-            </div>
-            <div class="col-lg-6">
               <label>Updated Date</label>
               <input
                 v-model="updatedDate"
@@ -107,7 +96,12 @@
                 readonly
               >
             </div>
-          </div> -->
+             <div class="col-lg-6">
+              <label>Status</label><br>
+              <span v-if="category.status===1" class="btn btn-success">Active</span>
+              <span v-else class="btn btn-danger">Inactive</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -132,10 +126,19 @@
             }
         },
         async mounted () {
+        
         await this.$store.dispatch('category/getCategoryDetail', { idCategory: this.$route.params.id })
         this.category    = this.$store.getters['category/getCategoryDetail'].result
         this.createdDate = moment(this.category.created_at).format('DD/MM/Y HH:mm:ss')
         this.updatedDate = moment(this.category.updated_at).format('DD/MM/Y HH:mm:ss')
-  },
+        var status = this.category.status;
+        if(status===1){
+          status = "Active"
+        }else{
+          status = "Inactive"
+        }
+        
+        console.log(status)
+       },
     }
 </script>
