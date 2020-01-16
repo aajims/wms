@@ -166,8 +166,12 @@ export default {
     }
   },
   async mounted () {
-    await this.$store.dispatch('company/getCompanyDetail', { idCompany: this.$route.params.id })
-    this.company    = this.$store.getters['company/getCompanyDetail'].result
+    try {
+      await this.$store.dispatch('company/getCompanyDetail', { idCompany: this.$route.params.id })
+      this.company    = this.$store.getters['company/getCompanyDetail'].result
+    } catch (error) {
+      this.company = { id: '', name: '' }
+    }
 
     const app = this
     $('#kt_form_status').on('change', function () {
