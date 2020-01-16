@@ -105,3 +105,4 @@ export const getters = {
     return state.regionDistrictsByCity
   },
 }
+

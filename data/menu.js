@@ -6,6 +6,12 @@ export default [
     children: [],
   },
   {
+    name    : 'Company',
+    icon    : 'fa flaticon2-shelter',
+    url     : '/company',
+    children: [],
+  },
+  {
     name    : 'Master',
     icon    : 'fa flaticon-layer',
     url     : '/',
