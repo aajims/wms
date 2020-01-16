@@ -25,14 +25,9 @@ export const mutations = {
 export const actions = {
   async list ({ commit, dispatch }, { params }) {
     const app   = this
-    const token = app.$cookies.get(`${process.env.APP_ENV}_token`)
     await axios({
       method : 'get',
-      url    : '/api/v1/product-category',
-      headers: {
-        'Content-Type' : 'application/x-www-form-urlencoded',
-        'Authorization': `Bearer ${token}`,
-      },
+      url    : '/api/category/list',
       params: params,
     }).then(function (response) {
       if (response.status === 200 && response.data.general_response.response_status === true)

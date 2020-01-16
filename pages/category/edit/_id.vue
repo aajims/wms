@@ -97,7 +97,7 @@
               } 
             }
         },
-        mounted() {
+        async mounted() {
             const validator = $('#category_form').validate({
             // define validation rules
             rules: {
@@ -105,8 +105,6 @@
                 code : { required: true },
             }
            })
-        },
-        async created() {
            await this.$store.dispatch('category/getCategoryDetail', { idCategory: this.$route.params.id })
             const categoryDetail      = this.$store.getters['category/getCategoryDetail'].result
             this.category.code       =   categoryDetail.code
