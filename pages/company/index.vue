@@ -32,7 +32,7 @@
         <div class="row align-items-center">
           <div class="col-xl-10 order-2 order-xl-1">
             <div class="row align-items-center">
-              <div class="col-md-2 kt-margin-b-20-tablet-and-mobile">
+              <div class="col-md-3 kt-margin-b-20-tablet-and-mobile">
                 <div class="kt-form__group">
                   <div class="kt-form__label">
                     <label>Filter By:</label>
@@ -96,6 +96,23 @@
                         Inactive
                       </option>
                     </select>
+                  </div>
+                </div>
+              </div>
+               <div class="col-md-2 kt-margin-b-20-tablet-and-mobile">
+                <div class="kt-form__group">
+                  <div class="kt-form__label">
+                    <label>&nbsp;</label>
+                  </div>
+                  <div class="kt-form__control">
+                    <a
+                      href="javascript:void(0)"
+                      class="btn btn-default"
+                      @click="clearForm"
+                    >
+                      <i class="flaticon2-circular-arrow" /> Clear
+                    </a>
+                    <div class="kt-separator d-xl-none" />
                   </div>
                 </div>
               </div>

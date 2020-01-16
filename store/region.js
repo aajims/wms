@@ -24,103 +24,66 @@ export const mutations = {
 
 export const actions = {
   async getCountries ({ commit }) {
-    const app   = this
-    const token = app.$cookies.get(`${process.env.APP_ENV}_token`)
     await axios({
-      method : 'get',
-      url    : `${process.env.API_URL}/v1/master/country`,
-      headers: {
-        'Content-Type' : 'application/x-www-form-urlencoded',
-        'Authorization': `Bearer ${token}`,
-      },
-      params: {
-        page    : 1,
-        per_page: 300,
-        status  : 1,
-        sort_by : 'name',
-        sort    : 'asc',
-        keyword : '',
-      },
+      method: 'get',
+      url   : '/api/country/select',
     }).then(function (response) {
-      if (response.status === 200 && response.data.general_response.response_status === true)
-        commit('SET_COUNTRIES', response.data.result)
+      if (response.status === 200 && response.data.general_response.response_status === true) {
+        const countries = [{ id: '', text: '' }]
+        for (const country in response.data.result)
+          countries.push({ id: response.data.result[country].id, text: response.data.result[country].name })
+        commit('SET_COUNTRIES', countries)
+      }
     }).catch(function () {
       throw new Error('Network Communication Error')
     })
   },
   async getStatesByCountry ({ commit }, { countryId }) {
-    const app   = this
-    const token = app.$cookies.get(`${process.env.APP_ENV}_token`)
     await axios({
-      method : 'get',
-      url    : `/api/v1/master/state-by-country`,
-      headers: {
-        'Content-Type' : 'application/x-www-form-urlencoded',
-        'Authorization': `Bearer ${token}`,
-      },
-      params: {
-        country_id: countryId,
-        status    : 1,
-        sort_by   : 'name',
-        sort      : 'asc',
-        keyword   : '',
-      },
+      method: 'get',
+      url   : `/api/state-by-country/select`,
+      params: { country_id: countryId },
     }).then(function (response) {
-      if (response.status === 200 && response.data.general_response.response_status === true)
-        commit('SET_STATES_BY_COUNTRY', response.data.result)
-      else
+      if (response.status === 200 && response.data.general_response.response_status === true) {
+        const states = [{ id: '', text: '' }]
+        for (const state in response.data.result)
+          states.push({ id: response.data.result[state].id, text: response.data.result[state].name })
+        commit('SET_STATES_BY_COUNTRY', states)
+      } else
         commit('SET_STATES_BY_COUNTRY', [])
     }).catch(function () {
       throw new Error('Network Communication Error')
     })
   },
   async getCitiesByState ({ commit }, { stateId }) {
-    const app   = this
-    const token = app.$cookies.get(`${process.env.APP_ENV}_token`)
     await axios({
-      method : 'get',
-      url    : `/api/v1/master/city-by-state`,
-      headers: {
-        'Content-Type' : 'application/x-www-form-urlencoded',
-        'Authorization': `Bearer ${token}`,
-      },
-      params: {
-        state_id: stateId,
-        status  : 1,
-        sort_by : 'name',
-        sort    : 'asc',
-        keyword : '',
-      },
+      method: 'get',
+      url   : '/api/city-by-state/select',
+      params: { state_id: stateId },
     }).then(function (response) {
-      if (response.status === 200 && response.data.general_response.response_status === true)
-        commit('SET_CITIES_BY_STATE', response.data.result)
-      else
+      if (response.status === 200 && response.data.general_response.response_status === true) {
+        const cities = [{ id: '', text: '' }]
+        for (const city in response.data.result)
+          cities.push({ id: response.data.result[city].id, text: response.data.result[city].name })
+        commit('SET_CITIES_BY_STATE', cities)
+      } else
         commit('SET_CITIES_BY_STATE', [])
     }).catch(function () {
       throw new Error('Network Communication Error')
     })
   },
   async getDistrictsByCity ({ commit }, { cityId }) {
-    const app   = this
-    const token = app.$cookies.get(`${process.env.APP_ENV}_token`)
     await axios({
-      method : 'get',
-      url    : `/api/v1/master/district-by-city`,
-      headers: {
-        'Content-Type' : 'application/x-www-form-urlencoded',
-        'Authorization': `Bearer ${token}`,
-      },
-      params: {
-        city_id: cityId,
-        status : 1,
-        sort_by: 'name',
-        sort   : 'asc',
-        keyword: '',
-      },
+      method: 'get',
+      url   : '/api/district-by-city/select',
+      params: { city_id: cityId },
     }).then(function (response) {
-      if (response.status === 200 && response.data.general_response.response_status === true)
-        commit('SET_DISTRICTS_BY_CITY', response.data.result)
-      else
+      if (response.status === 200 && response.data.general_response.response_status === true) {
+        const districts = [{ id: '', text: '' }]
+        for (const district in response.data.result)
+          districts.push({ id: response.data.result[district].id, text: response.data.result[district].name })
+        commit('SET_DISTRICTS_BY_CITY', districts)
+      } else
         commit('SET_DISTRICTS_BY_CITY', [])
     }).catch(function () {
       throw new Error('Network Communication Error')
@@ -129,6 +92,9 @@ export const actions = {
 }
 
 export const getters = {
+  getCountries: (state) => {
+    return state.countries
+  },
   getStatesByCountry: (state) => {
     return state.regionStatesByCountry
   },
@@ -139,3 +105,4 @@ export const getters = {
     return state.regionDistrictsByCity
   },
 }
+

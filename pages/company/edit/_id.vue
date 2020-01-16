@@ -5,7 +5,7 @@
         id="company_form"
         ref="form"
         class="kt-form kt-form--label-right"
-        @submit.prevent="addCompany()"
+        @submit.prevent="editCompany()"
       >
         <div
           id="kt_page_portlet"
@@ -17,7 +17,7 @@
                 <i class="kt-font-brand flaticon-add" />
               </span>
               <h3 class="kt-portlet__head-title">
-                Add Company
+                Edit Company
               </h3>
             </div>
             <div class="kt-portlet__head-toolbar">
@@ -33,7 +33,7 @@
                 class="btn btn-brand"
               >
                 <i class="la la-check" />
-                <span class="kt-hidden-mobile">Save</span>
+                <span class="kt-hidden-mobile">Update</span>
               </button>
             </div>
           </div>
@@ -50,13 +50,13 @@
                 >
               </div>
               <div class="col-lg-6">
-                <label>Code <span style="color:red">*</span></label>
+                <label>Website <span style="color:red">*</span></label>
                 <input
-                  v-model="company.code"
+                  v-model="company.website"
                   type="text"
                   class="form-control"
                   name="code"
-                  placeholder="Enter company code"
+                  placeholder="Enter company web"
                 >
               </div>
             </div>
@@ -78,28 +78,6 @@
                   class="form-control"
                   name="phone"
                   placeholder="Enter phone"
-                >
-              </div>
-            </div>
-            <div class="form-group row">
-              <div class="col-lg-6">
-                <label>Capacity</label>
-                <input
-                  v-model="company.capacity"
-                  type="text"
-                  class="form-control"
-                  name="capacity"
-                  placeholder="Enter company capacity"
-                >
-              </div>
-              <div class="col-lg-6">
-                <label>PIC <span style="color:red">*</span></label>
-                <input
-                  v-model="company.pic"
-                  type="text"
-                  class="form-control"
-                  name="pic"
-                  placeholder="Enter company pic"
                 >
               </div>
             </div>
@@ -134,13 +112,6 @@
                   name="country_id"
                 >
                   <option />
-                  <option
-                    v-for="country in $store.state.region.countries"
-                    :key="country.id"
-                    :value="country.id"
-                  >
-                    {{ country.name }}
-                  </option>
                 </select>
                 <span class="form-text text-muted" />
               </div>
@@ -152,13 +123,6 @@
                   name="state_id"
                 >
                   <option />
-                  <option
-                    v-for="state in states"
-                    :key="state.id"
-                    :value="state.id"
-                  >
-                    {{ state.name }}
-                  </option>
                 </select>
                 <span class="form-text text-muted">Please select a country </span>
               </div>
@@ -172,13 +136,6 @@
                   name="city_id"
                 >
                   <option />
-                  <option
-                    v-for="city in cities"
-                    :key="city.id"
-                    :value="city.id"
-                  >
-                    {{ city.name }}
-                  </option>
                 </select>
                 <span class="form-text text-muted">Please select a state </span>
               </div>
@@ -190,13 +147,6 @@
                   name="district_id"
                 >
                   <option />
-                  <option
-                    v-for="district in districts"
-                    :key="district.id"
-                    :value="district.id"
-                  >
-                    {{ district.name }}
-                  </option>
                 </select>
                 <span class="form-text text-muted">Please select a city </span>
               </div>
@@ -237,11 +187,9 @@
                 districts: [],
                 company  : {
                     name       : null,
-                    code       : null,
-                    capacity   : null,
+                    website    : null,
                     phone      : null,
                     email      : null,
-                    pic        : null,
                     address    : null,
                     country_id : null,
                     state_id   : null,
@@ -253,69 +201,103 @@
             }
         },
         async mounted() {
-            await store.dispatch('region/getCountries');
-            const app = this
-            $('#country').select2({ placeholder: 'Select a country', allowClear: true })
+          await this.$store.dispatch('company/getCompanyDetail', { idCompany: this.$route.params.id })
+          const companyDetail                   = this.$store.getters['company/getCompanyDetail'].result
+          this.company.name                     = companyDetail.name
+          this.company.website                  = companyDetail.website
+          this.company.phone                    = companyDetail.phone
+          this.company.email                    = companyDetail.email
+          this.company.address                  = companyDetail.address
+          this.company.country_id               = companyDetail.country_id
+          this.company.state_id                 = companyDetail.state_id
+          this.company.city_id                  = companyDetail.city_id
+          this.company.district_id              = companyDetail.district_id
+          this.company.zip_code                 = companyDetail.zip_code
+          this.company.description              = companyDetail.description
+
+            const customAdapter = $.fn.select2.amd.require('select2/data/customAdapter')
+            const app           = this
+            await this.$store.dispatch('region/getCountries')
+            this.countries = this.$store.getters['region/getCountries']
+            $('#country').select2({
+              placeholder: 'Select a country',
+              allowClear : true,
+              data       : this.countries,
+            })
+            $('#country').val(this.company.country_id).trigger('change')
             $('#country').on('change', function () {
-            validator.element($(this))
-            if ($('#country').val()) {
+              validator.element($(this))
+              if ($('#country').val()) {
                 $('#state').val(null).trigger('change')
                 $('#state').prop('disabled', false)
-                app.getStatesByCountry()
-            } else {
+                app.getStatesByCountry($('#country').val())
+              } else {
                 $('#state').val(null).trigger('change')
                 $('#city').val(null).trigger('change')
                 $('#district').val(null).trigger('change')
                 $('#state').prop('disabled', true)
                 $('#city').prop('disabled', true)
                 $('#district').prop('disabled', true)
-            }
+              }
             })
 
-            $('#state').select2({
-            placeholder: 'Select a state', allowClear: true, disabled: true,
+           this.stateOption = $('#state').select2({
+              placeholder: 'Select a state',
+              allowClear : true,
+              dataAdapter: customAdapter,
+              data       : this.states,
             })
+            await app.getStatesByCountry(this.company.country_id)
+            $('#state').val(this.company.state_id).trigger('change')
             $('#state').on('change', function () {
-            validator.element($(this))
-            if ($('#state').val()) {
+              validator.element($(this))
+              if ($('#state').val()) {
                 $('#city').val(null).trigger('change')
                 $('#city').prop('disabled', false)
-                app.getCitiesByState()
-            } else {
+                app.getCitiesByState($('#state').val())
+              } else {
                 $('#city').val(null).trigger('change')
                 $('#district').val(null).trigger('change')
                 $('#city').prop('disabled', true)
                 $('#district').prop('disabled', true)
-            }
+              }
             })
 
-            $('#city').select2({
-            placeholder: 'Select a city', allowClear: true, disabled: true,
+            this.cityOption = $('#city').select2({
+              placeholder: 'Select a city',
+              allowClear : true,
+              dataAdapter: customAdapter,
+              data       : this.cities,
             })
+            await app.getCitiesByState(this.company.state_id)
+            $('#city').val(this.company.city_id).trigger('change')
             $('#city').on('change', function () {
-            validator.element($(this))
-            if ($('#city').val()) {
+              validator.element($(this))
+              if ($('#city').val()) {
                 $('#district').val(null).trigger('change')
                 $('#district').prop('disabled', false)
-                app.getDistrictsByCity()
-            } else {
+                app.getDistrictsByCity($('#city').val())
+              } else {
                 $('#district').val(null).trigger('change')
                 $('#district').prop('disabled', true)
-            }
+              }
             })
 
-            $('#district').select2({
-            placeholder: 'Select a district', allowClear: true, disabled: true,
+            this.districtOption = $('#district').select2({
+              placeholder: 'Select a district',
+              allowClear : true,
+              dataAdapter: customAdapter,
+              data       : this.states,
             })
+            await app.getDistrictsByCity(this.company.city_id)
+            $('#district').val(this.company.district_id).trigger('change')
             $('#district').on('change', function () {
-            validator.element($(this))
+              validator.element($(this))
             })
-
             const validator = $('#company_form').validate({
             // define validation rules
             rules: {
                 name : { required: true },
-                code : { required: true },
                 email: {
                 required : true,
                 email    : true,
@@ -325,7 +307,6 @@
                 required: true,
                 digits  : true,
                 },
-                pic        : { required: true },
                 address    : { required: true },
                 country_id : { required: true },
                 state_id   : { required: true },
@@ -347,48 +328,56 @@
             })
         },
         methods: {
-             async getStatesByCountryModel () {
-            this.states = []
-            await this.$store.dispatch('region/getStatesByCountry', { countryId: $('#country').val() })
-            this.states = this.$store.getters['region/getStatesByCountry']
+             async getStatesByCountry (id) {
+              this.states = []
+              await this.$store.dispatch('region/getStatesByCountry', { countryId: id })
+              this.states = this.$store.getters['region/getStatesByCountry']
+              this.stateOption.data('select2').dataAdapter.updateOptions(this.states)
             },
-            async getStatesByCountry () {
-            await this.getStatesByCountryModel()
-            $('#country').select2({ placeholder: 'Select a country', allowClear: true })
-            $('#state').select2({ placeholder: 'Select a state', allowClear: true })
-            $('#city').select2({
-                placeholder: 'Select a city', allowClear: true, disabled: true,
-            })
-            $('#district').select2({
-                placeholder: 'Select a district', allowClear: true, disabled: true,
-            })
+            async getCitiesByState (id) {
+              this.cities = []
+              await this.$store.dispatch('region/getCitiesByState', { stateId: id })
+              this.cities = this.$store.getters['region/getCitiesByState']
+              this.cityOption.data('select2').dataAdapter.updateOptions(this.cities)
             },
-            async getCitiesByStateModel () {
-            this.cities = []
-            await this.$store.dispatch('region/getCitiesByState', { stateId: $('#state').val() })
-            this.cities = this.$store.getters['region/getCitiesByState']
+            async getDistrictsByCity (id) {
+              this.districts = []
+              await this.$store.dispatch('region/getDistrictsByCity', { cityId: id })
+              this.districts = this.$store.getters['region/getDistrictsByCity']
+              this.districtOption.data('select2').dataAdapter.updateOptions(this.districts)
             },
-            async getCitiesByState () {
-            await this.getCitiesByStateModel()
-            $('#country').select2({ placeholder: 'Select a country', allowClear: true })
-            $('#state').select2({ placeholder: 'Select a state', allowClear: true })
-            $('#city').select2({ placeholder: 'Select a city', allowClear: true })
-            $('#district').select2({
-                placeholder: 'Select a district', allowClear: true, disabled: true,
-            })
-            },
-            async getDistrictsByCityModel () {
-            this.districts = []
-            await this.$store.dispatch('region/getDistrictsByCity', { cityId: $('#city').val() })
-            this.districts = this.$store.getters['region/getDistrictsByCity']
-            },
-            async getDistrictsByCity () {
-            await this.getDistrictsByCityModel()
-            $('#country').select2({ placeholder: 'Select a country', allowClear: true })
-            $('#state').select2({ placeholder: 'Select a state', allowClear: true })
-            $('#city').select2({ placeholder: 'Select a city', allowClear: true })
-            $('#district').select2({ placeholder: 'Select a district', allowClear: true })
-            },
+            async editCompany () {
+            if ($('#company_form').valid()) {
+              this.company.country_id  = parseInt($('#country').val())
+              this.company.state_id    = parseInt($('#state').val())
+              this.company.city_id     = parseInt($('#city').val())
+              this.company.district_id = parseInt($('#district').val())
+              this.company.status      = 1
+              try {
+                  this.$nuxt.$loading.start()
+                  await this.$store.dispatch('company/editCompany', { idCompany: this.$route.params.id, data: this.company })
+                  const data      = this.$store.getters['company/getEditCompany']
+                  const parameter = {
+                    alertClass: 'alert-success',
+                    message   : `company ${data.result.name} has been edited`,
+                  }
+                  this.$nuxt.$emit('alertShow', parameter)
+                  this.$nuxt.$loading.finish()
+                  // eslint-disable-next-line no-undef
+                  KTUtil.scrollTop()
+                  setTimeout(function () { window.location.href = '/company' }, 3000)
+                } catch (error) {
+                  const parameter = {
+                    alertClass: 'alert-danger',
+                    message   : error.message,
+                  }
+                  this.$nuxt.$emit('alertShow', parameter)
+                  this.$nuxt.$loading.finish()
+                  // eslint-disable-next-line no-undef
+                  KTUtil.scrollTop()
+                }
+              }
+            }
         },
     }
 </script>

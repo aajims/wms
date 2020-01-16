@@ -32,7 +32,7 @@
           <div class="kt-portlet__body">
             <div class="form-group row">
               <div class="col-lg-6">
-                <label>Name <span style="color:red">*</span></label>
+                <label>Name </label>
                 <input
                   v-model="company.name"
                   type="text"
@@ -42,7 +42,7 @@
                 >
               </div>
               <div class="col-lg-6">
-                <label>Website <span style="color:red">*</span></label>
+                <label>Website </label>
                 <input
                   v-model="company.website"
                   type="text"
@@ -54,7 +54,7 @@
             </div>
             <div class="form-group row">
               <div class="col-lg-6">
-                <label>Email <span style="color:red">*</span></label>
+                <label>Email </label>
                 <input
                   v-model="company.email"
                   type="email"
@@ -63,7 +63,7 @@
                 >
               </div>
               <div class="col-lg-6">
-                <label>Phone <span style="color:red">*</span></label>
+                <label>Phone </label>
                 <input
                   v-model="company.phone"
                   type="text"
@@ -75,7 +75,7 @@
             </div>
             <div class="form-group row">
               <div class="col-lg-6">
-                <label for="address">Address <span style="color:red">*</span></label>
+                <label for="address">Address </label>
                 <textarea
                   id="address"
                   v-model="company.address"
@@ -97,7 +97,7 @@
             </div>
             <div class="form-group row">
               <div class="col-lg-6">
-                <label>Country <span style="color:red">*</span></label>
+                <label>Country </label>
                 <input
                   v-model="company.country_name"
                   type="text"
@@ -107,7 +107,7 @@
                 >
               </div>
               <div class="col-lg-6">
-                <label>State <span style="color:red">*</span></label>
+                <label>State </label>
                 <input
                   v-model="company.state_name"
                   type="text"
@@ -119,6 +119,16 @@
             </div>
             <div class="form-group row">
               <div class="col-lg-6">
+                <label>District </label>
+                <input
+                  v-model="company.district_name"
+                  type="text"
+                  class="form-control"
+                  name="district"
+                  placeholder="Enter Name "
+                >
+              </div>
+              <div class="col-lg-6">
                 <label>Created By</label>
                 <input
                   v-model="company.created_by_name"
@@ -128,16 +138,23 @@
                   placeholder="Enter Name "
                 >
               </div>
+            </div>
+            <div class="form-group row">
               <div class="col-lg-6">
-                <label>Status <span style="color:red">*</span></label>
+                <label>Created </label>
                 <input
-                  v-model="company.status"
+                  v-model="createdDate"
                   type="text"
                   class="form-control"
-                  name="pic"
-                  placeholder="Enter "
+                  name="created"
+                  placeholder="Enter Name "
                 >
               </div>
+              <div class="col-lg-6">
+              <label>Status</label><br>
+              <span v-if="company.status===1" class="btn btn-success">Active</span>
+              <span v-else class="btn btn-danger">Inactive</span>
+            </div>
             </div>
           </div>
         </div>
@@ -166,6 +183,7 @@
        async mounted () {
         await this.$store.dispatch('company/getCompanyDetail', { idCompany: this.$route.params.id })
         this.company    = this.$store.getters['company/getCompanyDetail'].result
+        this.createdDate = moment(this.company.created_at).format('DD/MM/Y HH:mm:ss')
        }
     }
 </script>

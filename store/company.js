@@ -54,7 +54,7 @@ export const actions = {
     }).then(function (response) {
       if (response.status === 200 && response.data.general_response.response_status === true) {
         commit('ADD_COMPANY', response.data)
-        setTimeout(() => app.$router.go({ path: '/warehouse' }), 3000)
+        setTimeout(() => app.$router.go({ path: '/company' }), 3000)
       } else if (response.data.general_response.response_code === 4003)
         dispatch('removeToken', null, { root: true })
       else
@@ -68,38 +68,36 @@ export const actions = {
         throw new Error('Network Communication Error')
     })
   },
-//   async editWarehouse ({ commit, dispatch }, { idWarehouse, data }) {
-//     const app   = this
-//     const token = app.$cookies.get(`${process.env.APP_ENV}_token`)
-//     await axios({
-//       method : 'put',
-//       url    : `/api/v1/warehouse/${idWarehouse}`,
-//       headers: {
-//         'Content-Type' : 'application/x-www-form-urlencoded',
-//         'Authorization': `Bearer ${token}`,
-//       },
-//       data: data,
-//     }).then(function (response) {
-//       if (response.status === 200 && response.data.general_response.response_status === true)
-//         commit('EDIT_WAREHOUSE', response.data)
-//       else if (response.data.general_response.response_code === 4003)
-//         dispatch('removeToken', null, { root: true })
-//       else
-//         throw new Error(response.data.general_response.response_message)
-//     }).catch(function (error) {
-//       if (error.response === undefined)
-//         throw error
-//       else if (error.response.status === 403)
-//         dispatch('removeToken', null, { root: true })
-//       else
-//         throw new Error('Network Communication Error')
-//     })
-//   },
+  async editCompany ({ commit, dispatch }, { idCompany, data }) {
+    const app   = this
+    const dataPut = { id_company: idCompany, data: data }
+    await axios({
+      method : 'put',
+      url    : `/api/company/edit`,
+      params: { id_company: idCompany },
+      data: dataPut,
+    }).then(function (response) {
+      if (response.status === 200 && response.data.general_response.response_status === true)
+        commit('EDIT_COMPANY', response.data)
+      else if (response.data.general_response.response_code === 4003)
+        dispatch('removeToken', null, { root: true })
+      else
+        throw new Error(response.data.general_response.response_message)
+    }).catch(function (error) {
+      if (error.response === undefined)
+        throw error
+      else if (error.response.status === 403)
+        dispatch('removeToken', null, { root: true })
+      else
+        throw new Error('Network Communication Error')
+    })
+  },
   async getCompanyDetail ({ commit, dispatch }, { idCompany}) {
     const app   = this
     await axios({
       method : 'get',
       url    : `/api/company/detail`,
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       params : { id_company: idCompany },
     }).then(function (response) {
       if (response.status === 200 && response.data.general_response.response_status === true)
