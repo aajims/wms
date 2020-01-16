@@ -58,19 +58,11 @@ module.exports = {
   buildModules    : ['@nuxtjs/dotenv'],
   modules         : [
     '@nuxtjs/axios',
-    '@nuxtjs/proxy',
     'nuxt-simple-line-icons',
     'cookie-universal-nuxt',
     '@nuxtjs/moment',
     ['bootstrap-vue/nuxt', { css: false }],
   ],
-  axios: { proxy: true },
-  proxy: {
-    '/api/': {
-      target     : process.env.API_URL,
-      pathRewrite: { '^/api': '' },
-    },
-  },
   build: {
     babel  : { plugins: ['lodash'] },
     loaders: {
