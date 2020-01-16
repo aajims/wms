@@ -280,7 +280,7 @@ export default {
       // eslint-disable-next-line no-undef
       swal.fire({
         title             : 'Are you sure?',
-        text              : `Company "${row.name}" in warehouse "${row.warehouse_name}" ${statusText}`,
+        text              : `Company "${row.name}" in Company "${row.name}" ${statusText}`,
         type              : 'question',
         showCancelButton  : true,
         confirmButtonText : statusText,
@@ -300,7 +300,7 @@ export default {
         const data      = this.$store.getters['company/getEditCompany']
         const parameter = {
           alertClass: 'alert-success',
-          message   : `Company ${data.result.name} in warehouse ${data.result.warehouse_name} has been edited`,
+          message   : `Company ${data.result.name} in Company ${data.result.warehouse_name} has been edited`,
         }
         this.$nuxt.$emit('alertShow', parameter)
         this.$nuxt.$loading.finish()
