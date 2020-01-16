@@ -195,6 +195,17 @@
                 readonly
               >
             </div>
+            <div class="col-lg-6">
+              <label>Status</label><br>
+              <span
+                v-if="warehouse.status === 1"
+                class="btn btn-success"
+              > Active </span>
+              <span
+                v-else
+                class="btn btn-danger"
+              > Inactive </span>
+            </div>
           </div>
         </div>
       </div>
@@ -220,10 +231,8 @@ export default {
       updatedDate: '',
     }
   },
-  async fetch ({ store, params }) {
-    await store.dispatch('warehouse/getWarehouseDetail', { idWarehouse: params.id })
-  },
-  created () {
+  async mounted () {
+    await this.$store.dispatch('warehouse/getWarehouseDetail', { idWarehouse: this.$route.params.id })
     this.warehouse   = this.$store.getters['warehouse/getWarehouseDetail'].result
     this.createdDate = moment(this.warehouse.created_at).format('DD/MM/Y HH:mm:ss')
     this.updatedDate = moment(this.warehouse.updated_at).format('DD/MM/Y HH:mm:ss')

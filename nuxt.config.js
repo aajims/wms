@@ -52,24 +52,17 @@ module.exports = {
     { src: '@/plugins/datepicker', ssr: false },
     { src: '@/plugins/vue-good-table', ssr: false },
     { src: '@/plugins/pagination', ssr: false },
+    { src: '@/plugins/qrcode', ssr: false },
   ],
   serverMiddleware: [{ path: '/api', handler: '~/api/index.js' }],
   buildModules    : ['@nuxtjs/dotenv'],
   modules         : [
     '@nuxtjs/axios',
-    '@nuxtjs/proxy',
     'nuxt-simple-line-icons',
     'cookie-universal-nuxt',
     '@nuxtjs/moment',
     ['bootstrap-vue/nuxt', { css: false }],
   ],
-  axios: { proxy: true },
-  proxy: {
-    '/api/': {
-      target     : process.env.API_URL,
-      pathRewrite: { '^/api': '' },
-    },
-  },
   build: {
     babel  : { plugins: ['lodash'] },
     loaders: {

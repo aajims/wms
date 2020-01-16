@@ -17,6 +17,12 @@ export default [
     url     : '/',
     children: [
       {
+        name    : 'Category',
+        icon    : 'kt-menu__link-bullet kt-menu__link-bullet--dot',
+        url     : '/category',
+        children: [],
+      },
+      {
         name    : 'Location',
         icon    : 'kt-menu__link-bullet kt-menu__link-bullet--dot',
         url     : '/location',

@@ -202,6 +202,19 @@
               >
             </div>
           </div>
+          <div class="form-group row">
+            <div class="col-lg-6">
+              <label>Status</label><br>
+              <span
+                v-if="location.status === 1"
+                class="btn btn-success"
+              > Active </span>
+              <span
+                v-else
+                class="btn btn-danger"
+              > Inactive </span>
+            </div>
+          </div>
         </div>
       </div>
     </div>

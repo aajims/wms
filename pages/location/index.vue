@@ -411,7 +411,7 @@ export default {
     })
 
     // begin first table
-    this.datatable        = $('#location_table').DataTable({
+    this.datatable = $('#location_table').DataTable({
       responsive: true,
       searching : false,
       processing: true,
@@ -505,7 +505,7 @@ export default {
                             <div class="dropdown-menu dropdown-menu-right">
                                 <a class="dropdown-item action-button-status" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-power-off"></i> Update Status</a>
                                 <a class="dropdown-item" href="javascript:void(0)"><i class="la la-search"></i> View Location Product</a>
-                                <a class="dropdown-item" href="javascript:void(0)"><i class="la la-qrcode"></i> Print QR Code</a>
+                                <a class="dropdown-item" href="/location/qrcode/${full.id}"><i class="la la-qrcode"></i> Print QR Code</a>
                             </div>
                         </span>`
           },
@@ -537,7 +537,6 @@ export default {
     this.datatable.on('draw.dt', function () {
       $('.action-button-status').click(function () {
         const rowData = app.datatable.row($(this).data('index')).data()
-        // app.$delete(rowData, 'unique_code')
         app.setStatus(rowData)
       })
     })
