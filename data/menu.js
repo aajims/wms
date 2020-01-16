@@ -7,7 +7,7 @@ export default [
   },
   {
     name    : 'Company',
-    icon    : 'fa flaticon2-shelter',
+    icon    : 'la la-building',
     url     : '/company',
     children: [],
   },

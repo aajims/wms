@@ -6,7 +6,7 @@
     <div class="kt-portlet__head kt-portlet__head--lg">
       <div class="kt-portlet__head-label">
         <span class="kt-portlet__head-icon">
-          <i class="kt-font-brand flaticon2-shelter" />
+          <i class="kt-font-brand la la-building" />
         </span>
         <h3 class="kt-portlet__head-title">
           Company List
@@ -120,6 +120,9 @@
           </div>
         </div>
       </div>
+      <!--end: Search Form -->
+    </div>
+    <div class="kt-portlet__body">
       <!--begin: Datatable -->
       <table
         id="company_table"
@@ -234,7 +237,7 @@ export default {
                             </a>
                             <div class="dropdown-menu dropdown-menu-right">
                                 <a class="dropdown-item action-button-status" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-power-off"></i> Update Status</a>
-                                <a class="dropdown-item" href="javascript:void(0)"><i class="la la-search"></i> Product List</a>
+                                <a class="dropdown-item" href="/packing/list/${full.id}"><i class="fa flaticon2-open-box"></i> Packing</a>
                                 <a class="dropdown-item" href="javascript:void(0)"><i class="la la-qrcode"></i> Print QR Code</a>
                             </div>
                         </span>`

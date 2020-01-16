@@ -47,7 +47,7 @@
           </div>
           <div class="form-group row">
             <div class="col-lg-6">
-              <label>Dimension</label>
+              <label>Dimension Type</label>
               <input
                 v-model="packing.dimension_type"
                 type="text"

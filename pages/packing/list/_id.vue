@@ -9,14 +9,14 @@
           <i class="kt-font-brand flaticon2-open-box" />
         </span>
         <h3 class="kt-portlet__head-title">
-          Packing List
+          {{ company.name }} - Packing List
         </h3>
       </div>
       <div class="kt-portlet__head-toolbar">
         <div class="kt-portlet__head-wrapper">
           <div class="kt-portlet__head-actions">
             <a
-              href="/packing/add"
+              :href="`/packing/add/${company.id}`"
               class="btn btn-brand btn-elevate btn-icon-sm"
             >
               <i class="la la-plus" />
@@ -157,6 +157,7 @@ export default {
   data () {
     return {
       datatable: [],
+      company  : [],
       params   : {
         keyword  : '',
         search_by: '',
@@ -165,6 +166,9 @@ export default {
     }
   },
   async mounted () {
+    await this.$store.dispatch('company/getCompanyDetail', { idCompany: this.$route.params.id })
+    this.company    = this.$store.getters['company/getCompanyDetail'].result
+
     const app = this
     $('#kt_form_status').on('change', function () {
       if ($('#kt_form_status').val() !== '' && $('#kt_form_status').val() !== null)

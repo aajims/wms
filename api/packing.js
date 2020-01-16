@@ -28,6 +28,23 @@ app.post('/packing/list', (request, response) => {
   })
 })
 
+app.post('/packing/add', (request, response) => {
+  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  axios({
+    method : 'post',
+    url    : `${process.env.API_URL}/v1/packing-type/`,
+    headers: {
+      'Content-Type' : 'application/x-www-form-urlencoded',
+      'Authorization': `Bearer ${token}`,
+    },
+    data: request.body,
+  }).then(function (responseApi) {
+    response.send(responseApi.data)
+  }).catch(function (error) {
+    response.status(error.response.status).send(error.response.data)
+  })
+})
+
 app.put('/packing/edit', (request, response) => {
   const token = request.cookies[`${process.env.APP_ENV}_token`]
   axios({
