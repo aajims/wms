@@ -45,4 +45,20 @@ app.put('/packing/edit', (request, response) => {
   })
 })
 
+app.get('/packing/detail', (request, response) => {
+  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  axios({
+    method : 'get',
+    url    : `${process.env.API_URL}/v1/packing-type/${request.query.id_packing}`,
+    headers: {
+      'Content-Type' : 'application/x-www-form-urlencoded',
+      'Authorization': `Bearer ${token}`,
+    },
+  }).then(function (responseApi) {
+    response.send(responseApi.data)
+  }).catch(function (error) {
+    response.status(error.response.status).send(error.response.data)
+  })
+})
+
 module.exports = app
