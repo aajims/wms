@@ -6,21 +6,21 @@
     <div class="kt-portlet__head kt-portlet__head--lg">
       <div class="kt-portlet__head-label">
         <span class="kt-portlet__head-icon">
-          <i class="kt-font-brand la la-building" />
+          <i class="kt-font-brand flaticon2-architecture-and-city" />
         </span>
         <h3 class="kt-portlet__head-title">
-          Company List
+          Warehouse List
         </h3>
       </div>
       <div class="kt-portlet__head-toolbar">
         <div class="kt-portlet__head-wrapper">
           <div class="kt-portlet__head-actions">
             <a
-              href="/company/add"
+              href="/master/warehouse/add"
               class="btn btn-brand btn-elevate btn-icon-sm"
             >
               <i class="la la-plus" />
-              <span class="kt-hidden-mobile">Add Company</span>
+              <span class="kt-hidden-mobile">Add Warehouse</span>
             </a>
           </div>
         </div>
@@ -43,16 +43,13 @@
                       class="form-control bootstrap-select selectpicker"
                     >
                       <option value="name">
-                        Company Name
+                        Warehouse
+                      </option>
+                      <option value="code">
+                        Code
                       </option>
                       <option value="address">
                         Address
-                      </option>
-                      <option value="city_name">
-                        City
-                      </option>
-                      <option value="country_name">
-                        Country
                       </option>
                     </select>
                   </div>
@@ -64,19 +61,18 @@
                 </div>
                 <div class="kt-input-icon kt-input-icon--left">
                   <input
-                    id="kt_form_search"
                     v-model="params.keyword"
                     type="text"
                     class="form-control"
                     placeholder="Search..."
-                    @keyup="getCompany()"
+                    @keyup="getWarehouse()"
                   >
                   <span class="kt-input-icon__icon kt-input-icon__icon--left">
                     <span><i class="la la-search" /></span>
                   </span>
                 </div>
               </div>
-              <div class="col-md-2 kt-margin-b-20-tablet-and-mobile">
+              <div class="col-md-3 kt-margin-b-20-tablet-and-mobile">
                 <div class="kt-form__group">
                   <div class="kt-form__label">
                     <label>Status:</label>
@@ -122,21 +118,21 @@
       </div>
       <!--end: Search Form -->
     </div>
+
     <div class="kt-portlet__body">
       <!--begin: Datatable -->
       <table
-        id="company_table"
+        id="warehouse_table"
         class="table table-hover table-checkable"
       >
         <thead>
           <tr>
             <th>#</th>
-            <th>Company Name</th>
+            <th>Name</th>
+            <th>Code</th>
             <th>Address</th>
-            <th>City</th>
             <th>Country</th>
             <th>Status</th>
-            <th>Create By</th>
             <th>Created</th>
             <th>Actions</th>
           </tr>
@@ -170,41 +166,37 @@ export default {
       },
     }
   },
-  mounted () {
+  async mounted () {
     const app = this
     $('#kt_form_status').on('change', function () {
       if ($('#kt_form_status').val() !== '' && $('#kt_form_status').val() !== null)
         app.params.filter.status = $('#kt_form_status').val()
       else
         app.$delete(app.params.filter, 'status')
-      app.getCompany()
+      app.getWarehouse()
     })
+
     // begin first table
-    this.datatable = $('#company_table').DataTable({
+    this.datatable = $('#warehouse_table').DataTable({
       responsive: true,
       searching : false,
       processing: true,
       serverSide: true,
       ajax      : {
-        url : 'api/company/list',
+        url : '/api/warehouse/list',
         type: 'POST',
         data: function (d) {
           d.params = app.params
         },
-        // "complete": function(xhr, status){
-        //     console.log(JSON.parse(xhr.responseText));
-        //     console.log(status);
-        // }
       },
-      order  : [[7, 'desc']],
+      order  : [[6, 'desc']],
       columns: [
         { data: 'row_number' },
         { data: 'name' },
+        { data: 'code' },
         { data: 'address' },
-        { data: 'city_name' },
         { data: 'country_name' },
         { data: 'status' },
-        { data: 'created_by_name' },
         { data: 'created_at' },
         { data: 'actions', responsivePriority: -1 },
       ],
@@ -214,8 +206,8 @@ export default {
           orderable: false,
         },
         {
-          targets  : 1,
-          orderable: true,
+          targets  : 4,
+          orderable: false,
         },
         {
           targets  : -1,
@@ -225,10 +217,10 @@ export default {
           orderable: false,
           render   : function (data, type, full, meta) {
             return `
-                        <a href="/company/detail/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
+                        <a href="/master/warehouse/detail/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
                           <i class="la la-eye"></i>
                         </a>
-                        <a href="/company/edit/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
+                        <a href="/master/warehouse/edit/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
                           <i class="la la-edit"></i>
                         </a>
                         <span class="dropdown">
@@ -237,21 +229,14 @@ export default {
                             </a>
                             <div class="dropdown-menu dropdown-menu-right">
                                 <a class="dropdown-item action-button-status" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-power-off"></i> Update Status</a>
-                                <a class="dropdown-item" href="/company/packing/list/${full.id}"><i class="fa flaticon2-open-box"></i> Packing</a>
+                                <a class="dropdown-item" href="javascript:void(0)"><i class="la la-search"></i> Manage Location</a>
                                 <a class="dropdown-item" href="javascript:void(0)"><i class="la la-qrcode"></i> Print QR Code</a>
                             </div>
                         </span>`
           },
         },
         {
-          targets  : -2,
-          className: 'dt-center',
-          render   : function (data, type, full, meta) {
-            return moment(data).format('DD/MM/Y HH:mm:ss')
-          },
-        },
-        {
-          targets  : -4,
+          targets  : -3,
           className: 'dt-center',
           render   : function (data, type, full, meta) {
             const status = {
@@ -264,18 +249,28 @@ export default {
             return `<span class="kt-badge ${status[data].class} kt-badge--inline">${status[data].title}</span>`
           },
         },
+        {
+          targets  : -2,
+          className: 'dt-center',
+          render   : function (data, type, full, meta) {
+            return moment(data).format('DD/MM/Y HH:mm:ss')
+          },
+        },
       ],
     })
 
     this.datatable.on('draw.dt', function () {
       $('.action-button-status').click(function () {
         const rowData = app.datatable.row($(this).data('index')).data()
-        // app.$delete(rowData, 'unique_code')
         app.setStatus(rowData)
       })
     })
   },
   methods: {
+    async getWarehouse () {
+      this.params.search_by = $('#kt_form_filter').val()
+      this.datatable.ajax.reload()
+    },
     async setStatus (row) {
       const app         = this
       const statusText  = row.status === 1 ? 'Deactivated' : 'Activated'
@@ -283,7 +278,7 @@ export default {
       // eslint-disable-next-line no-undef
       swal.fire({
         title             : 'Are you sure?',
-        text              : `Company "${row.name}" in Company "${row.name}" ${statusText}`,
+        text              : `Warehouse "${row.name}" ${statusText}`,
         type              : 'question',
         showCancelButton  : true,
         confirmButtonText : statusText,
@@ -295,15 +290,15 @@ export default {
           app.updateStatus(row.id, row)
       })
     },
-    async updateStatus (idLocation, param) {
+    async updateStatus (idWarehouse, param) {
       try {
         this.$nuxt.$loading.start()
         param.status    = param.status === 1 ? 0 : 1
-        await this.$store.dispatch('company/editCompany', { idCompany: idLocation, data: param })
-        const data      = this.$store.getters['company/getEditCompany']
+        await this.$store.dispatch('warehouse/editWarehouse', { idWarehouse: idWarehouse, data: param })
+        const data      = this.$store.getters['warehouse/getEditWarehouse']
         const parameter = {
           alertClass: 'alert-success',
-          message   : `Company ${data.result.name} in Company ${data.result.warehouse_name} has been edited`,
+          message   : `Warehouse ${data.result.name} has been edited`,
         }
         this.$nuxt.$emit('alertShow', parameter)
         this.$nuxt.$loading.finish()
@@ -322,10 +317,6 @@ export default {
         KTUtil.scrollTop()
       }
     },
-    async getCompany () {
-      this.params.search_by = $('#kt_form_filter').val()
-      this.datatable.ajax.reload()
-    },
     async clearForm () {
       this.params = {
         keyword  : '',
@@ -333,7 +324,9 @@ export default {
         filter   : {},
       }
       this.datatable.ajax.reload()
+      $('#kt_form_filter').val('name')
       $('#kt_form_status').val('')
+      $('.selectpicker').selectpicker('refresh')
     },
   },
 }

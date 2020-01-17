@@ -22,7 +22,7 @@
             </div>
             <div class="kt-portlet__head-toolbar">
               <a
-                href="/location"
+                href="/master/location"
                 class="btn btn-clean kt-margin-r-10"
               >
                 <i class="la la-arrow-left" />
@@ -166,7 +166,7 @@ export default {
           this.$nuxt.$loading.finish()
           // eslint-disable-next-line no-undef
           KTUtil.scrollTop()
-          setTimeout(function () { window.location.href = '/location' }, 3000)
+          setTimeout(function () { window.location.href = '/master/location' }, 3000)
         } catch (error) {
           const parameter = {
             alertClass: 'alert-danger',

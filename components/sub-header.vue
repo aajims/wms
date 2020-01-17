@@ -55,23 +55,22 @@ export default {
     }
   },
   created () {
-    let temporary    = []
-    const app        = this
-    const data       = this.$nuxt.$route.path.split('/')
-    this.currentPage = data[1][0].toUpperCase() + data[1].substr(1)
+    const path = this.$nuxt.$route.path.split('/')
     for (const menu of menus) {
-      if (menu.url === `/${data[1]}`) {
-        temporary = { name: menu.name, url: menu.url }
-        app.data.push(temporary)
-        break
-      }
-      for (const subMenu of menu.children) {
-        if (subMenu.url === `/${data[1]}`) {
-          temporary = { name: menu.name, url: menu.url }
-          app.data.push(temporary)
-          temporary = { name: subMenu.name, url: subMenu.url }
-          app.data.push(temporary)
-          break
+      if (menu.url === `/${path[1]}`) {
+        let parentUrl = menu.url
+        if (menu.folder === true)
+          parentUrl = '/'
+        this.currentPage = menu.name
+        this.data.push({ name: menu.name, url: parentUrl })
+        for (const subMenu of menu.children) {
+          if (subMenu.name.toLowerCase() === path[2]) {
+            let param = ''
+            if (subMenu.param === true)
+              param = `/${this.$nuxt.$route.params.id}`
+            this.currentPage = subMenu.name
+            this.data.push({ name: subMenu.name, url: `${menu.url}${subMenu.url}${param}` })
+          }
         }
       }
     }

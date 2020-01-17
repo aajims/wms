@@ -11,12 +11,12 @@
               <i class="kt-font-brand flaticon-clipboard" />
             </span>
             <h3 class="kt-portlet__head-title">
-              Warehouse Detail
+              Packing Detail
             </h3>
           </div>
           <div class="kt-portlet__head-toolbar">
             <a
-              href="/warehouse"
+              :href="`/company/packing/list/${packing.company_id}`"
               class="btn btn-clean kt-margin-r-10"
             >
               <i class="la la-arrow-left" />
@@ -29,7 +29,7 @@
             <div class="col-lg-6">
               <label>Name</label>
               <input
-                v-model="warehouse.name"
+                v-model="packing.name"
                 type="text"
                 class="form-control"
                 readonly
@@ -38,7 +38,7 @@
             <div class="col-lg-6">
               <label>Code</label>
               <input
-                v-model="warehouse.code"
+                v-model="packing.code"
                 type="text"
                 class="form-control"
                 readonly
@@ -47,38 +47,18 @@
           </div>
           <div class="form-group row">
             <div class="col-lg-6">
-              <label>Email</label>
+              <label>Dimension Type</label>
               <input
-                v-model="warehouse.email"
+                v-model="packing.dimension_type"
                 type="text"
                 class="form-control"
                 readonly
               >
             </div>
             <div class="col-lg-6">
-              <label>Phone</label>
+              <label>Length</label>
               <input
-                v-model="warehouse.phone"
-                type="text"
-                class="form-control"
-                readonly
-              >
-            </div>
-          </div>
-          <div class="form-group row">
-            <div class="col-lg-6">
-              <label>Capacity</label>
-              <input
-                v-model="warehouse.capacity"
-                type="text"
-                class="form-control"
-                readonly
-              >
-            </div>
-            <div class="col-lg-6">
-              <label>PIC</label>
-              <input
-                v-model="warehouse.pic"
+                v-model="packing.length"
                 type="text"
                 class="form-control"
                 readonly
@@ -87,69 +67,82 @@
           </div>
           <div class="form-group row">
             <div class="col-lg-6">
-              <label for="address">Address</label>
+              <label>Width</label>
+              <input
+                v-model="packing.width"
+                type="text"
+                class="form-control"
+                readonly
+              >
+            </div>
+            <div class="col-lg-6">
+              <label>Height</label>
+              <input
+                v-model="packing.height"
+                type="text"
+                class="form-control"
+                readonly
+              >
+            </div>
+          </div>
+          <div class="form-group row">
+            <div class="col-lg-6">
+              <label>Weight Type</label>
+              <input
+                v-model="packing.weight_type"
+                type="text"
+                class="form-control"
+                readonly
+              >
+            </div>
+            <div class="col-lg-6">
+              <label>Weight</label>
+              <input
+                v-model="packing.weight"
+                type="text"
+                class="form-control"
+                readonly
+              >
+            </div>
+          </div>
+          <div class="form-group row">
+            <div class="col-lg-12">
+              <label for="address">Description</label>
               <textarea
-                v-model="warehouse.address"
+                v-model="packing.description"
                 class="form-control"
                 rows="3"
                 readonly
               />
             </div>
+          </div>
+          <div class="form-group row">
             <div class="col-lg-6">
-              <label for="description">Description</label>
-              <textarea
-                v-model="warehouse.description"
+              <label for="city">Company</label>
+              <input
+                v-model="packing.company_name"
+                type="text"
                 class="form-control"
-                rows="3"
                 readonly
-              />
+              >
+            </div>
+            <div class="col-lg-6">
+              <label>Status</label><br>
+              <span
+                v-if="packing.status === 1"
+                class="btn btn-success"
+              > Active </span>
+              <span
+                v-else
+                class="btn btn-danger"
+              > Inactive </span>
             </div>
           </div>
           <div class="form-group row">
             <div class="col-lg-6">
-              <label for="country">Country</label>
+              <label>Created By</label>
               <input
-                v-model="warehouse.country_name"
-                type="text"
-                class="form-control"
-                readonly
-              >
-            </div>
-            <div class="col-lg-6">
-              <label for="state">State</label>
-              <input
-                v-model="warehouse.state_name"
-                type="text"
-                class="form-control"
-                readonly
-              >
-            </div>
-          </div>
-          <div class="form-group row">
-            <div class="col-lg-6">
-              <label for="city">City</label>
-              <input
-                v-model="warehouse.city_name"
-                type="text"
-                class="form-control"
-                readonly
-              >
-            </div>
-            <div class="col-lg-6">
-              <label for="district">District</label>
-              <input
-                v-model="warehouse.district_name"
-                type="text"
-                class="form-control"
-                readonly
-              >
-            </div>
-          </div>
-          <div class="form-group row">
-            <div class="col-lg-6">
-              <label>Postcode</label>
-              <input
-                v-model="warehouse.zip_code"
+                v-model="packing.created_by_name"
                 type="text"
                 class="form-control"
                 readonly
@@ -167,9 +160,9 @@
           </div>
           <div class="form-group row">
             <div class="col-lg-6">
-              <label>Created By</label>
+              <label>Updated By</label>
               <input
-                v-model="warehouse.created_by_name"
+                v-model="packing.updated_by_name"
                 type="text"
                 class="form-control"
                 readonly
@@ -183,28 +176,6 @@
                 class="form-control"
                 readonly
               >
-            </div>
-          </div>
-          <div class="form-group row">
-            <div class="col-lg-6">
-              <label>Updated By</label>
-              <input
-                v-model="warehouse.updated_by_name"
-                type="text"
-                class="form-control"
-                readonly
-              >
-            </div>
-            <div class="col-lg-6">
-              <label>Status</label><br>
-              <span
-                v-if="warehouse.status === 1"
-                class="btn btn-success"
-              > Active </span>
-              <span
-                v-else
-                class="btn btn-danger"
-              > Inactive </span>
             </div>
           </div>
         </div>
@@ -226,16 +197,16 @@ import moment from 'moment'
 export default {
   data () {
     return {
-      warehouse  : [],
+      packing    : [],
       createdDate: '',
       updatedDate: '',
     }
   },
   async mounted () {
-    await this.$store.dispatch('warehouse/getWarehouseDetail', { idWarehouse: this.$route.params.id })
-    this.warehouse   = this.$store.getters['warehouse/getWarehouseDetail'].result
-    this.createdDate = moment(this.warehouse.created_at).format('DD/MM/Y HH:mm:ss')
-    this.updatedDate = moment(this.warehouse.updated_at).format('DD/MM/Y HH:mm:ss')
+    await this.$store.dispatch('packing/getPackingDetail', { idPacking: this.$route.params.id })
+    this.packing     = this.$store.getters['packing/getPackingDetail'].result
+    this.createdDate = moment(this.packing.created_at).format('DD/MM/Y HH:mm:ss')
+    this.updatedDate = moment(this.packing.updated_at).format('DD/MM/Y HH:mm:ss')
   },
 }
 </script>
