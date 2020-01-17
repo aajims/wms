@@ -5,7 +5,7 @@
         id="warehouse_form"
         ref="form"
         class="kt-form kt-form--label-right"
-        @submit.prevent="addWarehouse()"
+        @submit.prevent="editWarehouse()"
       >
         <div
           id="kt_page_portlet"
@@ -14,15 +14,15 @@
           <div class="kt-portlet__head kt-portlet__head--lg">
             <div class="kt-portlet__head-label">
               <span class="kt-portlet__head-icon">
-                <i class="kt-font-brand flaticon-add" />
+                <i class="kt-font-brand flaticon-edit-1" />
               </span>
               <h3 class="kt-portlet__head-title">
-                Add Warehouse
+                Edit Warehouse
               </h3>
             </div>
             <div class="kt-portlet__head-toolbar">
               <a
-                href="/warehouse"
+                href="/master/warehouse"
                 class="btn btn-clean kt-margin-r-10"
               >
                 <i class="la la-arrow-left" />
@@ -204,7 +204,6 @@
 export default {
   data () {
     return {
-      countries: [],
       states   : [],
       cities   : [],
       districts: [],
@@ -222,6 +221,7 @@ export default {
         district_id: null,
         zip_code   : null,
         description: null,
+        status     : null,
       },
       stateOption   : null,
       cityOption    : null,
@@ -229,22 +229,39 @@ export default {
     }
   },
   async mounted () {
+    await this.$store.dispatch('warehouse/getWarehouseDetail', { idWarehouse: this.$route.params.id })
+    const warehouseDetail      = this.$store.getters['warehouse/getWarehouseDetail'].result
+    this.warehouse.name        = warehouseDetail.name
+    this.warehouse.code        = warehouseDetail.code
+    this.warehouse.capacity    = warehouseDetail.capacity
+    this.warehouse.phone       = warehouseDetail.phone
+    this.warehouse.email       = warehouseDetail.email
+    this.warehouse.pic         = warehouseDetail.pic
+    this.warehouse.address     = warehouseDetail.address
+    this.warehouse.zip_code    = warehouseDetail.zip_code
+    this.warehouse.description = warehouseDetail.description
+    this.warehouse.country_id  = warehouseDetail.country_id
+    this.warehouse.state_id    = warehouseDetail.state_id
+    this.warehouse.city_id     = warehouseDetail.city_id
+    this.warehouse.district_id = warehouseDetail.district_id
+
     const customAdapter = $.fn.select2.amd.require('select2/data/customAdapter')
+    const app           = this
 
     await this.$store.dispatch('region/getCountries')
     this.countries = this.$store.getters['region/getCountries']
-    const app      = this
     $('#country').select2({
       placeholder: 'Select a country',
       allowClear : true,
       data       : this.countries,
     })
+    $('#country').val(this.warehouse.country_id).trigger('change')
     $('#country').on('change', function () {
       validator.element($(this))
       if ($('#country').val()) {
         $('#state').val(null).trigger('change')
         $('#state').prop('disabled', false)
-        app.getStatesByCountry()
+        app.getStatesByCountry($('#country').val())
       } else {
         $('#state').val(null).trigger('change')
         $('#city').val(null).trigger('change')
@@ -258,16 +275,17 @@ export default {
     this.stateOption = $('#state').select2({
       placeholder: 'Select a state',
       allowClear : true,
-      disabled   : true,
       dataAdapter: customAdapter,
       data       : this.states,
     })
+    await app.getStatesByCountry(this.warehouse.country_id)
+    $('#state').val(this.warehouse.state_id).trigger('change')
     $('#state').on('change', function () {
       validator.element($(this))
       if ($('#state').val()) {
         $('#city').val(null).trigger('change')
         $('#city').prop('disabled', false)
-        app.getCitiesByState()
+        app.getCitiesByState($('#state').val())
       } else {
         $('#city').val(null).trigger('change')
         $('#district').val(null).trigger('change')
@@ -279,16 +297,17 @@ export default {
     this.cityOption = $('#city').select2({
       placeholder: 'Select a city',
       allowClear : true,
-      disabled   : true,
       dataAdapter: customAdapter,
       data       : this.cities,
     })
+    await app.getCitiesByState(this.warehouse.state_id)
+    $('#city').val(this.warehouse.city_id).trigger('change')
     $('#city').on('change', function () {
       validator.element($(this))
       if ($('#city').val()) {
         $('#district').val(null).trigger('change')
         $('#district').prop('disabled', false)
-        app.getDistrictsByCity()
+        app.getDistrictsByCity($('#city').val())
       } else {
         $('#district').val(null).trigger('change')
         $('#district').prop('disabled', true)
@@ -298,10 +317,11 @@ export default {
     this.districtOption = $('#district').select2({
       placeholder: 'Select a district',
       allowClear : true,
-      disabled   : true,
       dataAdapter: customAdapter,
       data       : this.states,
     })
+    await app.getDistrictsByCity(this.warehouse.city_id)
+    $('#district').val(this.warehouse.district_id).trigger('change')
     $('#district').on('change', function () {
       validator.element($(this))
     })
@@ -342,43 +362,44 @@ export default {
     })
   },
   methods: {
-    async getStatesByCountry () {
+    async getStatesByCountry (id) {
       this.states = []
-      await this.$store.dispatch('region/getStatesByCountry', { countryId: $('#country').val() })
+      await this.$store.dispatch('region/getStatesByCountry', { countryId: id })
       this.states = this.$store.getters['region/getStatesByCountry']
       this.stateOption.data('select2').dataAdapter.updateOptions(this.states)
     },
-    async getCitiesByState () {
+    async getCitiesByState (id) {
       this.cities = []
-      await this.$store.dispatch('region/getCitiesByState', { stateId: $('#state').val() })
+      await this.$store.dispatch('region/getCitiesByState', { stateId: id })
       this.cities = this.$store.getters['region/getCitiesByState']
       this.cityOption.data('select2').dataAdapter.updateOptions(this.cities)
     },
-    async getDistrictsByCity () {
+    async getDistrictsByCity (id) {
       this.districts = []
-      await this.$store.dispatch('region/getDistrictsByCity', { cityId: $('#city').val() })
+      await this.$store.dispatch('region/getDistrictsByCity', { cityId: id })
       this.districts = this.$store.getters['region/getDistrictsByCity']
       this.districtOption.data('select2').dataAdapter.updateOptions(this.districts)
     },
-    async addWarehouse () {
+    async editWarehouse () {
       if ($('#warehouse_form').valid()) {
         this.warehouse.country_id  = parseInt($('#country').val())
         this.warehouse.state_id    = parseInt($('#state').val())
         this.warehouse.city_id     = parseInt($('#city').val())
         this.warehouse.district_id = parseInt($('#district').val())
+        this.warehouse.status      = 1
         try {
           this.$nuxt.$loading.start()
-          await this.$store.dispatch('warehouse/addWarehouse', { data: this.warehouse })
-          const data      = this.$store.getters['warehouse/getAddSuccess']
+          await this.$store.dispatch('warehouse/editWarehouse', { idWarehouse: this.$route.params.id, data: this.warehouse })
+          const data      = this.$store.getters['warehouse/getEditWarehouse']
           const parameter = {
             alertClass: 'alert-success',
-            message   : `Warehouse ${data.result.name} has been added`,
+            message   : `Warehouse ${data.result.name} has been edited`,
           }
           this.$nuxt.$emit('alertShow', parameter)
           this.$nuxt.$loading.finish()
           // eslint-disable-next-line no-undef
           KTUtil.scrollTop()
-          setTimeout(function () { window.location.href = '/warehouse' }, 3000)
+          setTimeout(function () { window.location.href = '/master/warehouse' }, 3000)
         } catch (error) {
           const parameter = {
             alertClass: 'alert-danger',

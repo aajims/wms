@@ -1,5 +1,5 @@
 <template>
-    <div class="row">
+  <div class="row">
     <div class="col-lg-12">
       <div
         id="kt_page_portlet"
@@ -16,7 +16,7 @@
           </div>
           <div class="kt-portlet__head-toolbar">
             <a
-              href="/category"
+              href="/master/category"
               class="btn btn-clean kt-margin-r-10"
             >
               <i class="la la-arrow-left" />
@@ -46,7 +46,7 @@
             </div>
           </div>
           <div class="form-group row">
-              <div class="col-lg-6">
+            <div class="col-lg-6">
               <label for="description">Description</label>
               <textarea
                 id="description"
@@ -96,10 +96,16 @@
                 readonly
               >
             </div>
-             <div class="col-lg-6">
+            <div class="col-lg-6">
               <label>Status</label><br>
-              <span v-if="category.status===1" class="btn btn-success">Active</span>
-              <span v-else class="btn btn-danger">Inactive</span>
+              <span
+                v-if="category.status===1"
+                class="btn btn-success"
+              >Active</span>
+              <span
+                v-else
+                class="btn btn-danger"
+              >Inactive</span>
             </div>
           </div>
         </div>
@@ -117,28 +123,26 @@
 </template>
 
 <script>
-    export default {
-        data() {
-            return {
-                category   : [],
-                createdDate: '',
-                updatedDate: '',
-            }
-        },
-        async mounted () {
-        
-        await this.$store.dispatch('category/getCategoryDetail', { idCategory: this.$route.params.id })
-        this.category    = this.$store.getters['category/getCategoryDetail'].result
-        this.createdDate = moment(this.category.created_at).format('DD/MM/Y HH:mm:ss')
-        this.updatedDate = moment(this.category.updated_at).format('DD/MM/Y HH:mm:ss')
-        var status = this.category.status;
-        if(status===1){
-          status = "Active"
-        }else{
-          status = "Inactive"
-        }
-        
-        console.log(status)
-       },
+import moment from 'moment'
+
+export default {
+  data () {
+    return {
+      category   : [],
+      createdDate: '',
+      updatedDate: '',
     }
+  },
+  async mounted () {
+    await this.$store.dispatch('category/getCategoryDetail', { idCategory: this.$route.params.id })
+    this.category    = this.$store.getters['category/getCategoryDetail'].result
+    this.createdDate = moment(this.category.created_at).format('DD/MM/Y HH:mm:ss')
+    this.updatedDate = moment(this.category.updated_at).format('DD/MM/Y HH:mm:ss')
+    let status       = this.category.status
+    if (status === 1)
+      status = 'Active'
+    else
+      status = 'Inactive'
+  },
+}
 </script>
