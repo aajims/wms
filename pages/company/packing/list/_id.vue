@@ -161,11 +161,14 @@ export default {
       params   : {
         keyword  : '',
         search_by: '',
-        filter   : { company_id: this.$route.params.id },
+        filter   : { company_id: '' },
       },
     }
   },
   async mounted () {
+    if (this.$route.params.id !== undefined)
+      this.params.filter.company_id = this.$route.params.id
+
     try {
       await this.$store.dispatch('company/getCompanyDetail', { idCompany: this.$route.params.id })
       this.company    = this.$store.getters['company/getCompanyDetail'].result
