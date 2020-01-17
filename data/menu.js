@@ -36,4 +36,10 @@ export default [
       },
     ],
   },
+  {
+    name    : 'Order List',
+    icon    : 'fa flaticon2-shopping-cart-1',
+    url     : '/order',
+    children: [],
+  },
 ]
