@@ -11,12 +11,12 @@
               <i class="kt-font-brand flaticon-clipboard" />
             </span>
             <h3 class="kt-portlet__head-title">
-              Location Detail
+              Warehouse Detail
             </h3>
           </div>
           <div class="kt-portlet__head-toolbar">
             <a
-              href="/location"
+              href="/master/warehouse"
               class="btn btn-clean kt-margin-r-10"
             >
               <i class="la la-arrow-left" />
@@ -29,7 +29,7 @@
             <div class="col-lg-6">
               <label>Name</label>
               <input
-                v-model="location.name"
+                v-model="warehouse.name"
                 type="text"
                 class="form-control"
                 readonly
@@ -38,7 +38,7 @@
             <div class="col-lg-6">
               <label>Code</label>
               <input
-                v-model="location.code"
+                v-model="warehouse.code"
                 type="text"
                 class="form-control"
                 readonly
@@ -47,18 +47,38 @@
           </div>
           <div class="form-group row">
             <div class="col-lg-6">
-              <label>Capacity Dimension</label>
+              <label>Email</label>
               <input
-                v-model="location.capacity_dimension_type"
+                v-model="warehouse.email"
                 type="text"
                 class="form-control"
                 readonly
               >
             </div>
+            <div class="col-lg-6">
+              <label>Phone</label>
+              <input
+                v-model="warehouse.phone"
+                type="text"
+                class="form-control"
+                readonly
+              >
+            </div>
+          </div>
+          <div class="form-group row">
             <div class="col-lg-6">
               <label>Capacity</label>
               <input
-                v-model="location.capacity"
+                v-model="warehouse.capacity"
+                type="text"
+                class="form-control"
+                readonly
+              >
+            </div>
+            <div class="col-lg-6">
+              <label>PIC</label>
+              <input
+                v-model="warehouse.pic"
                 type="text"
                 class="form-control"
                 readonly
@@ -67,106 +87,69 @@
           </div>
           <div class="form-group row">
             <div class="col-lg-6">
-              <label>Level</label>
-              <input
-                v-model="location.level"
-                type="text"
-                class="form-control"
-                placeholder="Enter level"
-                name="level"
-                readonly
-              >
-            </div>
-            <div class="col-lg-6">
-              <label>Capacity Max</label>
-              <input
-                v-model="location.capacity_max"
-                type="text"
-                class="form-control"
-                readonly
-              >
-            </div>
-          </div>
-          <div class="form-group row">
-            <div class="col-lg-6">
-              <label>Weight Type</label>
-              <input
-                v-model="location.weight_type"
-                type="text"
-                class="form-control"
-                placeholder="Enter level"
-                name="level"
-                readonly
-              >
-            </div>
-            <div class="col-lg-6">
-              <label>Max Weight</label>
-              <input
-                v-model="location.weight_max"
-                type="text"
-                class="form-control"
-                readonly
-              >
-            </div>
-          </div>
-          <div class="form-group row">
-            <div class="col-lg-6">
-              <label>Warehouse</label>
-              <input
-                v-model="location.warehouse_name"
-                type="text"
-                class="form-control"
-                readonly
-              >
-            </div>
-            <div class="col-lg-6">
-              <label>Blocked By</label>
-              <input
-                v-model="location.company_name"
-                type="text"
-                class="form-control"
-                readonly
-              >
-            </div>
-          </div>
-          <div class="form-group row">
-            <div class="col-lg-6">
-              <label for="description">Description</label>
+              <label for="address">Address</label>
               <textarea
-                id="description"
-                v-model="location.description"
+                v-model="warehouse.address"
                 class="form-control"
                 rows="3"
                 readonly
               />
             </div>
             <div class="col-lg-6">
-              <label>&nbsp;</label>
-              <div class="kt-checkbox-list">
-                <label class="kt-checkbox kt-checkbox--brand">
-                  <input
-                    type="checkbox"
-                    disabled="disabled"
-                    :checked="location.bonded_location"
-                  > Bonded Location
-                  <span />
-                </label>
-                <label class="kt-checkbox kt-checkbox--brand">
-                  <input
-                    type="checkbox"
-                    disabled="disabled"
-                    :checked="location.stock_quarantine"
-                  > Stock Quarantine
-                  <span />
-                </label>
-              </div>
+              <label for="description">Description</label>
+              <textarea
+                v-model="warehouse.description"
+                class="form-control"
+                rows="3"
+                readonly
+              />
             </div>
           </div>
           <div class="form-group row">
             <div class="col-lg-6">
-              <label>Created By</label>
+              <label for="country">Country</label>
               <input
-                v-model="location.created_by_name"
+                v-model="warehouse.country_name"
+                type="text"
+                class="form-control"
+                readonly
+              >
+            </div>
+            <div class="col-lg-6">
+              <label for="state">State</label>
+              <input
+                v-model="warehouse.state_name"
+                type="text"
+                class="form-control"
+                readonly
+              >
+            </div>
+          </div>
+          <div class="form-group row">
+            <div class="col-lg-6">
+              <label for="city">City</label>
+              <input
+                v-model="warehouse.city_name"
+                type="text"
+                class="form-control"
+                readonly
+              >
+            </div>
+            <div class="col-lg-6">
+              <label for="district">District</label>
+              <input
+                v-model="warehouse.district_name"
+                type="text"
+                class="form-control"
+                readonly
+              >
+            </div>
+          </div>
+          <div class="form-group row">
+            <div class="col-lg-6">
+              <label>Postcode</label>
+              <input
+                v-model="warehouse.zip_code"
                 type="text"
                 class="form-control"
                 readonly
@@ -184,9 +167,9 @@
           </div>
           <div class="form-group row">
             <div class="col-lg-6">
-              <label>Updated By</label>
+              <label>Created By</label>
               <input
-                v-model="location.updated_by_name"
+                v-model="warehouse.created_by_name"
                 type="text"
                 class="form-control"
                 readonly
@@ -204,9 +187,18 @@
           </div>
           <div class="form-group row">
             <div class="col-lg-6">
+              <label>Updated By</label>
+              <input
+                v-model="warehouse.updated_by_name"
+                type="text"
+                class="form-control"
+                readonly
+              >
+            </div>
+            <div class="col-lg-6">
               <label>Status</label><br>
               <span
-                v-if="location.status === 1"
+                v-if="warehouse.status === 1"
                 class="btn btn-success"
               > Active </span>
               <span
@@ -234,16 +226,16 @@ import moment from 'moment'
 export default {
   data () {
     return {
-      location   : [],
+      warehouse  : [],
       createdDate: '',
       updatedDate: '',
     }
   },
   async mounted () {
-    await this.$store.dispatch('location/getLocationDetail', { idLocation: this.$route.params.id })
-    this.location    = this.$store.getters['location/getLocationDetail'].result
-    this.createdDate = moment(this.location.created_at).format('DD/MM/Y HH:mm:ss')
-    this.updatedDate = moment(this.location.updated_at).format('DD/MM/Y HH:mm:ss')
+    await this.$store.dispatch('warehouse/getWarehouseDetail', { idWarehouse: this.$route.params.id })
+    this.warehouse   = this.$store.getters['warehouse/getWarehouseDetail'].result
+    this.createdDate = moment(this.warehouse.created_at).format('DD/MM/Y HH:mm:ss')
+    this.updatedDate = moment(this.warehouse.updated_at).format('DD/MM/Y HH:mm:ss')
   },
 }
 </script>

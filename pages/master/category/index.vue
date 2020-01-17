@@ -1,6 +1,6 @@
 <template>
-    <div
-         id="kt_page_portlet"
+  <div
+    id="kt_page_portlet"
     class="kt-portlet kt-portlet--last kt-portlet--head-lg kt-portlet--responsive-mobile"
   >
     <div class="kt-portlet__head kt-portlet__head--lg">
@@ -16,7 +16,7 @@
         <div class="kt-portlet__head-wrapper">
           <div class="kt-portlet__head-actions">
             <a
-              href="/category/add"
+              href="/master/category/add"
               class="btn btn-brand btn-elevate btn-icon-sm"
             >
               <i class="la la-plus" />
@@ -157,14 +157,14 @@ export default {
   data () {
     return {
       datatable: [],
-       params   : {
+      params   : {
         keyword  : '',
         search_by: '',
         filter   : {},
       },
     }
   },
-  mounted() {
+  mounted () {
     const app = this
     $('#kt_form_status').on('change', function () {
       if ($('#kt_form_status').val() !== '' && $('#kt_form_status').val() !== null)
@@ -213,10 +213,10 @@ export default {
           orderable: false,
           render   : function (data, type, full, meta) {
             return `
-                  <a href="/category/detail/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
+                  <a href="/master/category/detail/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
                     <i class="la la-eye"></i>
                   </a>
-                  <a href="/category/edit/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
+                  <a href="/master/category/edit/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
                     <i class="la la-edit"></i>
                   </a>
                   <a class="btn btn-sm btn-clean btn-icon action-button-status" data-index="${meta.row}" href="javascript:void(0)">
@@ -256,7 +256,7 @@ export default {
     })
   },
   methods: {
-     async getCategory () {
+    async getCategory () {
       this.params.search_by = $('#kt_form_filter').val()
       this.datatable.ajax.reload()
     },
@@ -277,7 +277,6 @@ export default {
       }).then(function (result) {
         if (result.value)
           app.updateStatus(row.id, row)
-          window.location.href = '/category';
       })
     },
     async updateStatus (idCategory, param) {
@@ -294,6 +293,7 @@ export default {
         this.$nuxt.$loading.finish()
         // eslint-disable-next-line no-undef
         KTUtil.scrollTop()
+        this.datatable.ajax.reload()
       } catch (error) {
         param.status    = param.status === 1 ? 0 : 1
         const parameter = {
@@ -317,7 +317,7 @@ export default {
       $('#kt_form_filter').val('name')
       $('#kt_form_filter').val('code')
       $('#kt_form_filter').val('description')
-    }
+    },
   },
 }
 </script>

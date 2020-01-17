@@ -16,7 +16,7 @@
           </div>
           <div class="kt-portlet__head-toolbar">
             <a
-              :href="`/packing/list/${packing.company_id}`"
+              :href="`/company/packing/list/${packing.company_id}`"
               class="btn btn-clean kt-margin-r-10"
             >
               <i class="la la-arrow-left" />
@@ -56,7 +56,7 @@
               >
             </div>
             <div class="col-lg-6">
-              <label>Lenght</label>
+              <label>Length</label>
               <input
                 v-model="packing.length"
                 type="text"

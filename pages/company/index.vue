@@ -99,7 +99,7 @@
                   </div>
                 </div>
               </div>
-               <div class="col-md-2 kt-margin-b-20-tablet-and-mobile">
+              <div class="col-md-2 kt-margin-b-20-tablet-and-mobile">
                 <div class="kt-form__group">
                   <div class="kt-form__label">
                     <label>&nbsp;</label>
@@ -237,7 +237,7 @@ export default {
                             </a>
                             <div class="dropdown-menu dropdown-menu-right">
                                 <a class="dropdown-item action-button-status" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-power-off"></i> Update Status</a>
-                                <a class="dropdown-item" href="/packing/list/${full.id}"><i class="fa flaticon2-open-box"></i> Packing</a>
+                                <a class="dropdown-item" href="/company/packing/list/${full.id}"><i class="fa flaticon2-open-box"></i> Packing</a>
                                 <a class="dropdown-item" href="javascript:void(0)"><i class="la la-qrcode"></i> Print QR Code</a>
                             </div>
                         </span>`
@@ -299,7 +299,7 @@ export default {
       try {
         this.$nuxt.$loading.start()
         param.status    = param.status === 1 ? 0 : 1
-        await this.$store.dispatch('company/editCompany', { idCompany: idCompany, data: param })
+        await this.$store.dispatch('company/editCompany', { idCompany: idLocation, data: param })
         const data      = this.$store.getters['company/getEditCompany']
         const parameter = {
           alertClass: 'alert-success',
@@ -334,7 +334,7 @@ export default {
       }
       this.datatable.ajax.reload()
       $('#kt_form_status').val('')
-    }
+    },
   },
 }
 </script>

@@ -1,5 +1,5 @@
 <template>
-    <div class="row">
+  <div class="row">
     <div class="col-lg-12">
       <form
         id="category_form"
@@ -22,7 +22,7 @@
             </div>
             <div class="kt-portlet__head-toolbar">
               <a
-                href="/category"
+                href="/master/category"
                 class="btn btn-clean kt-margin-r-10"
               >
                 <i class="la la-arrow-left" />
@@ -39,7 +39,7 @@
           </div>
           <div class="kt-portlet__body">
             <div class="form-group row">
-                <div class="col-lg-6">
+              <div class="col-lg-6">
                 <label>Code <span style="color:red">*</span></label>mosde
                 <input
                   v-model="category.code"
@@ -67,7 +67,10 @@
                   class="form-control"
                   name="name"
                   placeholder="Enter Description"
-                ><input type="hidden" v-model="category.status">
+                ><input
+                  v-model="category.status"
+                  type="hidden"
+                >
               </div>
             </div>
           </div>
@@ -86,58 +89,58 @@
 </template>
 
 <script>
-    export default {
-        data() {
-            return {
-              category: {
-                name : null,
-                code : null,
-                description : null,
-                status : null
-              } 
-            }
-        },
-        async mounted() {
-            const validator = $('#category_form').validate({
-            // define validation rules
-            rules: {
-                name : { required: true },
-                code : { required: true },
-            }
-           })
-           await this.$store.dispatch('category/getCategoryDetail', { idCategory: this.$route.params.id })
-            const categoryDetail      = this.$store.getters['category/getCategoryDetail'].result
-            this.category.code       =   categoryDetail.code
-            this.category.name       =   categoryDetail.name
-            this.category.description =  categoryDetail.description 
-            this.category.status     =   categoryDetail.status
-        },
-        methods: {
-            async editCategory(){
-                try {
-                this.$nuxt.$loading.start()
-                await this.$store.dispatch('category/editCategory', { idCategory: this.$route.params.id, data: this.category })
-                const data      = this.$store.getters['category/getEditCategory']
-                const parameter = {
-                    alertClass: 'alert-success',
-                    message   : `Category ${data.result.name} has been edited`,
-                }
-                this.$nuxt.$emit('alertShow', parameter)
-                this.$nuxt.$loading.finish()
-                // eslint-disable-next-line no-undef
-                KTUtil.scrollTop()
-                setTimeout(function () { window.location.href = '/category' }, 3000)
-                } catch (error) {
-                const parameter = {
-                    alertClass: 'alert-danger',
-                    message   : error.message,
-                }
-                this.$nuxt.$emit('alertShow', parameter)
-                this.$nuxt.$loading.finish()
-                // eslint-disable-next-line no-undef
-                KTUtil.scrollTop()
-                }
-            }
-        },
+export default {
+  data () {
+    return {
+      category: {
+        name       : null,
+        code       : null,
+        description: null,
+        status     : null,
+      },
     }
+  },
+  async mounted () {
+    $('#category_form').validate({
+      // define validation rules
+      rules: {
+        name: { required: true },
+        code: { required: true },
+      },
+    })
+    await this.$store.dispatch('category/getCategoryDetail', { idCategory: this.$route.params.id })
+    const categoryDetail      = this.$store.getters['category/getCategoryDetail'].result
+    this.category.code        =   categoryDetail.code
+    this.category.name        =   categoryDetail.name
+    this.category.description =  categoryDetail.description
+    this.category.status      =   categoryDetail.status
+  },
+  methods: {
+    async editCategory () {
+      try {
+        this.$nuxt.$loading.start()
+        await this.$store.dispatch('category/editCategory', { idCategory: this.$route.params.id, data: this.category })
+        const data      = this.$store.getters['category/getEditCategory']
+        const parameter = {
+          alertClass: 'alert-success',
+          message   : `Category ${data.result.name} has been edited`,
+        }
+        this.$nuxt.$emit('alertShow', parameter)
+        this.$nuxt.$loading.finish()
+        // eslint-disable-next-line no-undef
+        KTUtil.scrollTop()
+        setTimeout(function () { window.location.href = '/master/category' }, 3000)
+      } catch (error) {
+        const parameter = {
+          alertClass: 'alert-danger',
+          message   : error.message,
+        }
+        this.$nuxt.$emit('alertShow', parameter)
+        this.$nuxt.$loading.finish()
+        // eslint-disable-next-line no-undef
+        KTUtil.scrollTop()
+      }
+    },
+  },
+}
 </script>

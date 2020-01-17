@@ -5,7 +5,7 @@
         id="packing_form"
         ref="form"
         class="kt-form kt-form--label-right"
-        @submit.prevent="editPacking()"
+        @submit.prevent="addPacking()"
       >
         <div
           id="kt_page_portlet"
@@ -14,15 +14,15 @@
           <div class="kt-portlet__head kt-portlet__head--lg">
             <div class="kt-portlet__head-label">
               <span class="kt-portlet__head-icon">
-                <i class="kt-font-brand flaticon-edit-1" />
+                <i class="kt-font-brand flaticon-add" />
               </span>
               <h3 class="kt-portlet__head-title">
-                Edit Packing ({{ company_name }})
+                Add Packing ({{ company.name }})
               </h3>
             </div>
             <div class="kt-portlet__head-toolbar">
               <a
-                :href="`/packing/list/${packing.company_id}`"
+                :href="`/company/packing/list/${company.id}`"
                 class="btn btn-clean kt-margin-r-10"
               >
                 <i class="la la-arrow-left" />
@@ -73,7 +73,7 @@
                 <span class="form-text text-muted" />
               </div>
               <div class="col-lg-6">
-                <label>Lenght <span style="color:red">*</span></label>
+                <label>Length <span style="color:red">*</span></label>
                 <input
                   v-model="packing.length"
                   type="text"
@@ -160,8 +160,8 @@ import { DIMENSION_TYPE, WEIGHT_TYPE } from '@/utils/constants'
 export default {
   data () {
     return {
-      company_name: null,
-      packing     : {
+      company: [],
+      packing: {
         name          : null,
         code          : null,
         dimension_type: null,
@@ -172,30 +172,21 @@ export default {
         weight        : null,
         company_id    : null,
         description   : null,
-        status        : null,
       },
     }
   },
   async mounted () {
-    await this.$store.dispatch('packing/getPackingDetail', { idPacking: this.$route.params.id })
-    this.packingDetail          = this.$store.getters['packing/getPackingDetail'].result
-    this.packing.name           = this.packingDetail.name
-    this.packing.code           = this.packingDetail.code
-    this.packing.dimension_type = this.packingDetail.dimension_type
-    this.packing.length         = this.packingDetail.length
-    this.packing.width          = this.packingDetail.width
-    this.packing.height         = this.packingDetail.height
-    this.packing.weight_type    = this.packingDetail.weight_type
-    this.packing.weight         = this.packingDetail.weight
-    this.packing.company_id     = this.packingDetail.company_id
-    this.packing.description    = this.packingDetail.description
-    this.packing.status         = this.packingDetail.status
-    this.company_name           = this.packingDetail.company_name
+    try {
+      await this.$store.dispatch('company/getCompanyDetail', { idCompany: this.$route.params.id })
+      this.company            = this.$store.getters['company/getCompanyDetail'].result
+      this.packing.company_id = this.company.id
+    } catch (error) {
+      this.company = { id: '', name: '' }
+    }
 
     $('#dimension_type').select2({
       data: DIMENSION_TYPE, placeholder: 'Select a dimension type', allowClear: true,
     })
-    $('#dimension_type').val(this.packing.dimension_type).trigger('change')
     $('#dimension_type').on('change', function () {
       validator.element($(this))
     })
@@ -203,7 +194,6 @@ export default {
     $('#weight_type').select2({
       data: WEIGHT_TYPE, placeholder: 'Select a weight type', allowClear: true,
     })
-    $('#weight_type').val(this.packing.weight_type).trigger('change')
     $('#weight_type').on('change', function () {
       validator.element($(this))
     })
@@ -243,7 +233,7 @@ export default {
     })
   },
   methods: {
-    async editPacking () {
+    async addPacking () {
       const app = this
       if ($('#packing_form').valid()) {
         this.packing.length         = parseInt(this.packing.length)
@@ -254,17 +244,17 @@ export default {
         this.packing.dimension_type = $('#dimension_type').val()
         try {
           this.$nuxt.$loading.start()
-          await this.$store.dispatch('packing/editPacking', { idPacking: this.$route.params.id, data: this.packing })
-          const data      = this.$store.getters['packing/getEditPacking']
+          await this.$store.dispatch('packing/addPacking', { data: this.packing })
+          const data      = this.$store.getters['packing/getAddSuccess']
           const parameter = {
             alertClass: 'alert-success',
-            message   : `Packing ${data.result.name} has been edited`,
+            message   : `Packing ${data.result.name} has been added`,
           }
           this.$nuxt.$emit('alertShow', parameter)
           this.$nuxt.$loading.finish()
           // eslint-disable-next-line no-undef
           KTUtil.scrollTop()
-          setTimeout(function () { window.location.href = `/packing/list/${app.packing.company_id}` }, 3000)
+          setTimeout(function () { window.location.href = `/company/packing/list/${app.company.id}` }, 3000)
         } catch (error) {
           const parameter = {
             alertClass: 'alert-danger',
