@@ -11,6 +11,7 @@ const location  = require('./location')
 const category  = require('./category')
 const region    = require('./region')
 const order    = require('./order')
+const packing   = require('./packing')
 
 // Import API Routes
 app.use(login)
@@ -20,6 +21,7 @@ app.use(location)
 app.use(category)
 app.use(region)
 app.use(order)
+app.use(packing)
 
 // Export the server middleware
 module.exports = {

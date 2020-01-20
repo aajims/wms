@@ -16,14 +16,14 @@
         <div class="kt-portlet__head-wrapper">
           <div class="kt-portlet__head-actions">
             <a
-              href="/location/add"
+              href="/master/location/add"
               class="btn btn-brand btn-elevate btn-icon-sm"
             >
               <i class="la la-plus" />
               <span class="kt-hidden-mobile">Add Location</span>
             </a>
             <a
-              href="/location/import"
+              href="/master/location/import"
               class="btn btn-brand btn-elevate btn-icon-sm"
             >
               <i class="la la-cloud-download" />
@@ -492,10 +492,10 @@ export default {
           orderable: false,
           render   : function (data, type, full, meta) {
             return `
-                        <a href="/location/detail/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
+                        <a href="/master/location/detail/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
                           <i class="la la-eye"></i>
                         </a>
-                        <a href="/location/edit/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
+                        <a href="/master/location/edit/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
                           <i class="la la-edit"></i>
                         </a>
                         <span class="dropdown">
@@ -505,7 +505,7 @@ export default {
                             <div class="dropdown-menu dropdown-menu-right">
                                 <a class="dropdown-item action-button-status" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-power-off"></i> Update Status</a>
                                 <a class="dropdown-item" href="javascript:void(0)"><i class="la la-search"></i> View Location Product</a>
-                                <a class="dropdown-item" href="/location/qrcode/${full.id}"><i class="la la-qrcode"></i> Print QR Code</a>
+                                <a class="dropdown-item" href="/master/location/qrcode/${full.id}"><i class="la la-qrcode"></i> Print QR Code</a>
                             </div>
                         </span>`
           },

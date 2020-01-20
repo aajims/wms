@@ -16,7 +16,7 @@
           </div>
           <div class="kt-portlet__head-toolbar">
             <a
-              href="/location"
+              href="/master/location"
               class="btn btn-clean kt-margin-r-10"
             >
               <i class="la la-arrow-left" />
