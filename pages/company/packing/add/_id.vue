@@ -22,7 +22,7 @@
             </div>
             <div class="kt-portlet__head-toolbar">
               <a
-                :href="`/company/packing/list/${company.id}`"
+                :href="`/company/packing/list/${idCompanyEncoded}`"
                 class="btn btn-clean kt-margin-r-10"
               >
                 <i class="la la-arrow-left" />
@@ -173,13 +173,15 @@ export default {
         company_id    : null,
         description   : null,
       },
+      idCompanyEncoded: null,
     }
   },
   async mounted () {
     try {
-      await this.$store.dispatch('company/getCompanyDetail', { idCompany: this.$route.params.id })
+      await this.$store.dispatch('company/getCompanyDetail', { idCompany: atob(this.$route.params.id) })
       this.company            = this.$store.getters['company/getCompanyDetail'].result
       this.packing.company_id = this.company.id
+      this.idCompanyEncoded   = btoa(this.company.id)
     } catch (error) {
       this.company = { id: '', name: '' }
     }
@@ -254,7 +256,7 @@ export default {
           this.$nuxt.$loading.finish()
           // eslint-disable-next-line no-undef
           KTUtil.scrollTop()
-          setTimeout(function () { window.location.href = `/company/packing/list/${app.company.id}` }, 3000)
+          setTimeout(function () { window.location.href = `/company/packing/list/${app.idCompanyEncoded}` }, 3000)
         } catch (error) {
           const parameter = {
             alertClass: 'alert-danger',

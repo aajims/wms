@@ -16,7 +16,7 @@
         <div class="kt-portlet__head-wrapper">
           <div class="kt-portlet__head-actions">
             <a
-              :href="`/company/packing/add/${company.id}`"
+              :href="`/company/packing/add/${idCompanyEncoded}`"
               class="btn btn-brand btn-elevate btn-icon-sm"
             >
               <i class="la la-plus" />
@@ -156,9 +156,11 @@ import moment from 'moment'
 export default {
   data () {
     return {
-      datatable: [],
-      company  : [],
-      params   : {
+      idCompanyEncoded: null,
+      idCompanyDecoded: null,
+      datatable       : [],
+      company         : [],
+      params          : {
         keyword  : '',
         search_by: '',
         filter   : { company_id: '' },
@@ -166,12 +168,18 @@ export default {
     }
   },
   async mounted () {
+    try {
+      this.idCompanyDecoded = atob(this.$route.params.id)
+    } catch (error) {
+
+    }
     if (this.$route.params.id !== undefined)
-      this.params.filter.company_id = this.$route.params.id
+      this.params.filter.company_id = this.idCompanyDecoded
 
     try {
-      await this.$store.dispatch('company/getCompanyDetail', { idCompany: this.$route.params.id })
-      this.company    = this.$store.getters['company/getCompanyDetail'].result
+      await this.$store.dispatch('company/getCompanyDetail', { idCompany: this.idCompanyDecoded })
+      this.company          = this.$store.getters['company/getCompanyDetail'].result
+      this.idCompanyEncoded = btoa(this.company.id)
     } catch (error) {
       this.company = { id: '', name: '' }
     }
@@ -236,10 +244,11 @@ export default {
           width    : '110px',
           orderable: false,
           render   : function (data, type, full, meta) {
-            return `<a href="/company/packing/detail/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
+            const idEncoded = btoa(full.id)
+            return `<a href="/company/packing/detail/${idEncoded}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
                       <i class="la la-eye"></i>
                     </a>
-                    <a href="/company/packing/edit/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
+                    <a href="/company/packing/edit/${idEncoded}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
                       <i class="la la-edit"></i>
                     </a>
                     <a class="btn btn-sm btn-clean btn-icon btn-icon-md action-button-status" data-index="${meta.row}" href="javascript:void(0)" title="Update Status">
@@ -333,7 +342,7 @@ export default {
       this.params = {
         keyword  : '',
         search_by: '',
-        filter   : {},
+        filter   : { company_id: this.idCompanyDecoded },
       }
       this.datatable.ajax.reload()
       $('#kt_form_filter').val('name')

@@ -16,7 +16,7 @@
           </div>
           <div class="kt-portlet__head-toolbar">
             <a
-              :href="`/company/packing/list/${packing.company_id}`"
+              :href="`/company/packing/list/${idCompanyEncoded}`"
               class="btn btn-clean kt-margin-r-10"
             >
               <i class="la la-arrow-left" />
@@ -197,16 +197,22 @@ import moment from 'moment'
 export default {
   data () {
     return {
-      packing    : [],
-      createdDate: '',
-      updatedDate: '',
+      packing         : [],
+      createdDate     : '',
+      updatedDate     : '',
+      idCompanyEncoded: null,
     }
   },
   async mounted () {
-    await this.$store.dispatch('packing/getPackingDetail', { idPacking: this.$route.params.id })
-    this.packing     = this.$store.getters['packing/getPackingDetail'].result
-    this.createdDate = moment(this.packing.created_at).format('DD/MM/Y HH:mm:ss')
-    this.updatedDate = moment(this.packing.updated_at).format('DD/MM/Y HH:mm:ss')
+    try {
+      await this.$store.dispatch('packing/getPackingDetail', { idPacking: atob(this.$route.params.id) })
+      this.packing          = this.$store.getters['packing/getPackingDetail'].result
+      this.idCompanyEncoded = btoa(this.packing.company_id)
+      this.createdDate      = moment(this.packing.created_at).format('DD/MM/Y HH:mm:ss')
+      this.updatedDate      = moment(this.packing.updated_at).format('DD/MM/Y HH:mm:ss')
+    } catch (error) {
+
+    }
   },
 }
 </script>
