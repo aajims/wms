@@ -27,3 +27,15 @@ export const WEIGHT_TYPE = [
     id: 'l', text: 'l', long_name: 'liter',
   },
 ]
+
+export const PRODUCT_TYPE = [
+  { id: 1, text: 'FIFO' },
+  { id: 2, text: 'LIFO' },
+  { id: 3, text: 'FEFO' },
+]
+
+export const PRODUCT_STATUS = [
+  { id: 1, text: 'Good' },
+  { id: 2, text: 'Quarantine' },
+  { id: 3, text: 'Damaged' },
+]

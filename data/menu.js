@@ -21,6 +21,13 @@ export default [
         param   : true,
         children: [],
       },
+      {
+        name    : 'Product',
+        icon    : 'kt-menu__link-bullet kt-menu__link-bullet--dot',
+        url     : '/product/list',
+        param   : true,
+        children: [],
+      },
     ],
   },
   {
