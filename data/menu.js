@@ -53,4 +53,12 @@ export default [
       },
     ],
   },
+  {
+    name        : 'Outgoing Stock',
+    icon        : 'fa flaticon-layer',
+    url         : '/outgoing',
+    folder      : false,
+    childDisplay: false,
+    children    : [],
+  },
 ]

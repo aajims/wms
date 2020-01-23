@@ -9,18 +9,18 @@
           <i class="kt-font-brand la la-building" />
         </span>
         <h3 class="kt-portlet__head-title">
-          Company List
+          Outgoing List
         </h3>
       </div>
       <div class="kt-portlet__head-toolbar">
         <div class="kt-portlet__head-wrapper">
           <div class="kt-portlet__head-actions">
             <a
-              href="/company/add"
+              href="/outgoing/add"
               class="btn btn-brand btn-elevate btn-icon-sm"
             >
               <i class="la la-plus" />
-              <span class="kt-hidden-mobile">Add Company</span>
+              <span class="kt-hidden-mobile">Add Outgoing</span>
             </a>
           </div>
         </div>
@@ -45,14 +45,14 @@
                       <option value="name">
                         Company Name
                       </option>
-                      <option value="address">
-                        Address
+                      <option value="order_no">
+                        No Order
                       </option>
-                      <option value="city_name">
-                        City
+                      <option value="from_warehouse_name">
+                        From Warehouse
                       </option>
-                      <option value="country_name">
-                        Country
+                      <option value="from_warehouse_name">
+                        To Warehouse
                       </option>
                     </select>
                   </div>
@@ -69,7 +69,7 @@
                     type="text"
                     class="form-control"
                     placeholder="Search..."
-                    @keyup="getCompany()"
+                    @keyup="getOutgoing()"
                   >
                   <span class="kt-input-icon__icon kt-input-icon__icon--left">
                     <span><i class="la la-search" /></span>
@@ -125,18 +125,19 @@
     <div class="kt-portlet__body">
       <!--begin: Datatable -->
       <table
-        id="company_table"
+        id="outgoing_table"
         class="table table-hover table-checkable"
       >
         <thead>
           <tr>
             <th>#</th>
+            <th>No Job</th>
             <th>Company Name</th>
-            <th>Address</th>
-            <th>City</th>
-            <th>Country</th>
+            <th>No Order</th>
+            <th>Order Date</th>
+            <th>From Warehouse</th>
+            <th>To Warehouse</th>
             <th>Status</th>
-            <th>Create By</th>
             <th>Created</th>
             <th>Actions</th>
           </tr>
@@ -177,30 +178,31 @@ export default {
         app.params.filter.status = $('#kt_form_status').val()
       else
         app.$delete(app.params.filter, 'status')
-      app.getCompany()
+      app.getOutgoing()
     })
     // begin first table
-    this.datatable = $('#company_table').DataTable({
+    this.datatable = $('#outgoing_table').DataTable({
       responsive: true,
       searching : false,
       processing: true,
       serverSide: true,
       ajax      : {
-        url : 'api/company/list',
+        url : 'api/outgoing/list',
         type: 'POST',
         data: function (d) {
           d.params = app.params
         },
       },
-      order  : [[7, 'desc']],
+      order  : [[8, 'desc']],
       columns: [
         { data: 'row_number' },
-        { data: 'name' },
-        { data: 'address' },
-        { data: 'city_name' },
-        { data: 'country_name' },
+        { data: 'job_no' },
+        { data: 'company_name' },
+        { data: 'order_no' },
+        { data: 'order_date' },
+        { data: 'from_warehouse_name' },
+        { data: 'to_warehouse_name' },
         { data: 'status' },
-        { data: 'created_by_name' },
         { data: 'created_at' },
         { data: 'actions', responsivePriority: -1 },
       ],
@@ -221,10 +223,10 @@ export default {
           orderable: false,
           render   : function (data, type, full, meta) {
             return `
-                        <a href="/company/detail/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
+                        <a href="/outgoing/detail/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
                           <i class="la la-eye"></i>
                         </a>
-                        <a href="/company/edit/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
+                        <a href="/outgoing/edit/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
                           <i class="la la-edit"></i>
                         </a>
                         <span class="dropdown">
@@ -233,8 +235,6 @@ export default {
                             </a>
                             <div class="dropdown-menu dropdown-menu-right">
                                 <a class="dropdown-item action-button-status" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-power-off"></i> Update Status</a>
-                                <a class="dropdown-item" href="/company/packing/list/${full.id}"><i class="fa flaticon2-open-box"></i> Packing</a>
-                                <a class="dropdown-item" href="javascript:void(0)"><i class="la la-qrcode"></i> Print QR Code</a>
                             </div>
                         </span>`
           },
@@ -247,7 +247,7 @@ export default {
           },
         },
         {
-          targets  : -4,
+          targets  : -3,
           className: 'dt-center',
           render   : function (data, type, full, meta) {
             const status = {
@@ -279,7 +279,7 @@ export default {
       // eslint-disable-next-line no-undef
       swal.fire({
         title             : 'Are you sure?',
-        text              : `Company "${row.name}" in Company "${row.name}" ${statusText}`,
+        text              : `outgoing "${row.job_no}" in outgoing "${row.order_no}" ${statusText}`,
         type              : 'question',
         showCancelButton  : true,
         confirmButtonText : statusText,
@@ -291,15 +291,15 @@ export default {
           app.updateStatus(row.id, row)
       })
     },
-    async updateStatus (idLocation, param) {
+    async updateStatus (idOutgoing, param) {
       try {
         this.$nuxt.$loading.start()
         param.status    = param.status === 1 ? 0 : 1
-        await this.$store.dispatch('company/editCompany', { idCompany: idLocation, data: param })
-        const data      = this.$store.getters['company/getEditCompany']
+        await this.$store.dispatch('outgoing/editOutgoing', { idOutgoing: idOutgoing, data: param })
+        const data      = this.$store.getters['outgoing/getEditOutgoing']
         const parameter = {
           alertClass: 'alert-success',
-          message   : `Company ${data.result.name} in Company ${data.result.warehouse_name} has been edited`,
+          message   : `Job Outgoing ${data.result.job_no} in Outgoing ${data.result.order_no} has been edited`,
         }
         this.$nuxt.$emit('alertShow', parameter)
         this.$nuxt.$loading.finish()
@@ -318,7 +318,7 @@ export default {
         KTUtil.scrollTop()
       }
     },
-    async getCompany () {
+    async getOutgoing () {
       this.params.search_by = $('#kt_form_filter').val()
       this.datatable.ajax.reload()
     },
@@ -330,6 +330,10 @@ export default {
       }
       this.datatable.ajax.reload()
       $('#kt_form_status').val('')
+      $('#kt_form_filter').val('name')
+      $('#kt_form_filter').val('order_no')
+      $('#kt_form_filter').val('from_warehouse_name')
+      $('#kt_form_filter').val('from_warehouse_name')
     },
   },
 }

@@ -43,6 +43,7 @@ module.exports = {
       { src: '/js/sweetalert2.init.js', body: true },
       { src: '/vendors/bootstrap-select.min.js', body: true },
       { src: '/vendors/datatables.bundle.min.js', body: true },
+      // { src: '/vendors/bootstrap-datepicker.min.js', body: true },
     ],
     bodyAttrs: { class: 'kt-quick-panel--right kt-demo-panel--right kt-offcanvas-panel--right kt-header--fixed kt-header-mobile--fixed kt-subheader--enabled kt-subheader--fixed kt-subheader--solid kt-aside--enabled kt-aside--fixed kt-page--loading' },
   },
