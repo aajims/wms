@@ -115,11 +115,11 @@
                 />
               </div>
               <div class="col-lg-6">
-                <label>Status <span style="color:red">*</span></label>
+                <label>Condition <span style="color:red">*</span></label>
                 <select
-                  id="status"
+                  id="condition"
                   class="form-control kt-select2"
-                  name="status"
+                  name="condition"
                 >
                   <option />
                 </select>
@@ -180,9 +180,7 @@
     <div
       id="packing_modal"
       class="modal fade"
-      tabindex="-1"
       role="dialog"
-      aria-labelledby="exampleModalLabel"
       aria-hidden="true"
     >
       <form
@@ -195,10 +193,7 @@
         >
           <div class="modal-content">
             <div class="modal-header">
-              <h5
-                id="exampleModalLabel"
-                class="modal-title"
-              >
+              <h5 class="modal-title">
                 Product Packing Type
               </h5>
               <button
@@ -316,24 +311,14 @@
 </template>
 
 <script>
-import { PRODUCT_TYPE, PRODUCT_STATUS, WEIGHT_TYPE } from '@/utils/constants'
+import { PRODUCT_TYPE, PRODUCT_CONDITION, WEIGHT_TYPE } from '@/utils/constants'
 
 export default {
   data () {
     return {
       company : [],
       category: [],
-      packing : {
-        packing_type_id  : null,
-        packing_type_name: null,
-        qty_max          : 0,
-        nett_weight_type : null,
-        nett_weight      : 0,
-        gross_weight_type: null,
-        gross_weight     : 0,
-        description      : null,
-      },
-      product: {
+      product : {
         name               : null,
         sku                : null,
         code               : null,
@@ -394,10 +379,10 @@ export default {
       validator.element($(this))
     })
 
-    $('#status').select2({
-      data: PRODUCT_STATUS, placeholder: 'Select a product status', allowClear: true,
+    $('#condition').select2({
+      data: PRODUCT_CONDITION, placeholder: 'Select a product condition', allowClear: true,
     })
-    $('#status').on('change', function () {
+    $('#condition').on('change', function () {
       validator.element($(this))
     })
 
@@ -408,7 +393,7 @@ export default {
         sku                : { required: true },
         category           : { required: true },
         type               : { required: true },
-        status             : { required: true },
+        condition          : { required: true },
         minimum_stock_alert: {
           required: true,
           digits  : true,
@@ -459,6 +444,9 @@ export default {
       $('#packing_type').on('change', function () {
         validatorModal.element($(this))
       })
+    })
+    $('#packing_modal').on('hidden.bs.modal', function () {
+      app.clearForm()
     })
 
     // touchspin
@@ -564,20 +552,21 @@ export default {
   },
   methods: {
     savePacking () {
-      this.packing.packing_type_id   = parseInt($('#packing_type').val())
-      this.packing.packing_type_name = $('#packing_type option:selected').text()
-      this.packing.qty_max           = parseInt($('#qty_max').val())
-      this.packing.nett_weight_type  = $('#nett_weight_type').val()
-      this.packing.nett_weight       = parseInt($('#nett_weight').val())
-      this.packing.gross_weight_type = $('#gross_weight_type').val()
-      this.packing.gross_weight      = parseInt($('#gross_weight').val())
-      this.packing.description       = $('#description').val()
+      const packing = {
+        packing_type_id  : parseInt($('#packing_type').val()),
+        packing_type_name: $('#packing_type option:selected').text(),
+        qty_max          : parseInt($('#qty_max').val()),
+        nett_weight_type : $('#nett_weight_type').val(),
+        nett_weight      : parseInt($('#nett_weight').val()),
+        gross_weight_type: $('#gross_weight_type').val(),
+        gross_weight     : parseInt($('#gross_weight').val()),
+        description      : $('#description').val(),
+      }
       if ($('#row_index').val().trim() === '')
-        this.datatable.row.add(this.packing).draw()
+        this.datatable.row.add(packing).draw()
       else
-        this.datatable.row($('#row_index').val().trim()).data(this.packing).draw()
+        this.datatable.row($('#row_index').val().trim()).data(packing).draw()
       $('#packing_modal').modal('hide')
-      this.clearForm()
     },
     clearForm () {
       $('#packing_type').val(null).trigger('change')
@@ -587,6 +576,7 @@ export default {
       $('#nett_weight').val(0)
       $('#gross_weight').val(0)
       $('#description').val(null)
+      $('#row_index').val('')
     },
     async addProduct (data) {
       const app = this
@@ -594,7 +584,7 @@ export default {
         this.product.minimum_stock_alert = parseInt(this.product.minimum_stock_alert)
         this.product.product_category_id = parseInt($('#category').val())
         this.product.type                = parseInt($('#type').val())
-        this.product.product_status      = parseInt($('#status').val())
+        this.product.product_status      = parseInt($('#condition').val())
         this.product.products_packing    = data
         try {
           this.$nuxt.$loading.start()

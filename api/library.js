@@ -63,24 +63,8 @@ function generateParameter (requestQuery) {
   return params
 }
 
-function generatePostData (postData) {
-  let data = Object.assign({})
-  for (const postKey in postData) {
-    if (Array.isArray(postData[postKey]) === true) {
-      for (const key in postData[postKey]) {
-        for (const childKey in postData[postKey][key])
-          data[`${postKey}[${key}][${childKey}]`] = postData[postKey][key][childKey]
-      }
-    } else
-      data[`${postKey}`] = postData[postKey]
-  }
-
-  return data
-}
-
 module.exports = {
   generateDatatableParameter: generateDatatableParameter,
   generateDatatableResult   : generateDatatableResult,
   generateParameter         : generateParameter,
-  generatePostData          : generatePostData,
 }

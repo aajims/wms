@@ -253,7 +253,7 @@ export default {
           },
         },
         {
-          targets  : 6,
+          targets  : 5,
           className: 'dt-center',
           render   : function (data, type, full, meta) {
             let productType = ''

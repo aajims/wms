@@ -3,10 +3,13 @@ export const DIMENSION_TYPE = [
     id: 'cm', text: 'cm', long_name: 'centi_mater',
   },
   {
+    id: 'in', text: 'inch', long_name: 'inch',
+  },
+  {
     id: 'm', text: 'm', long_name: 'meter',
   },
   {
-    id: 'km', text: 'km', long_name: 'kilo_meter',
+    id: 'sqm', text: 'sqm', long_name: 'kilo_meter',
   },
 ]
 
@@ -34,8 +37,17 @@ export const PRODUCT_TYPE = [
   { id: 3, text: 'FEFO' },
 ]
 
-export const PRODUCT_STATUS = [
+export const PRODUCT_CONDITION = [
   { id: 1, text: 'Good' },
   { id: 2, text: 'Quarantine' },
   { id: 3, text: 'Damaged' },
+]
+
+export const STATUS = [
+  {
+    id: 0, text: 'Inactive', class: 'danger',
+  },
+  {
+    id: 1, text: 'Active', class: 'success',
+  },
 ]
