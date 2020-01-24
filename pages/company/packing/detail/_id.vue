@@ -11,7 +11,7 @@
               <i class="kt-font-brand flaticon-clipboard" />
             </span>
             <h3 class="kt-portlet__head-title">
-              Packing Detail
+              Packing Detail ({{ packing.company_name }})
             </h3>
           </div>
           <div class="kt-portlet__head-toolbar">
@@ -29,7 +29,7 @@
             <div class="col-lg-6">
               <label>Name</label>
               <input
-                v-model="packing.name"
+                :value="packing.name"
                 type="text"
                 class="form-control"
                 readonly
@@ -38,7 +38,7 @@
             <div class="col-lg-6">
               <label>Code</label>
               <input
-                v-model="packing.code"
+                :value="packing.code"
                 type="text"
                 class="form-control"
                 readonly
@@ -49,7 +49,7 @@
             <div class="col-lg-6">
               <label>Dimension Type</label>
               <input
-                v-model="packing.dimension_type"
+                :value="packing.dimension_type"
                 type="text"
                 class="form-control"
                 readonly
@@ -58,7 +58,7 @@
             <div class="col-lg-6">
               <label>Length</label>
               <input
-                v-model="packing.length"
+                :value="packing.length"
                 type="text"
                 class="form-control"
                 readonly
@@ -69,7 +69,7 @@
             <div class="col-lg-6">
               <label>Width</label>
               <input
-                v-model="packing.width"
+                :value="packing.width"
                 type="text"
                 class="form-control"
                 readonly
@@ -78,7 +78,7 @@
             <div class="col-lg-6">
               <label>Height</label>
               <input
-                v-model="packing.height"
+                :value="packing.height"
                 type="text"
                 class="form-control"
                 readonly
@@ -89,7 +89,7 @@
             <div class="col-lg-6">
               <label>Weight Type</label>
               <input
-                v-model="packing.weight_type"
+                :value="packing.weight_type"
                 type="text"
                 class="form-control"
                 readonly
@@ -98,7 +98,7 @@
             <div class="col-lg-6">
               <label>Weight</label>
               <input
-                v-model="packing.weight"
+                :value="packing.weight"
                 type="text"
                 class="form-control"
                 readonly
@@ -109,7 +109,7 @@
             <div class="col-lg-12">
               <label for="address">Description</label>
               <textarea
-                v-model="packing.description"
+                :value="packing.description"
                 class="form-control"
                 rows="3"
                 readonly
@@ -120,7 +120,7 @@
             <div class="col-lg-6">
               <label for="city">Company</label>
               <input
-                v-model="packing.company_name"
+                :value="packing.company_name"
                 type="text"
                 class="form-control"
                 readonly
@@ -129,20 +129,15 @@
             <div class="col-lg-6">
               <label>Status</label><br>
               <span
-                v-if="packing.status === 1"
-                class="btn btn-success"
-              > Active </span>
-              <span
-                v-else
-                class="btn btn-danger"
-              > Inactive </span>
+                :class="`btn btn-${status.class}`"
+              > {{ status.text }} </span>
             </div>
           </div>
           <div class="form-group row">
             <div class="col-lg-6">
               <label>Created By</label>
               <input
-                v-model="packing.created_by_name"
+                :value="packing.created_by_name"
                 type="text"
                 class="form-control"
                 readonly
@@ -151,7 +146,7 @@
             <div class="col-lg-6">
               <label>Created Date</label>
               <input
-                v-model="createdDate"
+                :value="createdDate"
                 type="text"
                 class="form-control"
                 readonly
@@ -162,7 +157,7 @@
             <div class="col-lg-6">
               <label>Updated By</label>
               <input
-                v-model="packing.updated_by_name"
+                :value="packing.updated_by_name"
                 type="text"
                 class="form-control"
                 readonly
@@ -171,7 +166,7 @@
             <div class="col-lg-6">
               <label>Updated Date</label>
               <input
-                v-model="updatedDate"
+                :value="updatedDate"
                 type="text"
                 class="form-control"
                 readonly
@@ -193,6 +188,7 @@
 </template>
 
 <script>
+import { STATUS } from '@/utils/constants'
 import moment from 'moment'
 export default {
   data () {
@@ -201,6 +197,7 @@ export default {
       createdDate     : '',
       updatedDate     : '',
       idCompanyEncoded: null,
+      status          : [],
     }
   },
   async mounted () {
@@ -208,8 +205,10 @@ export default {
       await this.$store.dispatch('packing/getPackingDetail', { idPacking: atob(this.$route.params.id) })
       this.packing          = this.$store.getters['packing/getPackingDetail'].result
       this.idCompanyEncoded = btoa(this.packing.company_id)
+      this.status           = STATUS[this.product.status]
       this.createdDate      = moment(this.packing.created_at).format('DD/MM/Y HH:mm:ss')
-      this.updatedDate      = moment(this.packing.updated_at).format('DD/MM/Y HH:mm:ss')
+      if (this.updatedDate !== '' && this.updatedDate !== null)
+        this.updatedDate      = moment(this.packing.updated_at).format('DD/MM/Y HH:mm:ss')
     } catch (error) {
 
     }

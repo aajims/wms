@@ -13,10 +13,10 @@
           <div class="kt-portlet__head kt-portlet__head--lg">
             <div class="kt-portlet__head-label">
               <span class="kt-portlet__head-icon">
-                <i class="kt-font-brand flaticon-add" />
+                <i class="kt-font-brand flaticon-edit-1" />
               </span>
               <h3 class="kt-portlet__head-title">
-                Add Product ({{ company.name }})
+                Edit Product ({{ company_name }})
               </h3>
             </div>
             <div class="kt-portlet__head-toolbar">
@@ -144,7 +144,7 @@
               </div>
             </div>
             <div class="form-group row">
-              <div class="col-lg-8">
+              <div class="col-lg-9">
                 <!--begin: Datatable -->
                 <table
                   id="packing_table"
@@ -156,6 +156,7 @@
                       <th>Qty Max</th>
                       <th>Nett Weight</th>
                       <th>Gross Weight</th>
+                      <th>Status</th>
                       <th>Description</th>
                       <th>Actions</th>
                     </tr>
@@ -284,6 +285,16 @@
                     type="hidden"
                     value=""
                   >
+                  <input
+                    id="row_id"
+                    type="hidden"
+                    value=""
+                  >
+                  <input
+                    id="packing_status"
+                    type="hidden"
+                    value=""
+                  >
                 </div>
               </div>
             </div>
@@ -311,13 +322,13 @@
 </template>
 
 <script>
-import { PRODUCT_TYPE, PRODUCT_CONDITION, WEIGHT_TYPE } from '@/utils/constants'
+import { PRODUCT_TYPE, PRODUCT_CONDITION, WEIGHT_TYPE, STATUS } from '@/utils/constants'
 
 export default {
   data () {
     return {
-      company : [],
       category: [],
+      packing : [],
       product : {
         name               : null,
         sku                : null,
@@ -329,22 +340,54 @@ export default {
         company_id         : null,
         description        : null,
         products_packing   : [],
+        status             : null,
       },
-      idCompanyEncoded: null,
-      packingSelect   : null,
-      datatable       : [],
+      idCompanyEncoded     : null,
+      packingSelect        : null,
+      datatable            : [],
+      product_category_name: null,
+      company_name         : null,
     }
   },
   async mounted () {
     try {
       await this.$store.dispatch('packing/getPacking')
-      this.packingSelect      = this.$store.getters['packing/getPacking']
-      await this.$store.dispatch('company/getCompanyDetail', { idCompany: atob(this.$route.params.id) })
-      this.company            = this.$store.getters['company/getCompanyDetail'].result
-      this.product.company_id = this.company.id
-      this.idCompanyEncoded   = btoa(this.company.id)
+      this.packingSelect    = this.$store.getters['packing/getPacking']
+
+      await this.$store.dispatch('product/getProductDetail', { idProduct: atob(this.$route.params.id) })
+      const productDetail   = this.$store.getters['product/getProductDetail'].result
+
+      this.product.name                = productDetail.name
+      this.product.sku                 = productDetail.sku
+      this.product.code                = productDetail.code
+      this.product.type                = productDetail.type
+      this.product_category_name       = productDetail.product_category_name
+      this.product.product_category_id = productDetail.product_category_id
+      this.product.minimum_stock_alert = productDetail.minimum_stock_alert
+      this.product.product_status      = productDetail.product_status
+      this.product.company_id          = productDetail.company_id
+      this.product.description         = productDetail.description
+      this.product.status              = productDetail.status
+      // set product packing
+      productDetail.products_packing.forEach((value) => {
+        const productsPacking     = {
+          id               : value.id,
+          packing_type_id  : value.packing_type_id,
+          packing_type_name: value.packing_type_name,
+          qty_max          : value.qty_max,
+          nett_weight_type : value.nett_weight_type,
+          nett_weight      : value.nett_weight,
+          gross_weight_type: value.gross_weight_type,
+          gross_weight     : value.gross_weight,
+          description      : value.description,
+          status           : value.status,
+        }
+        this.product.products_packing.push(productsPacking)
+      })
+      this.company_name     = productDetail.company_name
+      this.idCompanyEncoded = btoa(this.product.company_id)
     } catch (error) {
-      this.company = { id: '', name: '' }
+
     }
 
     $('#category').select2({
@@ -368,6 +411,8 @@ export default {
         },
       },
     })
+    const newOptionCategory = new Option(this.product_category_name, this.product.product_category_id, true, true)
+    $('#category').append(newOptionCategory).trigger('change')
     $('#category').on('change', function () {
       validator.element($(this))
     })
@@ -375,6 +420,7 @@ export default {
     $('#type').select2({
       data: PRODUCT_TYPE, placeholder: 'Select a product type', allowClear: true,
     })
+    $('#type').val(this.product.type).trigger('change')
     $('#type').on('change', function () {
       validator.element($(this))
     })
@@ -382,6 +428,7 @@ export default {
     $('#condition').select2({
       data: PRODUCT_CONDITION, placeholder: 'Select a product condition', allowClear: true,
     })
+    $('#condition').val(this.product.product_status).trigger('change')
     $('#condition').on('change', function () {
       validator.element($(this))
     })
@@ -417,11 +464,14 @@ export default {
           })
           return false
         }
-        app.addProduct(data)
+        app.editProduct(data)
       },
     })
 
     // form modal
+    $('#gross_weight_type').select2({ data: WEIGHT_TYPE })
+    $('#nett_weight_type').select2({ data: WEIGHT_TYPE })
+    $('#packing_type').select2({ data: this.packingSelect })
     const app = this
     $('#packing_modal').on('shown.bs.modal', function () {
       $('#gross_weight_type').select2({
@@ -473,11 +523,14 @@ export default {
       paging    : false,
       info      : false,
       searching : false,
+      data      : app.product.products_packing,
+      rowId     : 'id',
       columns   : [
         { data: 'packing_type_name' },
         { data: 'qty_max' },
         { data: 'nett_weight' },
         { data: 'gross_weight' },
+        { data: 'status' },
         { data: 'description' },
         { data: 'actions', responsivePriority: -1 },
       ],
@@ -501,13 +554,25 @@ export default {
           },
         },
         {
+          targets  : -3,
+          className: 'dt-center',
+          render   : function (data, type, full, meta) {
+            if (typeof STATUS[data] === 'undefined')
+              return data
+
+            return `<span class="kt-badge kt-badge--${STATUS[data].class} kt-badge--inline">${STATUS[data].text}</span>`
+          },
+        },
+        {
           targets: -1,
           render : function (data, type, full, meta) {
+            const iconAdditional  = full.id === '' ? 'la la-trash' : 'la la-power-off'
+            const titleAdditional = full.id === '' ? 'Delete' : 'Update Status'
             return `<a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit">
                       <i class="la la-edit"></i>
                     </a>
-                    <a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Delete">
-                      <i class="la la-trash"></i>
+                    <a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="${titleAdditional}">
+                      <i class="${iconAdditional}"></i>
                     </a>`
           },
         },
@@ -519,11 +584,21 @@ export default {
       app.datatable.row($(this).parents('tr')).remove().draw()
     })
 
+    // change status datatable row
+    $('#packing_table').on('click', '.la-power-off', function () {
+      const rowIndex = app.datatable.row($(this).parents('tr')).index()
+      const rowData  = app.datatable.row($(this).parents('tr')).data()
+      app.updateStatus(rowIndex, rowData)
+    })
+
     // edit datatable row
     $('#packing_table').on('click', '.la-edit', function () {
       const rowIndex = app.datatable.row($(this).parents('tr')).index()
+      const rowId    = app.datatable.row($(this).parents('tr')).id()
       const rowData  = app.datatable.row($(this).parents('tr')).data()
+      $('#row_id').val(rowId)
       $('#row_index').val(rowIndex)
+      $('#packing_status').val(rowData.status)
       $('#description').val(rowData.description)
       $('#qty_max').val(rowData.qty_max)
       $('#nett_weight').val(rowData.nett_weight)
@@ -552,7 +627,8 @@ export default {
   },
   methods: {
     savePacking () {
-      const packing = {
+      const packingSave = {
+        id               : $('#row_id').val().trim(),
         packing_type_id  : parseInt($('#packing_type').val()),
         packing_type_name: $('#packing_type option:selected').text(),
         qty_max          : parseInt($('#qty_max').val()),
@@ -561,12 +637,17 @@ export default {
         gross_weight_type: $('#gross_weight_type').val(),
         gross_weight     : parseInt($('#gross_weight').val()),
         description      : $('#description').val(),
+        status           : $('#packing_status').val() === '' ? 1 : $('#packing_status').val(),
       }
       if ($('#row_index').val().trim() === '')
-        this.datatable.row.add(packing).draw()
+        this.datatable.row.add(packingSave).draw()
       else
-        this.datatable.row($('#row_index').val().trim()).data(packing).draw()
+        this.datatable.row($('#row_index').val().trim()).data(packingSave).draw()
       $('#packing_modal').modal('hide')
+    },
+    updateStatus (index, data) {
+      data.status = data.status === 1 ? 0 : 1
+      this.datatable.row(index).data(data).draw()
     },
     clearForm () {
       $('#packing_type').val(null).trigger('change')
@@ -577,8 +658,10 @@ export default {
       $('#gross_weight').val(0)
       $('#description').val(null)
       $('#row_index').val('')
+      $('#row_id').val('')
+      $('#packing_status').val('')
     },
-    async addProduct (data) {
+    async editProduct (data) {
       const app = this
       if ($('#product_form').valid()) {
         this.product.minimum_stock_alert = parseInt(this.product.minimum_stock_alert)
@@ -588,11 +671,11 @@ export default {
         this.product.products_packing    = data
         try {
           this.$nuxt.$loading.start()
-          await this.$store.dispatch('product/addProduct', { data: this.product })
-          const data      = this.$store.getters['product/getAddSuccess']
+          await this.$store.dispatch('product/editProduct', { idProduct: atob(this.$route.params.id), data: this.product })
+          const data      = this.$store.getters['product/getEditProduct']
           const parameter = {
             alertClass: 'alert-success',
-            message   : `Product ${data.result.name} has been added`,
+            message   : `Product ${data.result.name} has been edited`,
           }
           this.$nuxt.$emit('alertShow', parameter)
           this.$nuxt.$loading.finish()

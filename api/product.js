@@ -29,7 +29,6 @@ app.post('/product/list', (request, response) => {
 })
 
 app.post('/product/add', (request, response) => {
-  const postData = library.generatePostData(request.body)
   const token    = request.cookies[`${process.env.APP_ENV}_token`]
   axios({
     method : 'post',
@@ -38,7 +37,7 @@ app.post('/product/add', (request, response) => {
       'Content-Type' : 'application/x-www-form-urlencoded',
       'Authorization': `Bearer ${token}`,
     },
-    data: postData,
+    data: request.body,
   }).then(function (responseApi) {
     response.send(responseApi.data)
   }).catch(function (error) {
