@@ -11,8 +11,8 @@ const location  = require('./location')
 const category  = require('./category')
 const region    = require('./region')
 const packing   = require('./packing')
-const order     = require('./order')
 const product   = require('./product')
+const order     = require('./order')
 
 // Import API Routes
 app.use(login)
