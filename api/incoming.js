@@ -8,12 +8,12 @@ app.use(bodyParser.urlencoded({ extended: true }))
 
 const library = require('./library.js')
 
-app.post('/company/list', (request, response) => {
+app.post('/incoming/list', (request, response) => {
   const params = library.generateDatatableParameter(request.body)
   const token  = request.cookies[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
-    url    : `${process.env.API_URL}/v1/company/`,
+    url    : `${process.env.API_URL}/v1/job-incoming/`,
     headers: {
       'Content-Type' : 'application/x-www-form-urlencoded',
       'Authorization': `Bearer ${token}`,
@@ -27,11 +27,12 @@ app.post('/company/list', (request, response) => {
     response.status(error.response.status).send(error.response.data)
   })
 })
-app.post('/company/add', (request, response) => {
+
+app.post('/incoming/add', (request, response) => {
   const token = request.cookies[`${process.env.APP_ENV}_token`]
   axios({
     method : 'post',
-    url    : `${process.env.API_URL}/v1/company`,
+    url    : `${process.env.API_URL}/v1/incoming`,
     headers: {
       'Content-Type' : 'application/x-www-form-urlencoded',
       'Authorization': `Bearer ${token}`,
@@ -43,27 +44,12 @@ app.post('/company/add', (request, response) => {
     response.status(error.response.status).send(error.response.data)
   })
 })
-app.get('/company/detail', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
-  axios({
-    method : 'get',
-    url    : `${process.env.API_URL}/v1/company/${request.query.id_company}`,
-    headers: {
-      'Content-Type' : 'application/x-www-form-urlencoded',
-      'Authorization': `Bearer ${token}`,
-    },
-  }).then(function (responseApi) {
-    response.send(responseApi.data)
-  }).catch(function (error) {
-    response.status(error.response.status).send(error.response.data)
-  })
-})
 
-app.put('/company/edit', (request, response) => {
+app.put('/incoming/edit', (request, response) => {
   const token = request.cookies[`${process.env.APP_ENV}_token`]
   axios({
     method : 'put',
-    url    : `${process.env.API_URL}/v1/company/${request.body.id_company}`,
+    url    : `${process.env.API_URL}/v1/job-incoming/${request.body.id_incoming}`,
     headers: {
       'Content-Type' : 'application/x-www-form-urlencoded',
       'Authorization': `Bearer ${token}`,
@@ -76,23 +62,14 @@ app.put('/company/edit', (request, response) => {
   })
 })
 
-app.get('/company/select', (request, response) => {
+app.get('/incoming/detail', (request, response) => {
   const token = request.cookies[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
-    url    : `${process.env.API_URL}/v1/company`,
+    url    : `${process.env.API_URL}/v1/incoming/${request.query.id_incoming}`,
     headers: {
       'Content-Type' : 'application/x-www-form-urlencoded',
       'Authorization': `Bearer ${token}`,
-    },
-    params: {
-      'page'          : 1,
-      'per_page'      : 100,
-      'sort_by'       : 'name',
-      'sort'          : 'asc',
-      'search_by'     : 'name',
-      'keyword'       : request.query.term,
-      'filter[status]': 1,
     },
   }).then(function (responseApi) {
     response.send(responseApi.data)
