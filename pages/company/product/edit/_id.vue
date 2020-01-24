@@ -288,7 +288,7 @@
                   <input
                     id="row_id"
                     type="hidden"
-                    value=""
+                    value="0"
                   >
                   <input
                     id="packing_status"
@@ -628,7 +628,7 @@ export default {
   methods: {
     savePacking () {
       const packingSave = {
-        id               : $('#row_id').val().trim(),
+        id               : parseInt($('#row_id').val().trim()),
         packing_type_id  : parseInt($('#packing_type').val()),
         packing_type_name: $('#packing_type option:selected').text(),
         qty_max          : parseInt($('#qty_max').val()),
@@ -637,7 +637,7 @@ export default {
         gross_weight_type: $('#gross_weight_type').val(),
         gross_weight     : parseInt($('#gross_weight').val()),
         description      : $('#description').val(),
-        status           : $('#packing_status').val() === '' ? 1 : $('#packing_status').val(),
+        status           : $('#packing_status').val() === '' ? 1 : parseInt($('#packing_status').val()),
       }
       if ($('#row_index').val().trim() === '')
         this.datatable.row.add(packingSave).draw()
@@ -658,7 +658,7 @@ export default {
       $('#gross_weight').val(0)
       $('#description').val(null)
       $('#row_index').val('')
-      $('#row_id').val('')
+      $('#row_id').val(0)
       $('#packing_status').val('')
     },
     async editProduct (data) {

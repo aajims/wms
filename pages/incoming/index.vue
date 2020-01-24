@@ -1,0 +1,531 @@
+<template>
+  <div
+    id="kt_page_portlet"
+    class="kt-portlet kt-portlet--last kt-portlet--head-lg kt-portlet--responsive-mobile"
+  >
+    <div class="kt-portlet__head kt-portlet__head--lg">
+      <div class="kt-portlet__head-label">
+        <span class="kt-portlet__head-icon">
+          <i class="kt-font-brand la la-sign-in" />
+        </span>
+        <h3 class="kt-portlet__head-title">
+          Incoming Stock
+        </h3>
+      </div>
+      <div class="kt-portlet__head-toolbar">
+        <div class="kt-portlet__head-wrapper">
+          <div class="kt-portlet__head-actions">
+            <a
+              href="/incoming/add"
+              class="btn btn-brand btn-elevate btn-icon-sm"
+            >
+              <i class="la la-plus" />
+              <span class="kt-hidden-mobile">Add Incoming Stock</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="kt-portlet__body">
+      <!--begin: Search Form -->
+      <div class="kt-form kt-form--label-right kt-margin-t-20 kt-margin-b-10">
+        <div class="row align-items-center">
+          <div class="col-xl-12 order-2 order-xl-1">
+            <div class="row align-items-center">
+              <div class="col-md-2 kt-margin-b-20-tablet-and-mobile">
+                <div class="kt-form__group">
+                  <div class="kt-form__label">
+                    <label>Filter By:</label>
+                  </div>
+                  <div class="kt-form__control">
+                    <select
+                      id="kt_form_filter"
+                      class="form-control bootstrap-select selectpicker"
+                    >
+                      <option
+                        v-for="(item, index) in filter_by"
+                        :key="index"
+                        :value="index"
+                      >
+                        {{ item }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 kt-margin-b-20-tablet-and-mobile">
+                <div class="kt-form__label">
+                  <label>Search:</label>
+                </div>
+                <div class="kt-input-icon kt-input-icon--left">
+                  <input
+                    v-model="params.keyword"
+                    type="text"
+                    class="form-control"
+                    placeholder="Search..."
+                    @keyup="getIncoming()"
+                  >
+                  <span class="kt-input-icon__icon kt-input-icon__icon--left">
+                    <span><i class="la la-search" /></span>
+                  </span>
+                </div>
+              </div>
+              <div class="col-md-2 kt-margin-b-20-tablet-and-mobile">
+                <div class="kt-form__group">
+                  <div class="kt-form__label">
+                    <label>Status:</label>
+                  </div>
+                  <div class="kt-form__control">
+                    <select
+                      id="kt_form_status"
+                      class="form-control bootstrap-select selectpicker"
+                    >
+                      <option value="">
+                        All
+                      </option>
+                      <option
+                        v-for="item in job_status"
+                        :key="item.id"
+                        :value="item.id"
+                      >
+                        {{ item.text }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 kt-margin-b-20-tablet-and-mobile">
+                <div class="kt-form__group">
+                  <div class="kt-form__label">
+                    <label>Warehouse:</label>
+                  </div>
+                  <div class="kt-form__control">
+                    <select
+                      id="warehouse"
+                      class="form-control kt-select2"
+                      name="to_warehouse_id"
+                    >
+                      <option />
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-2 kt-margin-b-20-tablet-and-mobile">
+                <div class="kt-form__group">
+                  <div class="kt-form__label">
+                    <label>&nbsp;</label>
+                  </div>
+                  <div class="kt-form__control">
+                    <a
+                      href="javascript:void(0)"
+                      class="btn btn-default"
+                      @click="clearForm"
+                    >
+                      <i class="flaticon2-circular-arrow" /> Clear
+                    </a>
+                    <div class="kt-separator d-xl-none" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <br>
+      <div class="row align-items-center">
+        <div class="col-xl-12 order-2 order-xl-1">
+          <div class="row align-items-center">
+            <div class="col-md-2 kt-margin-b-20-tablet-and-mobile">
+              <div class="kt-form__group">
+                <div class="kt-form__label">
+                  <label>Filter Date By:</label>
+                </div>
+                <div class="kt-form__control">
+                  <select
+                    id="kt_form_filter_date"
+                    class="form-control bootstrap-select selectpicker"
+                  >
+                    <option
+                      v-for="(item, index) in filter_date_by"
+                      :key="index"
+                      :value="index"
+                    >
+                      {{ item }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 kt-margin-b-20-tablet-and-mobile">
+              <div class="kt-form__group">
+                <div class="kt-form__label">
+                  <label>From / To:</label>
+                </div>
+                <div class="kt-form__control">
+                  <div
+                    id="from_to"
+                    class="input-daterange input-group"
+                  >
+                    <input
+                      id="from"
+                      type="text"
+                      class="form-control"
+                    >
+                    <div class="input-group-append">
+                      <span class="input-group-text">/</span>
+                    </div>
+                    <input
+                      id="to"
+                      type="text"
+                      class="form-control"
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 kt-margin-b-20-tablet-and-mobile">
+              <div class="kt-form__group">
+                <div class="kt-form__label">
+                  <label>Company:</label>
+                </div>
+                <div class="kt-form__control">
+                  <select
+                    id="company"
+                    class="form-control kt-select2"
+                  >
+                    <option />
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--end: Search Form -->
+    </div>
+
+    <div class="kt-portlet__body">
+      <!--begin: Datatable -->
+      <table
+        id="incoming_table"
+        class="table table-hover table-checkable"
+      >
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Incoming No.</th>
+            <th>Company</th>
+            <th>Warehouse</th>
+            <th>Country</th>
+            <th>Status</th>
+            <th>ETD</th>
+            <th>ETA</th>
+            <th>Created</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+      </table>
+    <!--end: Datatable -->
+    </div>
+
+    <!-- begin::Scrolltop -->
+    <div
+      id="kt_scrolltop"
+      class="kt-scrolltop"
+    >
+      <i class="flaticon flaticon-up-arrow-1" />
+    </div>
+    <!-- end::Scrolltop -->
+  </div>
+</template>
+
+<script>
+import moment from 'moment'
+import { JOB_STATUS } from '@/utils/constants'
+
+export default {
+  data () {
+    return {
+      filter_by: {
+        job_no          : 'Job No',
+        from            : 'From',
+        to              : 'To',
+        flight          : 'Flight',
+        transport_number: 'Transport Number',
+      },
+      filter_date_by: {
+        'created_at-range': 'Created Date',
+        'updated_at-range': 'Updated Date',
+        'etd-range'       : 'ETD',
+        'eta-range'       : 'ETA',
+        'order-date-range': 'Order Date',
+      },
+      job_status: JOB_STATUS,
+      datatable : [],
+      params    : {
+        keyword  : '',
+        search_by: '',
+        filter   : {},
+      },
+    }
+  },
+  async mounted () {
+    const app = this
+    $('#warehouse').select2({
+      placeholder       : 'Select warehouse',
+      minimumInputLength: 1,
+      width             : '100%',
+      allowClear        : true,
+      ajax              : {
+        type          : 'GET',
+        url           : '/api/warehouse/select',
+        cache         : true,
+        processResults: function (data) {
+          return {
+            results: $.map(data.result, function (object) {
+              return {
+                id  : object.id,
+                text: object.name,
+              }
+            }),
+          }
+        },
+      },
+    })
+    $('#warehouse').on('change', function () {
+      if ($('#warehouse').val() !== '' && $('#warehouse').val() !== null)
+        app.params.filter.to_warehouse_id = $('#warehouse').val()
+      else
+        app.$delete(app.params.filter, 'to_warehouse_id')
+      app.getIncoming()
+    })
+
+    $('#company').select2({
+      placeholder       : 'Select company',
+      minimumInputLength: 1,
+      width             : '100%',
+      allowClear        : true,
+      ajax              : {
+        type          : 'GET',
+        url           : '/api/company/select',
+        cache         : true,
+        processResults: function (data) {
+          return {
+            results: $.map(data.result, function (object) {
+              return {
+                id  : object.id,
+                text: object.name,
+              }
+            }),
+          }
+        },
+      },
+    })
+    $('#company').on('change', function () {
+      if ($('#company').val() !== '' && $('#company').val() !== null)
+        app.params.filter.company_id = $('#company').val()
+      else
+        app.$delete(app.params.filter, 'company_id')
+      app.getIncoming()
+    })
+
+    $('#kt_form_status').on('change', function () {
+      if ($('#kt_form_status').val() !== '' && $('#kt_form_status').val() !== null)
+        app.params.filter.status = $('#kt_form_status').val()
+      else
+        app.$delete(app.params.filter, 'status')
+      app.getIncoming()
+    })
+
+    $('#from_to').datepicker({
+      todayHighlight: true,
+      orientation   : 'bottom left',
+      todayBtn      : 'linked',
+      templates     : {
+        leftArrow : '<i class="la la-angle-left"></i>',
+        rightArrow: '<i class="la la-angle-right"></i>',
+      },
+      format: 'dd/mm/yyyy',
+    }).on('changeDate', function (event) {
+      app.params.filter.etd = $('#company').val()
+      app.params.filter.eta = $('#company').val()
+      app.getIncoming()
+    })
+
+    // begin first table
+    this.datatable = $('#incoming_table').DataTable({
+      responsive: true,
+      searching : false,
+      processing: true,
+      serverSide: true,
+      ajax      : {
+        url : '/api/incoming/list',
+        type: 'POST',
+        data: function (d) {
+          d.params = app.params
+        },
+      },
+      order  : [[8, 'desc']],
+      columns: [
+        { data: 'row_number' },
+        { data: 'job_no' },
+        { data: 'company_name' },
+        { data: 'to_warehouse_name' },
+        { data: 'from_country_name' },
+        { data: 'status' },
+        { data: 'etd' },
+        { data: 'eta' },
+        { data: 'created_at' },
+        { data: 'actions', responsivePriority: -1 },
+      ],
+      columnDefs: [
+        {
+          targets  : 0,
+          orderable: false,
+        },
+        {
+          targets  : 2,
+          orderable: false,
+        },
+        {
+          targets  : 3,
+          orderable: false,
+        },
+        {
+          targets  : 4,
+          orderable: false,
+        },
+        {
+          targets  : -1,
+          title    : 'Actions',
+          className: 'dt-center',
+          width    : '110px',
+          orderable: false,
+          render   : function (data, type, full, meta) {
+            let actionButtonCancel = ''
+            if (full.status === 3)
+              actionButtonCancel = `<a class="dropdown-item action-button-cancel"  data-index="${meta.row}" href="javascript:void(0)"><i class="la la-times-circle"></i> Cancel Job</a>`
+
+            return `<a href="/incoming/detail/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
+                      <i class="la la-eye"></i>
+                    </a>
+                    <a href="/incoming/edit/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
+                      <i class="la la-edit"></i>
+                    </a>
+                    <span class="dropdown">
+                        <a href="javascript:void(0)" class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="dropdown" aria-expanded="true">
+                          <i class="la la-ellipsis-h"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="javascript:void(0)"><i class="la la-print"></i> Print</a>
+                            <a class="dropdown-item" href="javascript:void(0)"><i class="la la-qrcode"></i> Print QR Code</a>
+                            ${actionButtonCancel}
+                        </div>
+                    </span>`
+          },
+        },
+        {
+          targets  : -5,
+          className: 'dt-center',
+          render   : function (data, type, full, meta) {
+            if (typeof data === 'undefined')
+              return data
+
+            return `<span class="kt-badge kt-badge--${JOB_STATUS[data - 3].class} kt-badge--inline">${JOB_STATUS[data - 3].text}</span>`
+          },
+        },
+        {
+          targets: -4,
+          render : function (data, type, full, meta) {
+            return moment(data).format('DD/MM/Y')
+          },
+        },
+        {
+          targets: -3,
+          render : function (data, type, full, meta) {
+            return moment(data).format('DD/MM/Y')
+          },
+        },
+        {
+          targets: -2,
+          render : function (data, type, full, meta) {
+            return `${moment(data).format('DD/MM/Y HH:mm:ss')}<br>${full.created_by_name}`
+          },
+        },
+      ],
+    })
+
+    // update datatable row
+    this.datatable.on('draw.dt', function () {
+      $('.action-button-cancel').click(function () {
+        const rowData = app.datatable.row($(this).data('index')).data()
+        app.setStatus(rowData)
+      })
+    })
+  },
+  methods: {
+    async getIncoming () {
+      this.params.search_by = $('#kt_form_filter').val()
+      this.datatable.ajax.reload()
+    },
+    async setStatus (row) {
+      const app         = this
+      // eslint-disable-next-line no-undef
+      swal.fire({
+        title             : 'Are you sure?',
+        text              : `Incoming job "${row.job_no}" will be canceled`,
+        type              : 'question',
+        showCancelButton  : true,
+        confirmButtonText : 'Cancel Job',
+        buttonsStyling    : false,
+        confirmButtonClass: 'btn btn-danger',
+        cancelButtonClass : 'btn btn-default',
+      }).then(function (result) {
+        if (result.value)
+          app.updateStatus(row.id, row)
+      })
+    },
+    async updateStatus (idIncoming, param) {
+      try {
+        this.$nuxt.$loading.start()
+        param.status    = 5
+        await this.$store.dispatch('incoming/editIncoming', { idIncoming: idIncoming, data: param })
+        const data      = this.$store.getters['incoming/getEditIncoming']
+        const parameter = {
+          alertClass: 'alert-success',
+          message   : `Incoming job ${data.result.job_no} has been canceled`,
+        }
+        this.$nuxt.$emit('alertShow', parameter)
+        this.$nuxt.$loading.finish()
+        // eslint-disable-next-line no-undef
+        KTUtil.scrollTop()
+        this.datatable.ajax.reload()
+      } catch (error) {
+        param.status    = param.status === 1 ? 0 : 1
+        const parameter = {
+          alertClass: 'alert-danger',
+          message   : error.message,
+        }
+        this.$nuxt.$emit('alertShow', parameter)
+        this.$nuxt.$loading.finish()
+        // eslint-disable-next-line no-undef
+        KTUtil.scrollTop()
+      }
+    },
+    async clearForm () {
+      this.params = {
+        keyword  : '',
+        search_by: '',
+        filter   : {},
+      }
+      this.datatable.ajax.reload()
+      $('#warehouse').val(null).trigger('change')
+      $('#company').val(null).trigger('change')
+      $('#kt_form_filter').val('job_no')
+      $('#kt_form_filter_date').val('created_at-range')
+      $('#kt_form_status').val('')
+      $('.selectpicker').selectpicker('refresh')
+    },
+  },
+}
+</script>

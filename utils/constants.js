@@ -51,3 +51,15 @@ export const STATUS = [
     id: 1, text: 'Active', class: 'success',
   },
 ]
+
+export const JOB_STATUS = [
+  {
+    id: 3, text: 'Open', class: 'success',
+  },
+  {
+    id: 4, text: 'Close', class: 'dark',
+  },
+  {
+    id: 5, text: 'Cancel', class: 'danger',
+  },
+]

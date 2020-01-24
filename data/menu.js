@@ -31,6 +31,14 @@ export default [
     ],
   },
   {
+    name        : 'Incoming Stock',
+    icon        : 'la la-sign-in',
+    url         : '/incoming',
+    folder      : false,
+    childDisplay: false,
+    children    : [],
+  },
+  {
     name        : 'Master',
     icon        : 'fa flaticon-layer',
     url         : '/master',
