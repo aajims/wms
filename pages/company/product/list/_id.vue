@@ -9,18 +9,18 @@
           <i class="kt-font-brand flaticon2-open-box" />
         </span>
         <h3 class="kt-portlet__head-title">
-          Packing List ({{ company.name }})
+          Product List ({{ company.name }})
         </h3>
       </div>
       <div class="kt-portlet__head-toolbar">
         <div class="kt-portlet__head-wrapper">
           <div class="kt-portlet__head-actions">
             <a
-              :href="`/company/packing/add/${idCompanyEncoded}`"
+              :href="`/company/product/add/${idCompany}`"
               class="btn btn-brand btn-elevate btn-icon-sm"
             >
               <i class="la la-plus" />
-              <span class="kt-hidden-mobile">Add Packing</span>
+              <span class="kt-hidden-mobile">Add Product</span>
             </a>
           </div>
         </div>
@@ -45,8 +45,8 @@
                       <option value="name">
                         Name
                       </option>
-                      <option value="code">
-                        Code
+                      <option value="sku">
+                        SKU / Model
                       </option>
                     </select>
                   </div>
@@ -62,7 +62,7 @@
                     type="text"
                     class="form-control"
                     placeholder="Search..."
-                    @keyup="getPacking()"
+                    @keyup="getProduct()"
                   >
                   <span class="kt-input-icon__icon kt-input-icon__icon--left">
                     <span><i class="la la-search" /></span>
@@ -119,17 +119,17 @@
     <div class="kt-portlet__body">
       <!--begin: Datatable -->
       <table
-        id="packing_table"
+        id="product_table"
         class="table table-hover table-checkable"
       >
         <thead>
           <tr>
             <th>#</th>
+            <th>SKU / Model</th>
             <th>Name</th>
-            <th>Code</th>
             <th>Status</th>
-            <th>Length</th>
-            <th>Weight</th>
+            <th>Category</th>
+            <th>Type</th>
             <th>Created By</th>
             <th>Created</th>
             <th>Actions</th>
@@ -152,15 +152,15 @@
 
 <script>
 import moment from 'moment'
+import { PRODUCT_TYPE } from '@/utils/constants'
 
 export default {
   data () {
     return {
-      idCompanyEncoded: null,
-      idCompanyDecoded: null,
-      datatable       : [],
-      company         : [],
-      params          : {
+      idCompany: null,
+      datatable: [],
+      company  : [],
+      params   : {
         keyword  : '',
         search_by: '',
         filter   : { company_id: '' },
@@ -168,18 +168,14 @@ export default {
     }
   },
   async mounted () {
-    try {
-      this.idCompanyDecoded = atob(this.$route.params.id)
-    } catch (error) {
-
-    }
+    const param = atob(this.$route.params.id)
     if (this.$route.params.id !== undefined)
-      this.params.filter.company_id = this.idCompanyDecoded
+      this.params.filter.company_id = param
 
     try {
-      await this.$store.dispatch('company/getCompanyDetail', { idCompany: this.idCompanyDecoded })
-      this.company          = this.$store.getters['company/getCompanyDetail'].result
-      this.idCompanyEncoded = btoa(this.company.id)
+      await this.$store.dispatch('company/getCompanyDetail', { idCompany: param })
+      this.company   = this.$store.getters['company/getCompanyDetail'].result
+      this.idCompany = btoa(this.company.id)
     } catch (error) {
       this.company = { id: '', name: '' }
     }
@@ -190,17 +186,17 @@ export default {
         app.params.filter.status = $('#kt_form_status').val()
       else
         app.$delete(app.params.filter, 'status')
-      app.getPacking()
+      app.getProduct()
     })
 
     // begin first table
-    this.datatable = $('#packing_table').DataTable({
+    this.datatable = $('#product_table').DataTable({
       responsive: true,
       searching : false,
       processing: true,
       serverSide: true,
       ajax      : {
-        url : '/api/packing/list',
+        url : '/api/product/list',
         type: 'POST',
         data: function (d) {
           d.params = app.params
@@ -209,11 +205,11 @@ export default {
       order  : [[7, 'desc']],
       columns: [
         { data: 'row_number' },
+        { data: 'sku' },
         { data: 'name' },
-        { data: 'code' },
         { data: 'status' },
-        { data: 'length_concat' },
-        { data: 'weight_concat' },
+        { data: 'product_category_name' },
+        { data: 'type' },
         { data: 'created_by_name' },
         { data: 'created_at' },
         { data: 'actions', responsivePriority: -1 },
@@ -224,20 +220,6 @@ export default {
           orderable: false,
         },
         {
-          targets  : 4,
-          orderable: false,
-          render   : function (data, type, full, meta) {
-            return `${full.length} x ${full.width} x ${full.height} ${full.dimension_type}`
-          },
-        },
-        {
-          targets  : 5,
-          orderable: false,
-          render   : function (data, type, full, meta) {
-            return `${full.weight} ${full.weight_type}`
-          },
-        },
-        {
           targets  : -1,
           title    : 'Actions',
           className: 'dt-center',
@@ -245,10 +227,10 @@ export default {
           orderable: false,
           render   : function (data, type, full, meta) {
             const idEncoded = btoa(full.id)
-            return `<a href="/company/packing/detail/${idEncoded}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
+            return `<a href="/company/product/detail/${idEncoded}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
                       <i class="la la-eye"></i>
                     </a>
-                    <a href="/company/packing/edit/${idEncoded}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
+                    <a href="/company/product/edit/${idEncoded}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
                       <i class="la la-edit"></i>
                     </a>
                     <a class="btn btn-sm btn-clean btn-icon btn-icon-md action-button-status" data-index="${meta.row}" href="javascript:void(0)" title="Update Status">
@@ -271,6 +253,19 @@ export default {
           },
         },
         {
+          targets  : 5,
+          className: 'dt-center',
+          render   : function (data, type, full, meta) {
+            let productType = ''
+            for (const type in PRODUCT_TYPE) {
+              if (PRODUCT_TYPE[type].id === full.type)
+                productType = PRODUCT_TYPE[type].text
+            }
+
+            return productType
+          },
+        },
+        {
           targets  : -2,
           className: 'dt-center',
           render   : function (data, type, full, meta) {
@@ -288,7 +283,7 @@ export default {
     })
   },
   methods: {
-    async getPacking () {
+    async getProduct () {
       this.params.search_by = $('#kt_form_filter').val()
       this.datatable.ajax.reload()
     },
@@ -299,7 +294,7 @@ export default {
       // eslint-disable-next-line no-undef
       swal.fire({
         title             : 'Are you sure?',
-        text              : `Packing "${row.name}" ${statusText}`,
+        text              : `Product "${row.name}" ${statusText}`,
         type              : 'question',
         showCancelButton  : true,
         confirmButtonText : statusText,
@@ -311,15 +306,15 @@ export default {
           app.updateStatus(row.id, row)
       })
     },
-    async updateStatus (idPacking, param) {
+    async updateStatus (idProduct, param) {
       try {
         this.$nuxt.$loading.start()
         param.status    = param.status === 1 ? 0 : 1
-        await this.$store.dispatch('packing/editPacking', { idPacking: idPacking, data: param })
-        const data      = this.$store.getters['packing/getEditPacking']
+        await this.$store.dispatch('product/editProduct', { idProduct: idProduct, data: param })
+        const data      = this.$store.getters['product/getEditProduct']
         const parameter = {
           alertClass: 'alert-success',
-          message   : `Packing ${data.result.name} has been edited`,
+          message   : `Product ${data.result.name} has been edited`,
         }
         this.$nuxt.$emit('alertShow', parameter)
         this.$nuxt.$loading.finish()
@@ -342,7 +337,7 @@ export default {
       this.params = {
         keyword  : '',
         search_by: '',
-        filter   : { company_id: this.idCompanyDecoded },
+        filter   : { company_id: atob(this.$route.params.id) },
       }
       this.datatable.ajax.reload()
       $('#kt_form_filter').val('name')
