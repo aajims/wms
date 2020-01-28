@@ -1,48 +1,48 @@
 <template>
-    <div class="row">
+  <div class="row">
     <div class="col-lg-12">
-        <!-- <form
+      <form
         id="outgoing_form"
         ref="form"
         class="kt-form kt-form--label-right"
-        @submit.prevent="addOutgoing()"
+         @submit.prevent="addOutgoing()"
       >
-      <div
-        id="kt_page_portlet"
-        class="kt-portlet kt-portlet--last kt-portlet--head-lg kt-portlet--responsive-mobile"
-      >
-        <div class="kt-portlet__head kt-portlet__head--lg">
-          <div class="kt-portlet__head-label">
-            <span class="kt-portlet__head-icon">
-              <i class="kt-font-brand flaticon-clipboard" />
-            </span>
-            <h3 class="kt-portlet__head-title">
-              Add Outgoing
-            </h3>
-          </div>
-          <div class="kt-portlet__head-toolbar">
-            <a
-              href="/outgoing"
-              class="btn btn-clean kt-margin-r-10"
-            >
-              <i class="la la-arrow-left" />
-              <span class="kt-hidden-mobile">Back</span>
-            </a>
-            <button
+        <div
+          id="kt_page_portlet"
+          class="kt-portlet kt-portlet--last kt-portlet--head-lg kt-portlet--responsive-mobile"
+        >
+          <div class="kt-portlet__head kt-portlet__head--lg">
+            <div class="kt-portlet__head-label">
+              <span class="kt-portlet__head-icon">
+                <i class="kt-font-brand flaticon-add" />
+              </span>
+              <h3 class="kt-portlet__head-title">
+                Add Job Outgoing 
+              </h3>
+            </div>
+            <div class="kt-portlet__head-toolbar">
+              <a
+                href="/outgoing/"
+                class="btn btn-clean kt-margin-r-10"
+              >
+                <i class="la la-arrow-left" />
+                <span class="kt-hidden-mobile">Back</span>
+              </a>
+              <button
                 type="submit"
                 class="btn btn-brand"
               >
                 <i class="la la-check" />
                 <span class="kt-hidden-mobile">Save</span>
               </button>
+            </div>
           </div>
-        </div>
-        <div class="kt-portlet__body">
-          <div class="form-group row">
+          <div class="kt-portlet__body">
+             <div class="form-group row">
             <div class="col-lg-6">
               <label>Company Name <span style="color:red">*</span></label>
               <select
-                  id="company"
+                  id="company_id"
                   class="form-control kt-select2"
                   name="company"
                 >
@@ -63,25 +63,21 @@
           <div class="form-group row">
             <div class="col-lg-6">
               <label>ETD <span style="color:red">*</span></label>
-                <div class="input-group date">
-                  <input type="text" class="form-control" name="etd" readonly placeholder="Select date" id="date_etd" />
-                  <div class="input-group-append">
-                    <span class="input-group-text">
-                      <i class="la la-calendar-check-o"></i>
-                    </span>
-                  </div>
+              <div class="input-group date">
+                <input type="text" name="date_etd" class="form-control" readonly placeholder="Select date & time" id="date_etd" />
+                <div class="input-group-append">
+                  <span class="input-group-text"><i class="la la-calendar-check-o glyphicon-th"></i></span>
                 </div>
+              </div>
             </div>
             <div class="col-lg-6">
               <label>ETA <span style="color:red">*</span></label>
               <div class="input-group date">
-                  <input type="text" class="form-control" name="eta" readonly placeholder="Select date" id="date_eta" />
-                  <div class="input-group-append">
-                    <span class="input-group-text">
-                      <i class="la la-calendar-check-o"></i>
-                    </span>
-                  </div>
+                <input type="text" name="date_eta" class="form-control" readonly placeholder="Select date & time" id="date_eta" />
+                <div class="input-group-append">
+                  <span class="input-group-text"><i class="la la-calendar-check-o glyphicon-th"></i></span>
                 </div>
+              </div>
             </div>
           </div>
           <div class="form-group row">
@@ -92,12 +88,12 @@
                 type="text"
                 class="form-control"
                 name="transport"
-              >
+              ><input type="hidden" v-model="outgoing.flight">
             </div>
             <div class="col-lg-6">
               <label>Transport Number <span style="color:red">*</span></label>
               <input
-                v-model="outgoing.tranport_number"
+                v-model="outgoing.transport_number"
                 type="text"
                 class="form-control"
                 name="number"
@@ -105,8 +101,14 @@
             </div>
           </div>
           <div class="form-group row">
-            <div class="col-lg-4">
+            <div class="col-lg-3">
               <label for="country">From Country <span style="color:red">*</span></label>
+              <!-- <input
+                type="text"
+                id="country_from"
+                class="form-control"
+                name="country_from"
+              > -->
                 <select
                   id="country_from"
                   class="form-control kt-select2"
@@ -116,30 +118,29 @@
                 </select>
                 <span class="form-text text-muted">Please select a country </span>
             </div>
-            <div class="col-lg-4">
-              <label for="state">From State <span style="color:red">*</span></label>
-                <select
-                  id="state_from"
-                  class="form-control kt-select2"
-                  name="state_from"
-                >
-                  <option />
-                </select>
-                <span class="form-text text-muted">Please select a state </span>
-            </div>
-             <div class="col-lg-4">
+             <div class="col-lg-3">
               <label>From Warehouse <span style="color:red">*</span></label>
                <select
                   id="warehouse_from"
-                  class="form-control kt-select2"
+                  class="form-control"
                   name="warehouse_from"
                 >
                   <option />
                 </select>
             </div>
+            <div class="col-lg-6">
+              <label>From</label>
+              <input
+                  v-model="outgoing.from"
+                  type="text"
+                  name="from"
+                  class="form-control"
+                  placeholder="Enter Address "
+              >
+            </div>
           </div>
           <div class="form-group row">
-            <div class="col-lg-4">
+            <div class="col-lg-6">
               <label for="country">To Country <span style="color:red">*</span></label>
                 <select
                   id="country_to"
@@ -150,27 +151,16 @@
                 </select>
                 <span class="form-text text-muted">Please select a country </span>
             </div>
-            <div class="col-lg-4">
-              <label for="state">To State <span style="color:red">*</span></label>
-                <select
-                  id="state_to"
-                  class="form-control kt-select2"
-                  name="state_to"
-                >
-                  <option />
-                </select>
-                <span class="form-text text-muted">Please select a state </span>
-            </div>
-            <div class="col-lg-4">
-              <label>To Warehouse <span style="color:red">*</span></label>
-              <select
-                  id="warehouse_to"
-                  class="form-control kt-select2"
-                  name="warehouse_to"
-                >
-                  <option />
-              </select>
-            </div>
+            <div class="col-lg-6">
+              <label>To</label>
+              <input
+                  v-model="outgoing.to"
+                  type="text"
+                  name="to"
+                  class="form-control"
+                  placeholder="Enter Address "
+              >
+            </div><input type="hidden" v-model="outgoing.to_warehouse_id">
           </div>
           <div class="form-group row">
               <div class="col-lg-6">
@@ -195,7 +185,18 @@
             </div>
           </div>
           <div class="form-group row">
-              <div class="col-lg-6">
+            <div class="col-lg-6">
+              <label>Order Date <span style="color:red">*</span></label>
+              <div class="input-group date">
+                  <input type="text" class="form-control" name="order_date" readonly placeholder="Select date" id="date_order" />
+                  <div class="input-group-append">
+                    <span class="input-group-text">
+                      <i class="la la-calendar-check-o"></i>
+                    </span>
+                  </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
               <label for="description">Description</label>
               <textarea
                 id="description"
@@ -207,103 +208,60 @@
               />
             </div>
           </div>
-        </div>
-      </div> -->
-       </form>
-       <button
-                  type="button"
-                  class="btn btn-brand" data-toggle="modal" data-target="#kt_modal_5"
-                  >
-                  <i class="la la-plus" />
-                  <span class="kt-hidden-mobile">Add Product</span>
-              </button>
-     <!-- <div class="kt-portlet">
-        <div class="col-lg-12">
-          <div class="kt-portlet__head kt-portlet__head--lg">
-            <div class="kt-portlet__head-label">
-                <span class="kt-portlet__head-icon">
-                <i class="kt-font-brand flaticon-clipboard" />
-                </span>
-                <h3 class="kt-portlet__head-title">
-                    Add Product Outgoing
-                </h3>
+            <div class="kt-separator kt-separator--border-dashed kt-separator--space-lg" />
+            <div class="form-group row">
+              <div class="col-lg-3">
+                <label>Add Product </label>
+                <a
+                  href="javascript:;"
+                  class="btn btn-bold btn-sm btn-label-brand"
+                  style="margin-left: 10px"
+                  data-toggle="modal"
+                  data-target="#packing_modal"
+                  data-backdrop="static"
+                  data-keyboard="false"
+                >
+                  <i class="la la-plus" /> Add
+                </a>
+              </div>
             </div>
-            <div class="kt-portlet__head-toolbar">
-              <button
-                  type="button"
-                  class="btn btn-brand" data-toggle="modal" data-target="#modal2"
-                  >
-                  <i class="la la-plus" />
-                  <span class="kt-hidden-mobile">Add Product</span>
-              </button>
+            <div class="form-group row">
+              <div class="col-lg-12">
+                <!--begin: Datatable -->
+                <table
+                id="outgoing_table"
+                class="table table-hover table-checkable"
+            >
+                <thead>
+                <tr>
+                    <th>Product </th>
+                    <th>Packing </th>
+                    <th>From Warehouse</th>
+                    <th>Batch</th>
+                    <th>Qty</th>
+                    <th>Expired</th>
+                    <th>Description</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(row,index) in product_temporary" :key="index">
+                        <td>{{ row.product_id }}</td>
+                        <td>{{ row.packing }}</td>
+                        <td>{{ row.warehouse_name }}</td>
+                        <td>{{ row.batch }}</td>
+                        <td>{{ row.qty }}</td>
+                        <td>{{ row.expired }}</td>
+                        <td>{{ row.description }}</td>
+                    </tr>
+                </tbody>
+            </table>
+                <!--end: Datatable -->
+              </div>
             </div>
           </div>
-        </div> -->
-        <!-- <table
-          id="outgoing_table"
-          class="table table-hover table-checkable"
-      >
-          <thead>
-          <tr>
-              <th>Product </th>
-              <th>Packing </th>
-              <th>From Warehouse</th>
-              <th>Batch</th>
-              <th>Qty</th>
-              <th>Net Weight</th>
-              <th>Gross Weight</th>
-              <th>Dimension</th>
-              <th>Expired</th>
-              <th>created</th>
-              <th>Status</th>
-          </tr>
-          </thead>
-          <tbody>
-              <tr v-for="(row,index) in productDetail" :key="index">
-                  <td>{{ row.product_name }}</td>
-                  <td>{{ row.product_packing_name }}</td>
-                  <td>{{ row.from_warehouse_location_name }}</td>
-                  <td>{{ row.batch }}</td>
-                  <td>{{ row.qty }}</td>
-                  <td>{{ row.nett_weight }} /{{ row.nett_weight_type }}</td>
-                  <td>{{ row.gross_weight }} /{{ row.gross_weight_type }}</td>
-                  <td>{{ row.dimension_type }}</td>
-                  <td>{{ expired }}</td>
-                  <td>{{ row.created_by_name }}</td>
-                  <td v-if="row.status===1">Active</td>
-                  <td v-else>Inactive</td>
-              </tr>
-          </tbody>
-      </table> -->
-      <!-- </div> -->
+        </div>
+      </form>
     </div>
-    <div class="modal fade" id="kt_modal_5" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-								<div class="modal-dialog modal-sm" role="document">
-									<div class="modal-content">
-										<div class="modal-header">
-											<h5 class="modal-title" id="exampleModalLabel">New message</h5>
-											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-											</button>
-										</div>
-										<div class="modal-body">
-											<form>
-												<div class="form-group">
-													<label for="recipient-name" class="form-control-label">Recipient:</label>
-													<input type="text" v-model="product.product_id" class="form-control" id="recipient-name">
-												</div>
-												<div class="form-group">
-													<label for="message-text" class="form-control-label">Message:</label>
-													<textarea class="form-control" id="message-text"></textarea>
-												</div>
-											</form>
-										</div>
-										<div class="modal-footer">
-											<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-											<button type="button" class="btn btn-primary">Send message</button>
-										</div>
-									</div>
-								</div>
-							</div>
     <!-- begin::Scrolltop -->
     <div
       id="kt_scrolltop"
@@ -312,458 +270,503 @@
       <i class="flaticon flaticon-up-arrow-1" />
     </div>
     <!-- end::Scrolltop -->
-    <div class="modal fade" id="modal2" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-          <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Add Detail Product</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                </button>
-              </div>
-              <div class="modal-body">
-                  <div class="form-group row">
-                    <div class="col-lg-4">
-                      <label>Product  <span style="color:red">*</span></label>
-                          <input
-                          type="text"
-                          class="form-control"
-                          placeholder="Enter Batch"
+    <!--begin::Modal-->
+    <div
+      id="packing_modal"
+      class="modal fade"
+      role="dialog"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <form
+        id="packing_form"
+        ref="form"
+      >
+        <div
+          class="modal-dialog modal-lg"
+          role="document"
+        >
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5
+                id="exampleModalLabel"
+                class="modal-title"
+              >
+              Add Product
+              </h5>
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+              />
+            </div>
+            <div class="modal-body">
+              <div class="form-group row">
+                <div class="col-lg-4">
+                  <label>Product  <span style="color:red">*</span></label>
+                   <select
+                        id="product"
+                        class="form-control kt-select2"
+                        name="product_id"
                         >
-                    </div>
-                    <div class="col-lg-4">
-                      <label>Packing  <span style="color:red">*</span></label>
-                          <input
-                          v-model="product.product_packing_id"
-                          type="text"
-                          class="form-control"
-                          placeholder="Enter Batch"
-                        >
-                    </div>
-                    <div class="col-lg-4">
-                      <label>Warehouse  <span style="color:red">*</span></label>
-                          <select
-                              id="warehouse"
-                              class="form-control kt-select2"
-                              name="company"
-                              >
-                              <option />
-                          </select>
-                    </div>
-                  </div>
-                  <!-- <div class="form-group row">
-                    <div class="col-lg-3">
-                      <label>Batch  <span style="color:red">*</span></label>
-                        <input
-                          v-model="product.batch"
-                          type="text"
-                          class="form-control"
-                          placeholder="Enter Batch"
-                        >
-                    </div>
-                    <div class="col-lg-3">
-                      <label>Qty  <span style="color:red">*</span></label>
-                          <input
-                          v-model="product.qty"
-                          type="text"
-                          class="form-control"
-                          placeholder="Enter Qty"
-                      >
-                    </div>
-                    <div class="col-lg-3">
-                      <label>Nett Weight <span style="color:red">*</span></label>
-                          <input
-                          v-model="product.nett_weight"
-                          type="text"
-                          class="form-control"
-                          placeholder="Enter Nett Weight"
-                      >
-                    </div>
-                    <div class="col-lg-3">
-                      <label>Nett Weight Type<span style="color:red">*</span></label>
-                          <select class="form-control" name="type" v-model="product.nett_weight_type">
-                              <option value="kg">Kg</option>
-                              <option value="meter">Meter</option>
-                          </select>
-                    </div>
-                  </div>
-                  <div class="form-group row">
-                    <div class="col-lg-3">
-                      <label>Gross Weight <span style="color:red">*</span></label>
-                          <input
-                          v-model="product.gross_weight"
-                          type="text"
-                          class="form-control"
-                          placeholder="Enter Nett Weight"
-                        >
-                    </div>
-                    <div class="col-lg-3">
-                      <label>Gross Weight Type<span style="color:red">*</span></label>
-                          <select class="form-control" name="type" v-model="product.gross_weight_type">
-                              <option value="kg">Kg</option>
-                              <option value="meter">Meter</option>
-                          </select>
-                    </div>
-                    <div class="col-lg-3">
-                      <label>Dimension Type<span style="color:red">*</span></label>
-                        <input
-                          v-model="product.dimension_type"
-                          type="text"
-                          class="form-control"
-                          placeholder="Enter Nett Weight"
-                        >
-                    </div>
-                    <div class="col-lg-3">
-                      <label>Length <span style="color:red">*</span></label>
-                          <input
-                            v-model="product.length"
-                            type="text"
-                            class="form-control"
-                            placeholder="Enter Length"
-                          >
-                    </div>
-                  </div>
-                  <div class="form-group row">
-                    <div class="col-lg-3">
-                      <label> Weight<span style="color:red">*</span></label>
-                          <input
-                            v-model="product.weight"
-                            type="text"
-                            class="form-control"
-                            placeholder="Enter Weight"
-                          >
-                    </div>
-                    <div class="col-lg-3">
-                      <label>Height<span style="color:red">*</span></label>
-                        <input
-                          v-model="product.height"
-                          type="text"
-                          class="form-control"
-                          placeholder="Enter Height"
-                        >
-                    </div>
-                    <div class="col-lg-3">
-                      <label>Expired Date<span style="color:red">*</span></label>
-                        <div class="input-group date">
-                          <input type="text" class="form-control" readonly placeholder="Select date" id="date_exp" />
-                          <div class="input-group-append">
-                            <span class="input-group-text">
-                              <i class="la la-calendar-check-o"></i>
-                            </span>
-                          </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3">
-                      <label>Description<span style="color:red">*</span></label>
-                        <input
-                          v-model="product.description"
-                          type="text"
-                          class="form-control"
-                          placeholder="Enter Height"
-                        >
-                    </div>
-                  </div> -->
-                  <div class="modal-footer">
-                    <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
-                    <button type="submit" class="btn btn-primary">Save changes</button>
-                  </div>
+                        <option />
+                    </select>
+                      <!-- <input
+                      type="text"
+                      name="product_id"
+                      class="form-control"
+                      placeholder="Enter Product ID"
+                    > -->
                 </div>
+                <div class="col-lg-4">
+                  <label>Packing  <span style="color:red">*</span></label>
+                      <input
+                      type="text"
+                      name="packing"
+                      class="form-control"
+                      placeholder="Enter Packing"
+                    >
+                </div>
+                <div class="col-lg-4">
+                  <label>Warehouse  <span style="color:red">*</span></label>
+                      <select
+                          id="warehouse"
+                          class="form-control kt-select2"
+                          name="warehouse"
+                          >
+                          <option />
+                      </select>
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-lg-4">
+                  <label>Batch  <span style="color:red">*</span></label>
+                    <input
+                      type="text"
+                      name="batch"
+                      class="form-control"
+                      placeholder="Enter Batch"
+                    >
+                </div>
+                <div class="col-lg-4">
+                  <label>Qty  <span style="color:red">*</span></label>
+                      <input
+                      type="text"
+                      name="qty"
+                      class="form-control"
+                      placeholder="Enter Qty"
+                  >
+                </div>
+                <div class="col-lg-4">
+                  <label>Expired Date<span style="color:red">*</span></label>
+                    <div class="input-group date">
+                      <input type="text" name="date_exp" class="form-control" readonly placeholder="Select date" id="date_exp" />
+                      <div class="input-group-append">
+                        <span class="input-group-text">
+                          <i class="la la-calendar-check-o"></i>
+                        </span>
+                      </div>
+                    </div>
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-lg-6">
+                  <label>Description<span style="color:red">*</span></label>
+                    <input
+                      type="text"
+                      name="desc"
+                      class="form-control"
+                      placeholder="Enter Description"
+                    >
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-dismiss="modal"
+              >
+                Close
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary"
+                @click="addProductTemporary()"
+              >
+                Save
+              </button>
             </div>
           </div>
         </div>
+      </form>
+    </div>
+    <!--end::Modal-->
   </div>
 </template>
 
 <script>
-    export default {
-        data() {
+import { DIMENSION_TYPE, WEIGHT_TYPE } from '@/utils/constants'
+import moment from 'moment'
+
+export default {
+  data () {
+    return {
+       outgoing  : {
+          company_id  : null,
+          order_no : null,
+          type    : 2,
+          etd    : null,
+          eta    : null,
+          order_date    : null,
+          transport_type    : null,
+          transport_number    : null,
+          flight    : '',
+          from    : null,
+          from_country_id    : null,
+          from_warehouse_id    : null,
+          to    : null,
+          to_country_id    : null,
+          to_warehouse_id    : 0,
+          custom_permit    : null,
+          cargo_insurance    : null,
+          description    : null,
+          products  : null
+      },
+      allProduct  : '',
+      product_temporary : []
+    }
+  },
+  async mounted () {
+    this.getProductTemporary();
+     $('#date_etd').datetimepicker({
+          todayHighlight: true,
+          autoclose: true,
+          pickerPosition: 'bottom-left',
+          format: 'dd/mm/yyyy hh:ii'
+      });
+      $('#date_eta').datetimepicker({
+          todayHighlight: true,
+          autoclose: true,
+          pickerPosition: 'bottom-left',
+          format: 'dd/mm/yyyy hh:ii'
+      });
+      $('#date_exp, #date_exp_validate').datepicker({
+        rtl: KTUtil.isRTL(),
+        todayHighlight: true,
+        orientation: "bottom left",
+        format : 'dd/mm/yyyy'
+      });
+      $('#date_order').datepicker({
+        rtl: KTUtil.isRTL(),
+        todayHighlight: true,
+        orientation: "bottom left",
+        format : 'dd/mm/yyyy'
+      });
+
+        $('#warehouse_from').select2({
+        placeholder       : 'Select warehouse',
+        minimumInputLength: 1,
+        width             : '100%',
+        allowClear        : true,
+        ajax              : {
+            type          : 'GET',
+            url           : '/api/warehouse/select',
+            cache         : true,
+            processResults: function (data) {
             return {
-                datatable: [],
-                states   : [],
-                cities   : [],
-                districts: [],
-                outgoing  : {
-                    company_id  : null,
-                    type    : null,
-                    etd    : null,
-                    eta    : null,
-                    order_date    : null,
-                    tranport_type    : null,
-                    tranport_number    : null,
-                    flight    : null,
-                    from    : null,
-                    form_country_id    : null,
-                    from_warehouse_id    : null,
-                    to    : null,
-                    to_country_id    : null,
-                    to_warehouse_id    : null,
-                    custom_permit    : null,
-                    cargo_insurance    : null,
-                    description    : null,
-                },
-                product : {
-                    product_id  : null,
-                    product_packing_id  : null,
-                    from_warehouse_location_id  : null,
-                    to_warehouse_location_id  : null,
-                    batch  : null,
-                    qty  : null,
-                    nett_weight_type  : null,
-                    nett_weight  : null,
-                    gross_weight_type  : null,
-                    gross_weight  : null,
-                    dimension_type  : null,
-                    length  : null,
-                    width  : null,
-                    height  : null,
-                    attachment  : null,
-                    description  : null
-                },
-                createdDate: '',
-                updatedDate: ''  
+                results: $.map(data.result, function (object) {
+                return {
+                    id  : object.id,
+                    text: object.name,
+                }
+                }),
             }
+            },
         },
-        // async mounted () {
-        //   $('#date_etd, #date_etd_validate').datepicker({
-        //     rtl: KTUtil.isRTL(),
-        //     todayHighlight: true,
-        //     orientation: "bottom left"
-        //   });
-        //   $('#date_eta, #date_eta_validate').datepicker({
-        //     rtl: KTUtil.isRTL(),
-        //     todayHighlight: true,
-        //     orientation: "bottom left"
-        //   });
-        //   $('#date_exp, #date_exp_validate').datepicker({
-        //     rtl: KTUtil.isRTL(),
-        //     todayHighlight: true,
-        //     orientation: "bottom left"
-        //   });
+        })
+        $('#warehouse_from').on('change', function () {
+        validator.element($(this))
+        })
+        $('#warehouse_to').select2({
+        placeholder       : 'Select warehouse',
+        minimumInputLength: 1,
+        width             : '100%',
+        allowClear        : true,
+        ajax              : {
+            type          : 'GET',
+            url           : '/api/warehouse/select',
+            cache         : true,
+            processResults: function (data) {
+            return {
+                results: $.map(data.result, function (object) {
+                return {
+                    id  : object.id,
+                    text: object.name,
+                }
+                }),
+            }
+            },
+        },
+        })
+        $('#warehouse_to').on('change', function () {
+        validator.element($(this))
+        })
 
-        //     $('#warehouse_from').select2({
-        //     placeholder       : 'Select warehouse',
-        //     minimumInputLength: 1,
-        //     width             : '100%',
-        //     allowClear        : true,
-        //     ajax              : {
-        //         type          : 'GET',
-        //         url           : '/api/warehouse/select',
-        //         cache         : true,
-        //         processResults: function (data) {
-        //         return {
-        //             results: $.map(data.result, function (object) {
-        //             return {
-        //                 id  : object.id,
-        //                 text: object.name,
-        //             }
-        //             }),
-        //         }
-        //         },
-        //     },
-        //     })
-        //     $('#warehouse_from').on('change', function () {
-        //     validator.element($(this))
-        //     })
-        //     $('#warehouse_to').select2({
-        //     placeholder       : 'Select warehouse',
-        //     minimumInputLength: 1,
-        //     width             : '100%',
-        //     allowClear        : true,
-        //     ajax              : {
-        //         type          : 'GET',
-        //         url           : '/api/warehouse/select',
-        //         cache         : true,
-        //         processResults: function (data) {
-        //         return {
-        //             results: $.map(data.result, function (object) {
-        //             return {
-        //                 id  : object.id,
-        //                 text: object.name,
-        //             }
-        //             }),
-        //         }
-        //         },
-        //     },
-        //     })
-        //     $('#warehouse_to').on('change', function () {
-        //     validator.element($(this))
-        //     })
+        $('#company_id').select2({
+            placeholder       : 'Select company',
+            minimumInputLength: 1,
+            width             : '100%',
+            allowClear        : true,
+            ajax              : {
+                type          : 'GET',
+                url           : '/api/company/select',
+                cache         : true,
+                processResults: function (data) {
+                return {
+                    results: $.map(data.result, function (object) {
+                    return {
+                        id  : object.id,
+                        text: object.name,
+                    }
+                    }),
+                }
+                },
+            },
+          })
+          $('#company_id').on('change', function () {
+          validator.element($(this))
+          })
 
-        //   $('#modal2').on('shown.bs.modal', function () {
-        //     $('#warehouse').select2({
-        //     placeholder       : 'Select warehouse',
-        //     minimumInputLength: 1,
-        //     width             : '100%',
-        //     allowClear        : true,
-        //     ajax              : {
-        //         type          : 'GET',
-        //         url           : '/api/warehouse/select',
-        //         cache         : true,
-        //         processResults: function (data) {
-        //         return {
-        //             results: $.map(data.result, function (object) {
-        //             return {
-        //                 id  : object.id,
-        //                 text: object.name,
-        //             }
-        //             }),
-        //         }
-        //         },
-        //     },
-        //     })
-        //     $('#warehouse').on('change', function () {
-        //     validator.element($(this))
-        //     })
-        //     $('#company').select2({
-        //         placeholder       : 'Select company',
-        //         minimumInputLength: 1,
-        //         width             : '100%',
-        //         allowClear        : true,
-        //         ajax              : {
-        //             type          : 'GET',
-        //             url           : '/api/company/select',
-        //             cache         : true,
-        //             processResults: function (data) {
-        //             return {
-        //                 results: $.map(data.result, function (object) {
-        //                 return {
-        //                     id  : object.id,
-        //                     text: object.name,
-        //                 }
-        //                 }),
-        //             }
-        //             },
-        //         },
-        //         })
-        //         $('#company').on('change', function () {
-        //         validator.element($(this))
-        //         })
-        //     })
+        $('#packing_modal').on('shown.bs.modal', function () {
+           $('#warehouse').select2({
+            placeholder       : 'Select warehouse',
+            minimumInputLength: 1,
+            width             : '100%',
+            allowClear        : true,
+            ajax              : {
+                type          : 'GET',
+                url           : `/api/location/select?id_warehouse=${$('#warehouse_from').val()}`,
+                cache         : true,
+                processResults: function (data) {
+                return {
+                    results: $.map(data.result, function (object) {
+                    return {
+                        id  : object.id,
+                        text: object.name,
+                    }
+                    }),
+                }
+                },
+            },
+            })
+            $('#warehouse').on('change', function () {
+            validator.element($(this))
+            })
+            $('#product').select2({
+            placeholder       : 'Select product',
+            minimumInputLength: 1,
+            width             : '100%',
+            allowClear        : true,
+            ajax              : {
+                type          : 'GET',
+                url           : `/api/product/select?id_company=${$('#company_id').val()}`,
+                cache         : true,
+                processResults: function (data) {
+                return {
+                    results: $.map(data.result, function (object) {
+                    return {
+                        id  : object.id,
+                        text: object.name,
+                    }
+                    }),
+                }
+                },
+            },
+            })
+            $('#product').on('change', function () {
+            validator.element($(this))
+          })
+          $('#packing').select2({
+            placeholder       : 'Select Packing',
+            minimumInputLength: 1,
+            width             : '100%',
+            allowClear        : true,
+            ajax              : {
+                type          : 'GET',
+                url           : '/api/packing/select',
+                cache         : true,
+                processResults: function (data) {
+                return {
+                    results: $.map(data.result, function (object) {
+                    return {
+                        id  : object.id,
+                        text: object.name,
+                    }
+                    }),
+                }
+                },
+            },
+            })
+            $('#packing').on('change', function () {
+            validator.element($(this))
+          })
+          $('#dimension_type').select2({
+            data: DIMENSION_TYPE, placeholder: 'Select a dimension type', allowClear: true,
+          })
+          $('#dimension_type').on('change', function () {
+            validator.element($(this))
+          })
 
-        //     const validator = $('#outgoing_form').validate({
+          $('#weight_type').select2({
+            data: WEIGHT_TYPE, placeholder: 'Select a weight type', allowClear: true,
+          })
+          $('#weight_type').on('change', function () {
+            validator.element($(this))
+          })
+           $('#weight_types').select2({
+            data: WEIGHT_TYPE, placeholder: 'Select a weight type', allowClear: true,
+          })
+          $('#weight_types').on('change', function () {
+            validator.element($(this))
+          })
+       })
+
+        // const validator = $('#outgoing_form').validate({
         //     // define validation rules
         //     rules: {
-        //         company                : { required: true },
+        //         // company                : { required: true },
         //         order                  : { required: true },
-        //         etd                    : { required: true },
-        //         eta                    : { required: true },
+        //         // etd                    : { required: true },
+        //         // eta                    : { required: true },
+        //         order_date             : { required: true },
         //         transport              : { required: true },
         //         number                 : { required: true },
-        //         country_from           : { required: true },
-        //         state_from             : { required: true },
+        //         // country_from           : { required: true },
+        //         from                   : { required: true },
         //         warehouse_from         : { required: true },
+        //         // country_to             : { required: true },
+        //         to                     : { required: true },
+        //         warehouse_to           : { required: true },
         //         custom                 : { required: true },
         //         cargo                  : { required: true },
         //         description            : { required: true },
         //     },
         //     invalidHandler: function (event, validator) {
-        //         // eslint-disable-next-line no-undef
-        //         KTUtil.scrollTop()
-        //         event.preventDefault()
+        //       // eslint-disable-next-line no-undef
+        //       KTUtil.scrollTop()
+        //       event.preventDefault()
         //     },
         //     submitHandler: function (form) {
-        //         return false
+        //       return false
         //     },
-        //     })
-        //     const customAdapter = $.fn.select2.amd.require('select2/data/customAdapter')
+        // })
+       const customAdapter = $.fn.select2.amd.require('select2/data/customAdapter')
 
-        //     await this.$store.dispatch('region/getCountries')
-        //     this.countries = this.$store.getters['region/getCountries']
-        //     const app      = this
-        //     $('#country_from').select2({
-        //     placeholder: 'Select a country',
-        //     allowClear : true,
-        //     data       : this.countries,
-        //     })
-        //     $('#country_from').on('change', function () {
-        //     validator.element($(this))
-        //     if ($('#country_from').val()) {
-        //         $('#state').val(null).trigger('change')
-        //         $('#state').prop('disabled', false)
-        //         app.getStatesByCountry()
-        //     } else {
-        //         $('#state').val(null).trigger('change')
-        //         $('#city').val(null).trigger('change')
-        //         $('#district').val(null).trigger('change')
-        //         $('#state').prop('disabled', true)
-        //         $('#city').prop('disabled', true)
-        //         $('#district').prop('disabled', true)
-        //     }
-        //     })
-        //     this.stateOption = $('#state_from').select2({
-        //         placeholder: 'Select a state',
-        //         allowClear : true,
-        //         disabled   : true,
-        //         dataAdapter: customAdapter,
-        //         data       : this.states,
-        //         })
-        //         $('#state_from').on('change', function () {
-        //         validator.element($(this))
-        //         if ($('#state_from').val()) {
-        //             $('#city').val(null).trigger('change')
-        //             $('#city').prop('disabled', false)
-        //             app.getCitiesByState()
-        //         } else {
-        //             $('#city').val(null).trigger('change')
-        //             $('#district').val(null).trigger('change')
-        //             $('#city').prop('disabled', true)
-        //             $('#district').prop('disabled', true)
-        //         }
-        //         })
-        //         $('#country_to').select2({
-        //             placeholder: 'Select a country',
-        //             allowClear : true,
-        //             data       : this.countries,
-        //             })
-        //             $('#country_to').on('change', function () {
-        //             validator.element($(this))
-        //             if ($('#country_to').val()) {
-        //                 $('#state').val(null).trigger('change')
-        //                 $('#state').prop('disabled', false)
-        //                 app.getStatesByCountry()
-        //             } else {
-        //                 $('#state').val(null).trigger('change')
-        //                 $('#city').val(null).trigger('change')
-        //                 $('#district').val(null).trigger('change')
-        //                 $('#state').prop('disabled', true)
-        //                 $('#city').prop('disabled', true)
-        //                 $('#district').prop('disabled', true)
-        //             }
-        //             })
-        //             this.stateOption = $('#state_to').select2({
-        //                 placeholder: 'Select a state',
-        //                 allowClear : true,
-        //                 disabled   : true,
-        //                 dataAdapter: customAdapter,
-        //                 data       : this.states,
-        //                 })
-        //                 $('#state_to').on('change', function () {
-        //                 validator.element($(this))
-        //                 if ($('#state_to').val()) {
-        //                     $('#city').val(null).trigger('change')
-        //                     $('#city').prop('disabled', false)
-        //                     app.getCitiesByState()
-        //                 } else {
-        //                     $('#city').val(null).trigger('change')
-        //                     $('#district').val(null).trigger('change')
-        //                     $('#city').prop('disabled', true)
-        //                     $('#district').prop('disabled', true)
-        //                 }
-        //                 })
-        // },
-        methods: {
-          async addProduct(){
-             let arrayProduct = [],getListProduct;
-             getListProduct = {
-               productId: this.product.product_id,
-               packing: this.product.product_packing_id,
-               warehouse: this.product.from_warehouse_location_id
-             }
-             console.log(getListProduct);
+        await this.$store.dispatch('region/getCountries')
+        this.countries = this.$store.getters['region/getCountries']
+        const app      = this
+        $('#country_from').select2({
+          placeholder: 'Select a country',
+          allowClear : true,
+          data       : this.countries,
+        })
+
+        $('#country_to').select2({
+            placeholder: 'Select a country',
+            allowClear : true,
+            data       : this.countries,
+        })
+  },
+  methods: {
+    async getProductTemporary(){
+      let getListProduct = this.$cookies.get(`${process.env.APP_ENV}_productListAdd`);
+      let parseProduct = {allProduct:[]}
+      console.log(getListProduct)
+      if(getListProduct === undefined){
+          this.$cookies.set(`${process.env.APP_ENV}_productListAdd`, JSON.stringify(parseProduct))
+          this.product_temporary = parseProduct;
+      } else {
+        this.product_temporary = getListProduct.allProduct
+      }
+    },
+     async addProductTemporary(){
+        // console.log($('#warehouse').select2('data'))
+        var data = $('#warehouse').select2('data');
+          let arrayProduct = [],getListProduct;
+          getListProduct = {
+            product_id: $("input[name='product_id']").val(),
+            packing: $("input[name='packing']").val(),
+            warehouse: $("select[name='warehouse']").val(),
+            warehouse_name: data[0].text,
+            batch: $("input[name='batch']").val(),
+            qty: $("input[name='qty']").val(),
+            expired: $("input[name='date_exp']").val(),
+            description: $("input[name='desc']").val(),
           }
-        },
-        async addOutgoing(){
-          
+          let getProductCookies  = this.$cookies.get(`${process.env.APP_ENV}_productListAdd`);
+          let LisProduct = [];
+          LisProduct = getProductCookies.allProduct;
+          LisProduct.push(getListProduct)
+          if(getProductCookies.allProduct === undefined){
+            getProductCookies.allProduct = []
+            } else {
+            getProductCookies.allProduct = getProductCookies.allProduct
+            }
+          let parseProduct = {allProduct:LisProduct}
+          // console.log('###',parseProduct)
+          this.$cookies.set(`${process.env.APP_ENV}_productListAdd`, JSON.stringify(parseProduct), {
+            path  : '/',
+            maxAge: 60 * 60 * 24 * 7,
+          })
+          this.getProductTemporary();
+          $('#packing_form')[0].reset();
+      },
+      async addOutgoing(){
+        let products;
+        let detailProduct = [];
+        for (let i = 0; i < this.product_temporary.length; i++) {
+          const getdata = this.product_temporary[i];
+          products = {product_id:parseInt(getdata.product_id), product_packing_id:parseInt(getdata.packing), from_warehouse_location_id:parseInt(getdata.warehouse), batch:getdata.batch, qty:parseInt(getdata.qty), expired_date:moment(getdata.expired).format("YYYY-MM-DD HH:mm:ss"), description:getdata.description}
+          detailProduct.push(products)
         }
-    }
+        // if ($('#outgoing_form').valid()) {
+          // alert('aa')
+          this.outgoing.products  = detailProduct;
+          this.outgoing.etd  = moment($('#date_etd').val(), 'DD/MM/YYYY HH:mm:ss').format("YYYY-MM-DD HH:mm:ss");
+          this.outgoing.order_date  = moment($('#date_order').val(), 'DD/MM/YYYY HH:mm:ss').format("YYYY-MM-DD HH:mm:ss");
+          this.outgoing.eta  = moment($('#date_eta').val(), 'DD/MM/YYYY HH:mm:ss').format("YYYY-MM-DD HH:mm:ss");
+          this.outgoing.company_id  = parseInt($('#company_id').val())
+          this.outgoing.from_country_id  = parseInt($('#country_from').val())
+          this.outgoing.to_country_id  = parseInt($('#country_to').val())
+          this.outgoing.from_warehouse_id  = parseInt($('#warehouse_from').val())
+          console.log(this.outgoing);
+          try {
+            this.$nuxt.$loading.start()
+            await this.$store.dispatch('outgoing/addOutgoing', { data: this.outgoing })
+            const data      = this.$store.getters['outgoing/getAddSuccess']
+            const parameter = {
+              alertClass: 'alert-success',
+              message   : `Outgoing ${data.result.order_no} has been added`,
+            }
+            this.$nuxt.$emit('alertShow', parameter)
+            this.$nuxt.$loading.finish()
+            // this.$cookies.remove(`${process.env.APP_ENV}_productListAdd`)
+            // eslint-disable-next-line no-undef
+            KTUtil.scrollTop()
+          } catch (error) {
+            const parameter = {
+              alertClass: 'alert-danger',
+              message   : error.message,
+            }
+            this.$nuxt.$emit('alertShow', parameter)
+            this.$nuxt.$loading.finish()
+            // eslint-disable-next-line no-undef
+            KTUtil.scrollTop()
+          }
+        // }
+      }
+  },
+}
 </script>
-

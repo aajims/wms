@@ -57,20 +57,20 @@
                 <div class="col-lg-6">
                 <label>ETD <span style="color:red">*</span></label>
                     <input
-                        id="order"
+                        id="etd"
                         v-model="etd"
                         class="form-control"
-                        name="order"
+                        name="etd"
                         readonly
                     />
                 </div>
                 <div class="col-lg-6">
                 <label>ETA <span style="color:red">*</span></label>
                     <input
-                        id="order"
+                        id="eta"
                         v-model="eta"
                         class="form-control"
-                        name="order"
+                        name="eta"
                         readonly
                     />
                 </div>
@@ -199,6 +199,51 @@
                 />
                 </div>
             </div>
+            <div class="kt-separator kt-separator--border-dashed kt-separator--space-lg" />
+              <div class="form-group row">
+                <div class="col-lg-3">
+                    <label>Detail Product </label>
+                </div>
+            </div>
+            <div class="form-group row">
+            <div class="col-lg-12">
+                <!--begin: Datatable -->
+                <table
+                id="outgoing_table"
+                class="table table-hover table-checkable"
+            >
+                <thead>
+                <tr>
+                    <th>Product </th>
+                    <th>Packing </th>
+                    <th>From Warehouse</th>
+                    <th>Batch</th>
+                    <th>Qty</th>
+                    <th>Net Weight</th>
+                    <th>Gross Weight</th>
+                    <th>Dimension</th>
+                    <th>Expired</th>
+                    <th>Description</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(row,index) in product" :key="index">
+                        <td>{{ row.product_name }}</td>
+                        <td>{{ row.product_packing_name }}</td>
+                        <td>{{ row.from_warehouse_location_name }}</td>
+                        <td>{{ row.batch }}</td>
+                        <td>{{ row.qty }}</td>
+                        <td>{{ row.nett_weight }} /{{ row.nett_weight_type }}</td>
+                        <td>{{ row.gross_weight }} /{{ row.gross_weight_type }}</td>
+                        <td>{{ row.dimension_type }}</td>
+                        <td>{{ row.expired_date }}</td>
+                        <td>{{ row.description }}</td>
+                    </tr>
+                </tbody>
+            </table>
+                <!--end: Datatable -->
+              </div>
+            </div>
             </div>
         </div>
             </form>
@@ -220,16 +265,17 @@ export default {
   data () {
     return {
       outgoing   : [],
+      product : [],
       etd   : '',
       eta   : '',
-      createdDate: '',
       updatedDate: '',
     }
   },
   async mounted () {
     await this.$store.dispatch('outgoing/getOutgoingDetail', { idOutgoing: this.$route.params.id })
     this.outgoing    = this.$store.getters['outgoing/getOutgoingDetail'].result
-    this.createdDate = moment(this.outgoing.created_at).format('DD/MM/Y HH:mm:ss')
+    this.product    = this.$store.getters['outgoing/getOutgoingDetail'].result.products
+    this.expired = moment(this.expired_date).format('DD/MM/Y')
     this.updatedDate = moment(this.outgoing.updated_at).format('DD/MM/Y HH:mm:ss')
     this.etd = moment(this.outgoing.etd).format('DD/MM/Y')
     this.eta = moment(this.outgoing.eta).format('DD/MM/Y')

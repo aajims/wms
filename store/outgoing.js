@@ -26,28 +26,6 @@ export const mutations = {
 }
 
 export const actions = {
-  async addProduct ({ dispatch }, { data }){
-    const app = this
-    await axios({
-      method : 'post',
-      url    : '/api/outgoing/add',
-      data: data,
-    }).then(function (response) {
-      if (response.status === 200 && response.data.general_response.response_status === true) {
-        app.$cookies.set(`${process.env.APP_ENV}_token`, response.data.result.token, {})
-      } else if (response.data.general_response.response_code === 4003)
-        dispatch('removeToken', null, { root: true })
-      else
-        throw new Error(response.data.general_response.response_message)
-    }).catch(function (error) {
-      if (error.response === undefined)
-        throw error
-      else if (error.response.status === 403)
-        dispatch('removeToken', null, { root: true })
-      else
-        throw new Error('Network Communication Error')
-    })
-  },
   async list ({ commit, dispatch }, { params }) {
     const app   = this
     await axios({
@@ -79,7 +57,7 @@ export const actions = {
     }).then(function (response) {
       if (response.status === 200 && response.data.general_response.response_status === true) {
         commit('ADD_OUTGOING', response.data)
-        setTimeout(() => app.$router.go({ path: '/outgoing' }), 3000)
+        // setTimeout(() => app.$router.go({ path: '/outgoing' }), 3000)
       } else if (response.data.general_response.response_code === 4003)
         dispatch('removeToken', null, { root: true })
       else
@@ -154,8 +132,5 @@ export const getters = {
   },
   getEditoutgoing: (state) => {
     return state.editOutgoing
-  },
-  getAddProduct: (state) => {
-    return state.addProduct
   },
 }
