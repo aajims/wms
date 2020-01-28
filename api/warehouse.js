@@ -18,9 +18,7 @@ app.get('/warehouse/select', (request, response) => {
     'keyword'       : request.query.term,
     'filter[status]': 1,
   }
-  if (request.query.id_country !== undefined)
-    params['filter[country_id]'] = request.query.id_country
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token  = request.cookies[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
     url    : `${process.env.API_URL}/v1/warehouse`,
