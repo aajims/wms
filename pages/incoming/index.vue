@@ -431,10 +431,10 @@ export default {
             if (full.status === STATUS_OPEN)
               actionButtonAdditional = `<a class="dropdown-item action-button-cancel"  data-index="${meta.row}" href="javascript:void(0)"><i class="la la-times-circle"></i> Cancel Job</a>`
 
-            return `<a href="/incoming/detail/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
+            return `<a href="/incoming/detail/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
                       <i class="la la-eye"></i>
                     </a>
-                    <a href="/incoming/edit/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
+                    <a href="/incoming/edit/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
                       <i class="la la-edit"></i>
                     </a>
                     <span class="dropdown">

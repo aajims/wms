@@ -65,7 +65,7 @@
               </div>
               <div class="col-lg-4">
                 <div class="kt-form__label">
-                  <label>Warehouse To <span style="color:red">*</span></label>
+                  <label>Warehouse <span style="color:red">*</span></label>
                 </div>
                 <div class="kt-form__control">
                   <select
@@ -478,7 +478,6 @@ import { TRANSPORT_TYPE, STATUS_ACTIVE } from '@/utils/constants'
 export default {
   data () {
     return {
-      display  : 'none',
       rowIndex : null,
       countries: [],
       incoming : {
