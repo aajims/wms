@@ -360,15 +360,11 @@ export default {
       app.getIncoming()
     })
 
-    $('#from, #to').datepicker({
+    $('#from, #to').datetimepicker({
       todayHighlight: true,
       orientation   : 'bottom left',
       todayBtn      : 'linked',
-      templates     : {
-        leftArrow : '<i class="la la-angle-left"></i>',
-        rightArrow: '<i class="la la-angle-right"></i>',
-      },
-      format: 'dd/mm/yyyy',
+      format        : 'dd/mm/yyyy',
     }).on('changeDate', function (event) {
       app.params.date_by   = $('#kt_form_filter_date').val()
       if ($('#from').val() !== '')
@@ -428,7 +424,7 @@ export default {
           targets  : -1,
           title    : 'Actions',
           className: 'dt-center',
-          width    : '150px',
+          width    : '170px',
           orderable: false,
           render   : function (data, type, full, meta) {
             let actionButtonAdditional = ''
@@ -464,10 +460,10 @@ export default {
           },
         },
         {
-          targets: -6,
+          targets: -7,
           render : function (data, type, full, meta) {
             if (data !== '')
-              return moment(data).format('DD/MM/Y')
+              return moment(data).format('DD/MM/Y HH:mm')
             else
               return data
           },
@@ -476,7 +472,7 @@ export default {
           targets: -6,
           render : function (data, type, full, meta) {
             if (data !== '')
-              return moment(data).format('DD/MM/Y')
+              return moment(data).format('DD/MM/Y HH:mm')
             else
               return data
           },
@@ -485,7 +481,7 @@ export default {
           targets: -5,
           render : function (data, type, full, meta) {
             if (data !== '')
-              return moment(data).format('DD/MM/Y')
+              return moment(data).format('DD/MM/Y HH:mm')
             else
               return data
           },
@@ -494,7 +490,7 @@ export default {
           targets: -4,
           render : function (data, type, full, meta) {
             if (data !== '')
-              return moment(data).format('DD/MM/Y')
+              return moment(data).format('DD/MM/Y HH:mm')
             else
               return data
           },
@@ -502,13 +498,19 @@ export default {
         {
           targets: -3,
           render : function (data, type, full, meta) {
-            return `${moment(data).format('DD/MM/Y HH:mm:ss')}<br>${full.created_by_name}`
+            if (data !== '')
+              return `${moment(data).format('DD/MM/Y HH:mm:ss')}<br>${full.created_by_name}`
+            else
+              return data
           },
         },
         {
           targets: -2,
           render : function (data, type, full, meta) {
-            return `${moment(data).format('DD/MM/Y HH:mm:ss')}<br>${full.created_by_name}`
+            if (data !== '')
+              return `${moment(data).format('DD/MM/Y HH:mm:ss')}<br>${full.updated_by_name}`
+            else
+              return data
           },
         },
       ],

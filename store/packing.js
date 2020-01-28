@@ -87,10 +87,11 @@ export const actions = {
         throw new Error('Network Communication Error')
     })
   },
-  async getPacking ({ commit }) {
+  async getPacking ({ commit }, { idCompany }) {
     await axios({
       method: 'get',
       url   : '/api/packing/select',
+      params: { id_company: idCompany },
     }).then(function (response) {
       if (response.status === 200 && response.data.general_response.response_status === true) {
         const packing = [{ id: '', text: '' }]

@@ -9,6 +9,17 @@ app.use(bodyParser.urlencoded({ extended: true }))
 const library = require('./library.js')
 
 app.get('/warehouse/select', (request, response) => {
+  const params = {
+    'page'          : 1,
+    'per_page'      : 100,
+    'sort_by'       : 'name',
+    'sort'          : 'asc',
+    'search_by'     : 'name',
+    'keyword'       : request.query.term,
+    'filter[status]': 1,
+  }
+  if (request.query.id_country !== undefined)
+    params['filter[country_id]'] = request.query.id_country
   const token = request.cookies[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
@@ -17,15 +28,7 @@ app.get('/warehouse/select', (request, response) => {
       'Content-Type' : 'application/x-www-form-urlencoded',
       'Authorization': `Bearer ${token}`,
     },
-    params: {
-      'page'          : 1,
-      'per_page'      : 100,
-      'sort_by'       : 'name',
-      'sort'          : 'asc',
-      'search_by'     : 'name',
-      'keyword'       : request.query.term,
-      'filter[status]': 1,
-    },
+    params: params,
   }).then(function (responseApi) {
     response.send(responseApi.data)
   }).catch(function (error) {
