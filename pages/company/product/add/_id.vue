@@ -337,7 +337,7 @@ export default {
   },
   async mounted () {
     try {
-      await this.$store.dispatch('packing/getPacking')
+      await this.$store.dispatch('packing/getPacking', { idCompany: atob(this.$route.params.id) })
       this.packingSelect      = this.$store.getters['packing/getPacking']
       await this.$store.dispatch('company/getCompanyDetail', { idCompany: atob(this.$route.params.id) })
       this.company            = this.$store.getters['company/getCompanyDetail'].result

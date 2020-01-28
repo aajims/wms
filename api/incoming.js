@@ -32,7 +32,7 @@ app.post('/incoming/add', (request, response) => {
   const token = request.cookies[`${process.env.APP_ENV}_token`]
   axios({
     method : 'post',
-    url    : `${process.env.API_URL}/v1/incoming`,
+    url    : `${process.env.API_URL}/v1/job-incoming`,
     headers: {
       'Content-Type' : 'application/x-www-form-urlencoded',
       'Authorization': `Bearer ${token}`,
@@ -66,7 +66,7 @@ app.get('/incoming/detail', (request, response) => {
   const token = request.cookies[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
-    url    : `${process.env.API_URL}/v1/incoming/${request.query.id_incoming}`,
+    url    : `${process.env.API_URL}/v1/job-incoming/${request.query.id_incoming}`,
     headers: {
       'Content-Type' : 'application/x-www-form-urlencoded',
       'Authorization': `Bearer ${token}`,

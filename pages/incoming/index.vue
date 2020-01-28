@@ -156,29 +156,48 @@
                 </div>
               </div>
             </div>
-            <div class="col-md-4 kt-margin-b-20-tablet-and-mobile">
+            <div class="col-md-2 kt-margin-b-20-tablet-and-mobile">
               <div class="kt-form__group">
                 <div class="kt-form__label">
-                  <label>From / To:</label>
+                  <label>From:</label>
                 </div>
                 <div class="kt-form__control">
-                  <div
-                    id="from_to"
-                    class="input-daterange input-group"
-                  >
+                  <div class="input-group date">
                     <input
                       id="from"
                       type="text"
                       class="form-control"
+                      readonly
+                      placeholder="Select from"
                     >
                     <div class="input-group-append">
-                      <span class="input-group-text">/</span>
+                      <span class="input-group-text">
+                        <i class="la la-calendar" />
+                      </span>
                     </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-2 kt-margin-b-20-tablet-and-mobile">
+              <div class="kt-form__group">
+                <div class="kt-form__label">
+                  <label>To:</label>
+                </div>
+                <div class="kt-form__control">
+                  <div class="input-group date">
                     <input
                       id="to"
                       type="text"
                       class="form-control"
+                      readonly
+                      placeholder="Select to"
                     >
+                    <div class="input-group-append">
+                      <span class="input-group-text">
+                        <i class="la la-calendar" />
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -218,9 +237,12 @@
             <th>Warehouse</th>
             <th>Country</th>
             <th>Status</th>
+            <th>Shipment</th>
+            <th>Order</th>
             <th>ETD</th>
             <th>ETA</th>
             <th>Created</th>
+            <th>Updated</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -254,11 +276,12 @@ export default {
         transport_number: 'Transport Number',
       },
       filter_date_by: {
-        'created_at-range': 'Created Date',
-        'updated_at-range': 'Updated Date',
-        'etd-range'       : 'ETD',
-        'eta-range'       : 'ETA',
-        'order-date-range': 'Order Date',
+        created_at   : 'Created Date',
+        updated_at   : 'Updated Date',
+        etd          : 'ETD',
+        eta          : 'ETA',
+        order_date   : 'Order Date',
+        shipment_date: 'Shipment Date',
       },
       job_status: JOB_STATUS,
       datatable : [],
@@ -337,18 +360,17 @@ export default {
       app.getIncoming()
     })
 
-    $('#from_to').datepicker({
+    $('#from, #to').datetimepicker({
       todayHighlight: true,
       orientation   : 'bottom left',
       todayBtn      : 'linked',
-      templates     : {
-        leftArrow : '<i class="la la-angle-left"></i>',
-        rightArrow: '<i class="la la-angle-right"></i>',
-      },
-      format: 'dd/mm/yyyy',
+      format        : 'dd/mm/yyyy',
     }).on('changeDate', function (event) {
-      app.params.filter.etd = $('#company').val()
-      app.params.filter.eta = $('#company').val()
+      app.params.date_by   = $('#kt_form_filter_date').val()
+      if ($('#from').val() !== '')
+        app.params.date_from = moment($('#from').val(), 'DD/MM/YYYY').format('Y-MM-DD HH:mm:ss')
+      if ($('#to').val() !== '')
+        app.params.date_to   = moment(`${$('#to').val()} 23:59:59`, 'DD/MM/YYYY HH:mm:ss').format('Y-MM-DD HH:mm:ss')
       app.getIncoming()
     })
 
@@ -365,7 +387,7 @@ export default {
           d.params = app.params
         },
       },
-      order  : [[8, 'desc']],
+      order  : [[10, 'desc']],
       columns: [
         { data: 'row_number' },
         { data: 'job_no' },
@@ -373,9 +395,12 @@ export default {
         { data: 'to_warehouse_name' },
         { data: 'from_country_name' },
         { data: 'status' },
+        { data: 'shipment_date' },
+        { data: 'order_date' },
         { data: 'etd' },
         { data: 'eta' },
         { data: 'created_at' },
+        { data: 'updated_at' },
         { data: 'actions', responsivePriority: -1 },
       ],
       columnDefs: [
@@ -399,12 +424,12 @@ export default {
           targets  : -1,
           title    : 'Actions',
           className: 'dt-center',
-          width    : '110px',
+          width    : '170px',
           orderable: false,
           render   : function (data, type, full, meta) {
-            let actionButtonCancel = ''
+            let actionButtonAdditional = ''
             if (full.status === 3)
-              actionButtonCancel = `<a class="dropdown-item action-button-cancel"  data-index="${meta.row}" href="javascript:void(0)"><i class="la la-times-circle"></i> Cancel Job</a>`
+              actionButtonAdditional = `<a class="dropdown-item action-button-cancel"  data-index="${meta.row}" href="javascript:void(0)"><i class="la la-times-circle"></i> Cancel Job</a>`
 
             return `<a href="/incoming/detail/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
                       <i class="la la-eye"></i>
@@ -419,13 +444,13 @@ export default {
                         <div class="dropdown-menu dropdown-menu-right">
                             <a class="dropdown-item" href="javascript:void(0)"><i class="la la-print"></i> Print</a>
                             <a class="dropdown-item" href="javascript:void(0)"><i class="la la-qrcode"></i> Print QR Code</a>
-                            ${actionButtonCancel}
+                            ${actionButtonAdditional}
                         </div>
                     </span>`
           },
         },
         {
-          targets  : -5,
+          targets  : 5,
           className: 'dt-center',
           render   : function (data, type, full, meta) {
             if (typeof data === 'undefined')
@@ -435,21 +460,57 @@ export default {
           },
         },
         {
+          targets: -7,
+          render : function (data, type, full, meta) {
+            if (data !== '')
+              return moment(data).format('DD/MM/Y HH:mm')
+            else
+              return data
+          },
+        },
+        {
+          targets: -6,
+          render : function (data, type, full, meta) {
+            if (data !== '')
+              return moment(data).format('DD/MM/Y HH:mm')
+            else
+              return data
+          },
+        },
+        {
+          targets: -5,
+          render : function (data, type, full, meta) {
+            if (data !== '')
+              return moment(data).format('DD/MM/Y HH:mm')
+            else
+              return data
+          },
+        },
+        {
           targets: -4,
           render : function (data, type, full, meta) {
-            return moment(data).format('DD/MM/Y')
+            if (data !== '')
+              return moment(data).format('DD/MM/Y HH:mm')
+            else
+              return data
           },
         },
         {
           targets: -3,
           render : function (data, type, full, meta) {
-            return moment(data).format('DD/MM/Y')
+            if (data !== '')
+              return `${moment(data).format('DD/MM/Y HH:mm:ss')}<br>${full.created_by_name}`
+            else
+              return data
           },
         },
         {
           targets: -2,
           render : function (data, type, full, meta) {
-            return `${moment(data).format('DD/MM/Y HH:mm:ss')}<br>${full.created_by_name}`
+            if (data !== '')
+              return `${moment(data).format('DD/MM/Y HH:mm:ss')}<br>${full.updated_by_name}`
+            else
+              return data
           },
         },
       ],
@@ -522,7 +583,9 @@ export default {
       $('#warehouse').val(null).trigger('change')
       $('#company').val(null).trigger('change')
       $('#kt_form_filter').val('job_no')
-      $('#kt_form_filter_date').val('created_at-range')
+      $('#kt_form_filter_date').val('created_at')
+      $('#from').val('')
+      $('#to').val('')
       $('#kt_form_status').val('')
       $('.selectpicker').selectpicker('refresh')
     },

@@ -351,9 +351,6 @@ export default {
   },
   async mounted () {
     try {
-      await this.$store.dispatch('packing/getPacking')
-      this.packingSelect    = this.$store.getters['packing/getPacking']
-
       await this.$store.dispatch('product/getProductDetail', { idProduct: atob(this.$route.params.id) })
       const productDetail   = this.$store.getters['product/getProductDetail'].result
 
@@ -368,6 +365,9 @@ export default {
       this.product.company_id          = productDetail.company_id
       this.product.description         = productDetail.description
       this.product.status              = productDetail.status
+
+      await this.$store.dispatch('packing/getPacking', { idCompany: productDetail.company_id })
+      this.packingSelect    = this.$store.getters['packing/getPacking']
       // set product packing
       productDetail.products_packing.forEach((value) => {
         const productsPacking     = {
