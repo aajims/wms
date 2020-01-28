@@ -1,36 +1,32 @@
 import axios from 'axios'
 
 export const state = () => ({
-  addPacking   : null,
-  packingDetail: null,
-  editPacking  : null,
-  packing      : null,
+  addProduct   : null,
+  productDetail: null,
+  editProduct  : null,
 })
 
 export const mutations = {
-  SET_PACKING_DETAIL (state, packingDetail) {
-    state.packingDetail = packingDetail
+  SET_PRODUCT_DETAIL (state, productDetail) {
+    state.productDetail = productDetail
   },
-  ADD_PACKING (state, addPacking) {
-    state.addPacking = addPacking
+  ADD_PRODUCT (state, addProduct) {
+    state.addProduct = addProduct
   },
-  EDIT_PACKING (state, editPacking) {
-    state.editPacking = editPacking
-  },
-  SET_PACKING (state, packing) {
-    state.packing = packing
+  EDIT_PRODUCT (state, editProduct) {
+    state.editProduct = editProduct
   },
 }
 
 export const actions = {
-  async addPacking ({ commit, dispatch }, { data }) {
+  async addProduct ({ commit, dispatch }, { data }) {
     await axios({
       method: 'post',
-      url   : '/api/packing/add',
+      url   : '/api/product/add',
       data  : data,
     }).then(function (response) {
       if (response.status === 200 && response.data.general_response.response_status === true)
-        commit('ADD_PACKING', response.data)
+        commit('ADD_PRODUCT', response.data)
       else if (response.data.general_response.response_code === 4003)
         dispatch('removeToken', null, { root: true })
       else
@@ -44,15 +40,15 @@ export const actions = {
         throw new Error('Network Communication Error')
     })
   },
-  async editPacking ({ commit, dispatch }, { idPacking, data }) {
-    const dataPut = { id_packing: idPacking, data: data }
+  async editProduct ({ commit, dispatch }, { idProduct, data }) {
+    const dataPut = { id_product: idProduct, data: data }
     await axios({
       method: 'put',
-      url   : '/api/packing/edit',
+      url   : '/api/product/edit',
       data  : dataPut,
     }).then(function (response) {
       if (response.status === 200 && response.data.general_response.response_status === true)
-        commit('EDIT_PACKING', response.data)
+        commit('EDIT_PRODUCT', response.data)
       else if (response.data.general_response.response_code === 4003)
         dispatch('removeToken', null, { root: true })
       else
@@ -66,14 +62,14 @@ export const actions = {
         throw new Error('Network Communication Error')
     })
   },
-  async getPackingDetail ({ commit, dispatch }, { idPacking }) {
+  async getProductDetail ({ commit, dispatch }, { idProduct }) {
     await axios({
       method: 'get',
-      url   : '/api/packing/detail',
-      params: { id_packing: idPacking },
+      url   : '/api/product/detail',
+      params: { id_product: idProduct },
     }).then(function (response) {
       if (response.status === 200 && response.data.general_response.response_status === true)
-        commit('SET_PACKING_DETAIL', response.data)
+        commit('SET_PRODUCT_DETAIL', response.data)
       else if (response.data.general_response.response_code === 4003)
         dispatch('removeToken', null, { root: true })
       else
@@ -85,36 +81,18 @@ export const actions = {
         dispatch('removeToken', null, { root: true })
       else
         throw new Error('Network Communication Error')
-    })
-  },
-  async getPacking ({ commit }) {
-    await axios({
-      method: 'get',
-      url   : '/api/packing/select',
-    }).then(function (response) {
-      if (response.status === 200 && response.data.general_response.response_status === true) {
-        const packing = [{ id: '', text: '' }]
-        for (const pack in response.data.result)
-          packing.push({ id: response.data.result[pack].id, text: response.data.result[pack].name })
-        commit('SET_PACKING', packing)
-      }
-    }).catch(function () {
-      throw new Error('Network Communication Error')
     })
   },
 }
 
 export const getters = {
   getAddSuccess: (state) => {
-    return state.addPacking
+    return state.addProduct
   },
-  getPackingDetail: (state) => {
-    return state.packingDetail
+  getProductDetail: (state) => {
+    return state.productDetail
   },
-  getEditPacking: (state) => {
-    return state.editPacking
-  },
-  getPacking: (state) => {
-    return state.packing
+  getEditProduct: (state) => {
+    return state.editProduct
   },
 }

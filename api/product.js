@@ -8,36 +8,12 @@ app.use(bodyParser.urlencoded({ extended: true }))
 
 const library = require('./library.js')
 
-app.get('/packing/select', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
-  axios({
-    method : 'get',
-    url    : `${process.env.API_URL}/v1/packing-type`,
-    headers: {
-      'Content-Type' : 'application/x-www-form-urlencoded',
-      'Authorization': `Bearer ${token}`,
-    },
-    params: {
-      'page'          : 1,
-      'per_page'      : 100,
-      'sort_by'       : 'name',
-      'sort'          : 'asc',
-      'search_by'     : 'name',
-      'keyword'       : request.query.term,
-      'filter[status]': 1,
-    },
-  }).then(function (responseApi) {
-    response.send(responseApi.data)
-  }).catch(function (error) {
-    response.status(error.response.status).send(error.response.data)
-  })
-})
-app.post('/packing/list', (request, response) => {
+app.post('/product/list', (request, response) => {
   const params = library.generateDatatableParameter(request.body)
   const token  = request.cookies[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
-    url    : `${process.env.API_URL}/v1/packing-type/`,
+    url    : `${process.env.API_URL}/v1/product/`,
     headers: {
       'Content-Type' : 'application/x-www-form-urlencoded',
       'Authorization': `Bearer ${token}`,
@@ -52,11 +28,11 @@ app.post('/packing/list', (request, response) => {
   })
 })
 
-app.post('/packing/add', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+app.post('/product/add', (request, response) => {
+  const token    = request.cookies[`${process.env.APP_ENV}_token`]
   axios({
     method : 'post',
-    url    : `${process.env.API_URL}/v1/packing-type/`,
+    url    : `${process.env.API_URL}/v1/product/`,
     headers: {
       'Content-Type' : 'application/x-www-form-urlencoded',
       'Authorization': `Bearer ${token}`,
@@ -69,11 +45,11 @@ app.post('/packing/add', (request, response) => {
   })
 })
 
-app.put('/packing/edit', (request, response) => {
+app.put('/product/edit', (request, response) => {
   const token = request.cookies[`${process.env.APP_ENV}_token`]
   axios({
     method : 'put',
-    url    : `${process.env.API_URL}/v1/packing-type/${request.body.id_packing}`,
+    url    : `${process.env.API_URL}/v1/product/${request.body.id_product}`,
     headers: {
       'Content-Type' : 'application/x-www-form-urlencoded',
       'Authorization': `Bearer ${token}`,
@@ -86,40 +62,14 @@ app.put('/packing/edit', (request, response) => {
   })
 })
 
-app.get('/packing/detail', (request, response) => {
+app.get('/product/detail', (request, response) => {
   const token = request.cookies[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
-    url    : `${process.env.API_URL}/v1/packing-type/${request.query.id_packing}`,
+    url    : `${process.env.API_URL}/v1/product/${request.query.id_product}`,
     headers: {
       'Content-Type' : 'application/x-www-form-urlencoded',
       'Authorization': `Bearer ${token}`,
-    },
-  }).then(function (responseApi) {
-    response.send(responseApi.data)
-  }).catch(function (error) {
-    response.status(error.response.status).send(error.response.data)
-  })
-})
-
-app.get('/packing/select', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
-  axios({
-    method : 'get',
-    url    : `${process.env.API_URL}/v1/packing-type`,
-    headers: {
-      'Content-Type' : 'application/x-www-form-urlencoded',
-      'Authorization': `Bearer ${token}`,
-    },
-    params: {
-      'page'              : 1,
-      'per_page'          : 1000,
-      'sort_by'           : 'name',
-      'sort'              : 'asc',
-      'search_by'         : 'name',
-      'keyword'           : '',
-      'filter[status]'    : 1,
-      'filter[company_id]': 1,
     },
   }).then(function (responseApi) {
     response.send(responseApi.data)
