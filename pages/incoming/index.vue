@@ -227,7 +227,7 @@
       <!--begin: Datatable -->
       <table
         id="incoming_table"
-        class="table table-hover table-checkable"
+        class="table table-hover table-checkable nowrap"
       >
         <thead>
           <tr>
@@ -263,7 +263,7 @@
 
 <script>
 import moment from 'moment'
-import { JOB_STATUS } from '@/utils/constants'
+import { JOB_STATUS, STATUS_OPEN, STATUS_CANCEL } from '@/utils/constants'
 
 export default {
   data () {
@@ -390,7 +390,7 @@ export default {
       order  : [[10, 'desc']],
       columns: [
         { data: 'row_number' },
-        { data: 'job_no' },
+        { data: 'job_no', responsivePriority: -3 },
         { data: 'company_name' },
         { data: 'to_warehouse_name' },
         { data: 'from_country_name' },
@@ -399,9 +399,9 @@ export default {
         { data: 'order_date' },
         { data: 'etd' },
         { data: 'eta' },
-        { data: 'created_at' },
+        { data: 'created_at', responsivePriority: -1 },
         { data: 'updated_at' },
-        { data: 'actions', responsivePriority: -1 },
+        { data: 'actions', responsivePriority: -2 },
       ],
       columnDefs: [
         {
@@ -424,17 +424,17 @@ export default {
           targets  : -1,
           title    : 'Actions',
           className: 'dt-center',
-          width    : '170px',
+          width    : '100px',
           orderable: false,
           render   : function (data, type, full, meta) {
             let actionButtonAdditional = ''
-            if (full.status === 3)
+            if (full.status === STATUS_OPEN)
               actionButtonAdditional = `<a class="dropdown-item action-button-cancel"  data-index="${meta.row}" href="javascript:void(0)"><i class="la la-times-circle"></i> Cancel Job</a>`
 
-            return `<a href="/incoming/detail/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
+            return `<a href="/incoming/detail/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
                       <i class="la la-eye"></i>
                     </a>
-                    <a href="/incoming/edit/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
+                    <a href="/incoming/edit/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
                       <i class="la la-edit"></i>
                     </a>
                     <span class="dropdown">
@@ -455,8 +455,10 @@ export default {
           render   : function (data, type, full, meta) {
             if (typeof data === 'undefined')
               return data
-
-            return `<span class="kt-badge kt-badge--${JOB_STATUS[data - 3].class} kt-badge--inline">${JOB_STATUS[data - 3].text}</span>`
+            for (const statusIndex in JOB_STATUS) {
+              if (data === JOB_STATUS[statusIndex].id)
+                return `<span class="kt-badge kt-badge--${JOB_STATUS[statusIndex].class} kt-badge--inline">${JOB_STATUS[statusIndex].text}</span>`
+            }
           },
         },
         {
@@ -534,7 +536,7 @@ export default {
       // eslint-disable-next-line no-undef
       swal.fire({
         title             : 'Are you sure?',
-        text              : `Incoming job "${row.job_no}" will be canceled`,
+        text              : `Job incoming "${row.job_no}" will be canceled`,
         type              : 'question',
         showCancelButton  : true,
         confirmButtonText : 'Cancel Job',
@@ -549,12 +551,12 @@ export default {
     async updateStatus (idIncoming, param) {
       try {
         this.$nuxt.$loading.start()
-        param.status    = 5
+        param.status    = STATUS_CANCEL
         await this.$store.dispatch('incoming/editIncoming', { idIncoming: idIncoming, data: param })
         const data      = this.$store.getters['incoming/getEditIncoming']
         const parameter = {
           alertClass: 'alert-success',
-          message   : `Incoming job ${data.result.job_no} has been canceled`,
+          message   : `Job incoming ${data.result.job_no} has been canceled`,
         }
         this.$nuxt.$emit('alertShow', parameter)
         this.$nuxt.$loading.finish()
@@ -562,7 +564,7 @@ export default {
         KTUtil.scrollTop()
         this.datatable.ajax.reload()
       } catch (error) {
-        param.status    = param.status === 1 ? 0 : 1
+        param.status    = STATUS_OPEN
         const parameter = {
           alertClass: 'alert-danger',
           message   : error.message,
