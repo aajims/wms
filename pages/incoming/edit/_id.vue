@@ -13,10 +13,10 @@
           <div class="kt-portlet__head kt-portlet__head--lg">
             <div class="kt-portlet__head-label">
               <span class="kt-portlet__head-icon">
-                <i class="kt-font-brand flaticon-add" />
+                <i class="kt-font-brand flaticon-edit-1" />
               </span>
               <h3 class="kt-portlet__head-title">
-                Add Incoming Stock
+                Edit Incoming Stock &nbsp;&nbsp;#{{ incomingNo }}
               </h3>
             </div>
             <div class="kt-portlet__head-toolbar">
@@ -507,11 +507,58 @@ export default {
       productPackingOption: null,
       productPackingId    : null,
       remainingLocation   : [],
+      incomingNo          : '',
+      company_name        : '',
+      warehouse_name      : '',
+      rowId               : '',
     }
   },
   async mounted () {
     const app           = this
     const customAdapter = $.fn.select2.amd.require('select2/data/customAdapter')
+    try {
+      await this.$store.dispatch('incoming/getIncomingDetail', { idIncoming: atob(this.$route.params.id) })
+      const incomingDetail           = this.$store.getters['incoming/getIncomingDetail'].result
+
+      this.incoming.order_no         = incomingDetail.order_no
+      this.incomingNo                = incomingDetail.job_no
+      this.incoming.transport_number = incomingDetail.transport_number
+      this.incoming.flight           = incomingDetail.flight
+      this.incoming.from             = incomingDetail.from
+      this.incoming.custom_permit    = incomingDetail.custom_permit
+      this.incoming.cargo_insurance  = incomingDetail.cargo_insurance
+      this.incoming.description      = incomingDetail.description
+      this.incoming.transport_type   = incomingDetail.transport_type
+      this.incoming.from_country_id  = incomingDetail.from_country_id
+      this.incoming.company_id       = incomingDetail.company_id
+      this.incoming.to_warehouse_id  = incomingDetail.to_warehouse_id
+      this.company_name              = incomingDetail.company_name
+      this.warehouse_name            = incomingDetail.to_warehouse_name
+      this.incoming.products         = incomingDetail.products
+
+      if (incomingDetail.etd !== '')
+        $('#etd').val(moment(incomingDetail.etd).format('DD/MM/YYYY HH:mm'))
+      if (incomingDetail.eta !== '')
+        $('#eta').val(moment(incomingDetail.eta).format('DD/MM/YYYY HH:mm'))
+      if (incomingDetail.order_date !== '')
+        $('#order_date').val(moment(incomingDetail.order_date).format('DD/MM/YYYY HH:mm'))
+      if (incomingDetail.shipment_date !== '')
+        $('#shipment_date').val(moment(incomingDetail.shipment_date).format('DD/MM/YYYY HH:mm'))
+
+      // set usage existing
+      const holder = {}
+      this.incoming.products.forEach(function (value) {
+        // eslint-disable-next-line no-prototype-builtins
+        if (holder.hasOwnProperty(value.to_location_id))
+          holder[value.to_location_id] = holder[value.to_location_id] + 1
+        else
+          holder[value.to_location_id] = 1
+      })
+      for (const property in holder)
+        this.remainingLocation.push({ location_id: parseInt(property), usage: holder[property] })
+    } catch (error) {
+
+    }
     $('#company_id').select2({
       placeholder       : 'Select company',
       minimumInputLength: 1,
@@ -533,6 +580,8 @@ export default {
         },
       },
     })
+    const newOptionCompany = new Option(this.company_name, this.incoming.company_id, true, true)
+    $('#company_id').append(newOptionCompany).trigger('change')
     $('#company_id').on('change', function () {
       validator.element($(this))
     })
@@ -563,6 +612,8 @@ export default {
         return data.text
       },
     })
+    const newOptionWarehouse = new Option(this.warehouse_name, this.incoming.to_warehouse_id, true, true)
+    $('#to_warehouse_id').append(newOptionWarehouse).trigger('change')
     $('#to_warehouse_id').on('change', function () {
       validator.element($(this))
     })
@@ -594,12 +645,14 @@ export default {
       allowClear : true,
       data       : this.countries,
     })
+    $('#from_country_id').val(this.incoming.from_country_id).trigger('change')
 
     $('#transport_type').select2({
       placeholder: 'Select a transport type',
       allowClear : true,
       data       : TRANSPORT_TYPE,
     })
+    $('#transport_type').val(this.incoming.transport_type).trigger('change')
     $('#transport_type').on('change', function () {
       app.incoming.transport_type = $(this).val()
     })
@@ -652,7 +705,7 @@ export default {
           })
           return false
         }
-        app.addIncoming(data)
+        app.editIncoming(data)
       },
     })
 
@@ -679,6 +732,7 @@ export default {
           url : function () {
             return `/api/product/select?id_company=${$('#company_id').val()}`
           },
+          // url           : `/api/product/select?id_company=1`,
           cache         : true,
           processResults: function (data) {
             return {
@@ -729,6 +783,7 @@ export default {
           url : function () {
             return `/api/location/select?id_warehouse=${$('#to_warehouse_id').val()}`
           },
+          // url           : `/api/location/select?id_warehouse=2`,
           cache         : true,
           processResults: function (data) {
             return {
@@ -768,11 +823,12 @@ export default {
       paging    : false,
       info      : false,
       searching : false,
+      data      : this.incoming.products,
       columns   : [
         { data: 'product_name' },
-        { data: 'packing_name' },
+        { data: 'product_packing_name' },
         { data: 'qty' },
-        { data: 'location_name' },
+        { data: 'to_location_name' },
         { data: 'batch' },
         { data: 'expired_date' },
         { data: 'description' },
@@ -815,11 +871,13 @@ export default {
         {
           targets: -1,
           render : function (data, type, full, meta) {
+            const iconAdditional  = full.id === '' ? 'la la-trash' : 'la la-power-off'
+            const titleAdditional = full.id === '' ? 'Delete' : 'Update Status'
             return `<a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit">
                       <i class="la la-edit"></i>
                     </a>
-                    <a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Delete">
-                      <i class="la la-trash"></i>
+                    <a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="${titleAdditional}">
+                      <i class="${iconAdditional}"></i>
                     </a>`
           },
         },
@@ -849,15 +907,21 @@ export default {
       app.rowIndex         = app.datatable.row($(this).parents('tr')).index()
       const rowData        = app.datatable.row($(this).parents('tr')).data()
       app.productPackingId = rowData.product_packing_id
+      app.rowId            = rowData.id
       if (rowData.to_warehouse_location_id === '')
         app.emptyLocation = true
-      $('#product_id').val(rowData.product_id).trigger('change')
+
+      const newOptionProduct  = new Option(rowData.product_name, rowData.product_id, true, true)
+      $('#product_id').append(newOptionProduct).trigger('change')
       $('#description_modal').val(rowData.description)
       $('#qty').val(rowData.qty)
-      $('#to_warehouse_location_id').val(rowData.to_warehouse_location_id).trigger('change')
+
+      const newOptionLocation = new Option(rowData.to_location_name, rowData.to_warehouse_location_id, true, true)
+      $('#to_warehouse_location_id').append(newOptionLocation).trigger('change')
       if (rowData.expired_date !== '')
         $('#expired_date').val(moment(rowData.expired_date).format('DD/MM/Y'))
       $('#batch').val(rowData.batch)
+
       $('#product_modal').modal('show')
     })
 
@@ -981,12 +1045,13 @@ export default {
         }
 
         product = {
+          id                      : this.rowId,
           product_id              : parseInt($('#product_id').val()),
           product_packing_id      : parseInt($('#product_packing_id').val()),
           to_warehouse_location_id: locationId,
           product_name            : $('#product_id option:selected').text(),
-          packing_name            : $('#product_packing_id').find(':selected').data('packing-name'),
-          location_name           : locationName,
+          product_packing_name    : $('#product_packing_id').find(':selected').data('packing-name'),
+          to_location_name        : locationName,
           expired_date            : $('#expired_date').val() !== '' ? moment($('#expired_date').val(), 'DD/MM/YYYY').format('Y-MM-DD HH:mm:ss') : '',
           qty                     : qtyPerRow,
           batch                   : $('#batch').val(),
@@ -1027,6 +1092,7 @@ export default {
       this.productPackingId = null
       this.rowIndex         = null
       this.emptyLocation    = false
+      this.rowId            = ''
     },
     setDataPost (data) {
       this.incoming.company_id = parseInt($('#company_id').val())
@@ -1045,12 +1111,12 @@ export default {
       this.incoming.to_warehouse_id = parseInt($('#to_warehouse_id').val())
       this.incoming.products        = data
     },
-    async addIncoming (data) {
+    async editIncoming (data) {
       if ($('#incoming_form').valid()) {
         await this.setDataPost(data)
         try {
           this.$nuxt.$loading.start()
-          await this.$store.dispatch('incoming/addIncoming', { data: this.incoming })
+          await this.$store.dispatch('incoming/editIncoming', { data: this.incoming })
           const data      = this.$store.getters['incoming/getAddSuccess']
           const parameter = {
             alertClass: 'alert-success',

@@ -11,7 +11,7 @@
               <i class="kt-font-brand flaticon-add" />
             </span>
             <h3 class="kt-portlet__head-title">
-              Incoming Stock Detail
+              Incoming Stock Detail &nbsp;&nbsp;#{{ incoming.job_no }}
             </h3>
           </div>
           <div class="kt-portlet__head-toolbar">
