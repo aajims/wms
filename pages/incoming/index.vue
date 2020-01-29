@@ -123,7 +123,6 @@
                     >
                       <i class="flaticon2-circular-arrow" /> Clear
                     </a>
-                    <div class="kt-separator d-xl-none" />
                   </div>
                 </div>
               </div>
@@ -233,16 +232,18 @@
           <tr>
             <th>#</th>
             <th>Incoming No.</th>
+            <th>Tracking</th>
             <th>Company</th>
             <th>Warehouse</th>
             <th>Country</th>
             <th>Status</th>
+            <th>Created</th>
             <th>Shipment</th>
             <th>Order</th>
             <th>ETD</th>
             <th>ETA</th>
-            <th>Created</th>
             <th>Updated</th>
+            <th>Close Date</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -387,37 +388,33 @@ export default {
           d.params = app.params
         },
       },
-      order  : [[10, 'desc']],
+      order  : [[7, 'desc']],
       columns: [
         { data: 'row_number' },
-        { data: 'job_no', responsivePriority: -3 },
+        { data: 'job_no', responsivePriority: -1 },
+        { data: 'tracking' },
         { data: 'company_name' },
         { data: 'to_warehouse_name' },
         { data: 'from_country_name' },
         { data: 'status' },
+        { data: 'created_at' },
         { data: 'shipment_date' },
         { data: 'order_date' },
         { data: 'etd' },
         { data: 'eta' },
-        { data: 'created_at', responsivePriority: -1 },
         { data: 'updated_at' },
+        { data: 'job_close_date' },
         { data: 'actions', responsivePriority: -2 },
       ],
       columnDefs: [
         {
-          targets  : 0,
-          orderable: false,
-        },
-        {
-          targets  : 2,
-          orderable: false,
-        },
-        {
-          targets  : 3,
-          orderable: false,
-        },
-        {
-          targets  : 4,
+          targets: [
+            0,
+            2,
+            3,
+            4,
+            5,
+          ],
           orderable: false,
         },
         {
@@ -427,9 +424,9 @@ export default {
           width    : '100px',
           orderable: false,
           render   : function (data, type, full, meta) {
-            let actionButtonAdditional = ''
-            if (full.status === STATUS_OPEN)
-              actionButtonAdditional = `<a class="dropdown-item action-button-cancel"  data-index="${meta.row}" href="javascript:void(0)"><i class="la la-times-circle"></i> Cancel Job</a>`
+            let actionButtonCancel = ''
+            if (full.status === STATUS_OPEN && full.tracking === '')
+              actionButtonCancel = `<a class="dropdown-item action-button-cancel"  data-index="${meta.row}" href="javascript:void(0)"><i class="la la-times-circle"></i> Cancel Job</a>`
 
             return `<a href="/incoming/detail/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
                       <i class="la la-eye"></i>
@@ -444,13 +441,13 @@ export default {
                         <div class="dropdown-menu dropdown-menu-right">
                             <a class="dropdown-item" href="javascript:void(0)"><i class="la la-print"></i> Print</a>
                             <a class="dropdown-item" href="javascript:void(0)"><i class="la la-qrcode"></i> Print QR Code</a>
-                            ${actionButtonAdditional}
+                            ${actionButtonCancel}
                         </div>
                     </span>`
           },
         },
         {
-          targets  : 5,
+          targets  : 6,
           className: 'dt-center',
           render   : function (data, type, full, meta) {
             if (typeof data === 'undefined')
@@ -462,8 +459,14 @@ export default {
           },
         },
         {
-          targets: -7,
-          render : function (data, type, full, meta) {
+          targets: [
+            8,
+            9,
+            10,
+            11,
+            13,
+          ],
+          render: function (data, type, full, meta) {
             if (data !== '')
               return moment(data).format('DD/MM/Y HH:mm')
             else
@@ -471,34 +474,7 @@ export default {
           },
         },
         {
-          targets: -6,
-          render : function (data, type, full, meta) {
-            if (data !== '')
-              return moment(data).format('DD/MM/Y HH:mm')
-            else
-              return data
-          },
-        },
-        {
-          targets: -5,
-          render : function (data, type, full, meta) {
-            if (data !== '')
-              return moment(data).format('DD/MM/Y HH:mm')
-            else
-              return data
-          },
-        },
-        {
-          targets: -4,
-          render : function (data, type, full, meta) {
-            if (data !== '')
-              return moment(data).format('DD/MM/Y HH:mm')
-            else
-              return data
-          },
-        },
-        {
-          targets: -3,
+          targets: 7,
           render : function (data, type, full, meta) {
             if (data !== '')
               return `${moment(data).format('DD/MM/Y HH:mm:ss')}<br>${full.created_by_name}`
@@ -507,7 +483,7 @@ export default {
           },
         },
         {
-          targets: -2,
+          targets: 12,
           render : function (data, type, full, meta) {
             if (data !== '')
               return `${moment(data).format('DD/MM/Y HH:mm:ss')}<br>${full.updated_by_name}`
