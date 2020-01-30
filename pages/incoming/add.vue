@@ -621,8 +621,9 @@ export default {
           cancelButtonClass : 'btn btn-default',
         }).then(function (result) {
           if (result.value) {
-            app.remainingLocation = []
+            app.remainingLocation   = []
             app.datatable.clear().draw()
+            app.toWarehouseIdBefore = $('#to_warehouse_id').val()
           } else {
             app.isRestore = true
             $('#to_warehouse_id').select2('val', app.toWarehouseIdBefore)
