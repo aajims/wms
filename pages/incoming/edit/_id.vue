@@ -13,10 +13,10 @@
           <div class="kt-portlet__head kt-portlet__head--lg">
             <div class="kt-portlet__head-label">
               <span class="kt-portlet__head-icon">
-                <i class="kt-font-brand flaticon-add" />
+                <i class="kt-font-brand flaticon-edit-1" />
               </span>
               <h3 class="kt-portlet__head-title">
-                Add Incoming Stock
+                Edit Incoming Stock &nbsp;&nbsp;#{{ incomingNo }}
               </h3>
             </div>
             <div class="kt-portlet__head-toolbar">
@@ -299,17 +299,12 @@
                       <th>SKU - Product</th>
                       <th>Packing</th>
                       <th>Qty</th>
-                      <th class="location_name">
-                        Location
-                      </th>
+                      <th>Location</th>
                       <th>Batch</th>
-                      <th class="expired_date">
-                        Expired
-                      </th>
+                      <th>Status</th>
+                      <th>Expired</th>
                       <th>Description</th>
-                      <th class="actions">
-                        Actions
-                      </th>
+                      <th>Actions</th>
                     </tr>
                   </thead>
                 </table>
@@ -479,7 +474,7 @@
 
 <script>
 import moment from 'moment'
-import { TRANSPORT_TYPE } from '@/utils/constants'
+import { TRANSPORT_TYPE, INCOMING_STATUS, STATUS_OPEN, STATUS_BLOCK, STATUS_STORED } from '@/utils/constants'
 
 export default {
   data () {
@@ -507,21 +502,97 @@ export default {
         description     : '',
         products        : [],
       },
-      datatable           : [],
-      productPackingSelect: [],
-      productPackingOption: null,
-      productPackingId    : null,
-      remainingLocation   : [],
-      locationIdBefore    : '',
-      modalOpen           : false,
-      toWarehouseIdBefore : '',
-      toCompanyIdBefore   : '',
-      isRestore           : false,
+      datatable               : [],
+      productPackingSelect    : [],
+      productPackingOption    : null,
+      productPackingId        : null,
+      remainingLocation       : [],
+      incomingNo              : '',
+      company_name            : '',
+      warehouse_name          : '',
+      rowId                   : '',
+      locationIdBefore        : '',
+      statusProduct           : STATUS_OPEN,
+      modalHasOpen            : false,
+      toWarehouseIdBefore     : '',
+      toWarehouseNameBefore   : '',
+      toWarehouseCountryBefore: '',
+      toCompanyIdBefore       : '',
+      isRestore               : false,
     }
   },
   async mounted () {
     const app           = this
     const customAdapter = $.fn.select2.amd.require('select2/data/customAdapter')
+    try {
+      await this.$store.dispatch('incoming/getIncomingDetail', { idIncoming: atob(this.$route.params.id) })
+      const incomingDetail           = this.$store.getters['incoming/getIncomingDetail'].result
+
+      this.incoming.order_no         = incomingDetail.order_no
+      this.incomingNo                = incomingDetail.job_no
+      this.incoming.transport_number = incomingDetail.transport_number
+      this.incoming.flight           = incomingDetail.flight
+      this.incoming.from             = incomingDetail.from
+      this.incoming.custom_permit    = incomingDetail.custom_permit
+      this.incoming.cargo_insurance  = incomingDetail.cargo_insurance
+      this.incoming.description      = incomingDetail.description
+      this.incoming.transport_type   = incomingDetail.transport_type
+      this.incoming.from_country_id  = incomingDetail.from_country_id
+      this.incoming.company_id       = incomingDetail.company_id
+      this.incoming.to_warehouse_id  = incomingDetail.to_warehouse_id
+      this.company_name              = incomingDetail.company_name
+      this.warehouse_name            = incomingDetail.to_warehouse_name
+
+      this.toWarehouseIdBefore      = incomingDetail.to_warehouse_id
+      this.toWarehouseNameBefore    = incomingDetail.to_warehouse_name
+      this.toWarehouseCountryBefore = incomingDetail.to_country_id
+
+      // set products
+      incomingDetail.products.forEach((value) => {
+        const products     = {
+          id                                : value.id,
+          product_id                        : value.product_id,
+          product_packing_id                : value.product_packing_id,
+          to_warehouse_location_id          : value.to_warehouse_location_id,
+          product_name                      : value.product_name,
+          product_packing_name              : value.product_packing_name,
+          // to_country_id                     : value.to_warehouse_location_name,
+          to_warehouse_location_name        : value.to_warehouse_location_name,
+          to_warehouse_location_level       : value.to_warehouse_location_level,
+          to_warehouse_location_usage       : value.to_warehouse_location_usage,
+          to_warehouse_location_capacity_max: value.to_warehouse_location_capacity_max,
+          expired_date                      : value.expired_date,
+          qty                               : value.qty,
+          batch                             : value.batch,
+          description                       : value.description,
+          status                            : value.status,
+        }
+        this.incoming.products.push(products)
+      })
+
+      if (incomingDetail.etd !== '')
+        $('#etd').val(moment(incomingDetail.etd).format('DD/MM/YYYY HH:mm'))
+      if (incomingDetail.eta !== '')
+        $('#eta').val(moment(incomingDetail.eta).format('DD/MM/YYYY HH:mm'))
+      if (incomingDetail.order_date !== '')
+        $('#order_date').val(moment(incomingDetail.order_date).format('DD/MM/YYYY HH:mm'))
+      if (incomingDetail.shipment_date !== '')
+        $('#shipment_date').val(moment(incomingDetail.shipment_date).format('DD/MM/YYYY HH:mm'))
+
+      // set usage existing
+      const holder = {}
+      this.incoming.products.forEach(function (value) {
+        // eslint-disable-next-line no-prototype-builtins
+        if (holder.hasOwnProperty(value.to_warehouse_location_id))
+          holder[value.to_warehouse_location_id] = holder[value.to_warehouse_location_id] + 1
+        else
+          holder[value.to_warehouse_location_id] = 1
+      })
+      for (const property in holder)
+        this.remainingLocation.push({ location_id: parseInt(property), usage: holder[property] })
+    } catch (error) {
+
+    }
     $('#company_id').select2({
       placeholder       : 'Select company',
       minimumInputLength: 1,
@@ -543,36 +614,10 @@ export default {
         },
       },
     })
-    $('#company_id').on('select2:select', function () {
-      const data = app.datatable.rows().data().toArray()
-      if (data.length === 0)
-        app.toCompanyIdBefore = $(this).val()
-    })
+    const newOptionCompany = new Option(this.company_name, this.incoming.company_id, true, true)
+    $('#company_id').append(newOptionCompany).trigger('change')
     $('#company_id').on('change', function () {
       validator.element($(this))
-      const data = app.datatable.rows().data().toArray()
-      if (data.length !== 0 && app.isRestore === false) {
-        // eslint-disable-next-line no-undef
-        swal.fire({
-          title             : 'Are you sure?',
-          text              : 'If you change warehouse, all product will be deleted',
-          type              : 'question',
-          showCancelButton  : true,
-          buttonsStyling    : false,
-          confirmButtonClass: 'btn btn-success',
-          cancelButtonClass : 'btn btn-default',
-        }).then(function (result) {
-          if (result.value) {
-            app.remainingLocation = []
-            app.datatable.clear().draw()
-          } else {
-            app.isRestore = true
-            $('#company_id').select2('val', app.toCompanyIdBefore)
-            setTimeout(function () { app.isRestore = false }, 500)
-          }
-        })
-        return false
-      }
     })
 
     $('#to_warehouse_id').select2({
@@ -601,11 +646,9 @@ export default {
         return data.text
       },
     })
-    $('#to_warehouse_id').on('select2:select', function () {
-      const data = app.datatable.rows().data().toArray()
-      if (data.length === 0)
-        app.toWarehouseIdBefore = $(this).val()
-    })
+    const newOptionWarehouse = new Option(this.warehouse_name, this.incoming.to_warehouse_id, true, true)
+    newOptionWarehouse.setAttribute('data-country-id', this.incoming.to_country_id)
+    $('#to_warehouse_id').append(newOptionWarehouse).trigger('change')
     $('#to_warehouse_id').on('change', function () {
       validator.element($(this))
       const data = app.datatable.rows().data().toArray()
@@ -621,16 +664,26 @@ export default {
           cancelButtonClass : 'btn btn-default',
         }).then(function (result) {
           if (result.value) {
-            app.remainingLocation   = []
+            app.remainingLocation = []
             app.datatable.clear().draw()
-            app.toWarehouseIdBefore = $('#to_warehouse_id').val()
           } else {
-            app.isRestore = true
-            $('#to_warehouse_id').select2('val', app.toWarehouseIdBefore)
+            app.isRestore            = true
+            const newOptionWarehouse = new Option(app.toWarehouseNameBefore, app.toWarehouseIdBefore, true, true)
+            newOptionWarehouse.setAttribute('data-country-id', app.toWarehouseCountryBefore)
+            $('#to_warehouse_id').append(newOptionWarehouse).trigger('change')
             setTimeout(function () { app.isRestore = false }, 500)
           }
         })
         return false
+      }
+    })
+    $('#to_warehouse_id').on('select2:select', function () {
+      const data = app.datatable.rows().data().toArray()
+      console.log(data.length)
+      if (data.length === 0) {
+        app.toWarehouseIdBefore      = $(this).val()
+        app.toWarehouseCountryBefore = parseInt($(this).find(':selected').data('country-id'))
+        app.toWarehouseNameBefore    = $('#to_warehouse_id option:selected').text()
       }
     })
 
@@ -661,12 +714,14 @@ export default {
       allowClear : true,
       data       : this.countries,
     })
+    $('#from_country_id').val(this.incoming.from_country_id).trigger('change')
 
     $('#transport_type').select2({
       placeholder: 'Select a transport type',
       allowClear : true,
       data       : TRANSPORT_TYPE,
     })
+    $('#transport_type').val(this.incoming.transport_type).trigger('change')
     $('#transport_type').on('change', function () {
       app.incoming.transport_type = $(this).val()
     })
@@ -719,7 +774,7 @@ export default {
           })
           return false
         }
-        app.addIncoming(data)
+        app.editIncoming(data)
       },
     })
 
@@ -734,6 +789,8 @@ export default {
       validatorModal.element($(this))
       app.setPackingValue($('#product_id').val())
     })
+    $('#product_packing_id').prop('disabled', true)
+
     $('#to_warehouse_location_id').on('change', function () {
       validatorModal.element($(this))
       if (app.rowIndex !== null) {
@@ -743,8 +800,9 @@ export default {
           app.deleteRemainingUsage(app.locationIdBefore)
       }
     })
-    $('#product_packing_id').prop('disabled', true)
+
     $('#product_modal').on('shown.bs.modal', function () {
+      app.modalHasOpen = true
       $('#product_id').select2({
         placeholder       : 'Select product',
         minimumInputLength: 1,
@@ -782,7 +840,8 @@ export default {
       })
       $('#product_packing_id').on('change', function () {
         validatorModal.element($(this))
-        $('#qty_max').val($('#product_packing_id').find(':selected').data('qty-max'))
+        if (this.productPackingOption !== null)
+          $('#qty_max').val($('#product_packing_id').find(':selected').data('qty-max'))
       })
 
       $('#expired_date').datetimepicker({
@@ -816,11 +875,12 @@ export default {
                 })
                 if (object.usage !== object.capacity_max && usageRemaining < object.capacity_max) {
                   return {
-                    id           : object.id,
-                    text         : `${object.name} - Level ${object.level} (${object.usage} / ${object.capacity_max})`,
-                    location_name: `${object.name} - Level ${object.level}`,
-                    usage        : object.usage,
-                    capacity_max : object.capacity_max,
+                    id            : object.id,
+                    text          : `${object.name} - Level ${object.level} (${object.usage} / ${object.capacity_max})`,
+                    location_name : `${object.name}`,
+                    location_level: `${object.level}`,
+                    usage         : object.usage,
+                    capacity_max  : object.capacity_max,
                   }
                 }
               }),
@@ -829,6 +889,7 @@ export default {
         },
         templateSelection: function (data, container) {
           $(data.element).attr('data-location-name', data.location_name)
+          $(data.element).attr('data-location-level', data.location_level)
           $(data.element).attr('data-usage', data.usage)
           $(data.element).attr('data-capacity-max', data.capacity_max)
           return data.text
@@ -836,7 +897,6 @@ export default {
       })
     })
     $('#product_modal').on('hidden.bs.modal', function () {
-      app.modalOpen = false
       app.clearForm()
     })
 
@@ -847,12 +907,14 @@ export default {
       paging    : false,
       info      : false,
       searching : false,
+      data      : this.incoming.products,
       columns   : [
         { data: 'product_name' },
-        { data: 'packing_name' },
+        { data: 'product_packing_name' },
         { data: 'qty' },
-        { data: 'location_name' },
+        { data: 'to_warehouse_location_name' },
         { data: 'batch' },
+        { data: 'status' },
         { data: 'expired_date' },
         { data: 'description' },
         { data: 'actions', responsivePriority: -1 },
@@ -862,18 +924,31 @@ export default {
           title    : 'Insufficient Capacity',
           html     : true,
           trigger  : 'manual',
-          placement: 'right',
+          placement: 'left',
           content  : function () {
             return 'The location is <span class="kt-badge kt-badge--danger kt-badge--inline">FULL</span> Please select another location.'
           },
         })
+        $('.status-open').click(function () {
+          const rowData = app.datatable.row($(this).data('index')).data()
+          app.updateStatus(STATUS_OPEN, $(this).data('index'), rowData)
+        })
+        $('.status-block').click(function () {
+          const rowData = app.datatable.row($(this).data('index')).data()
+          app.updateStatus(STATUS_BLOCK, $(this).data('index'), rowData)
+        })
+        $('.status-store').click(function () {
+          const rowData = app.datatable.row($(this).data('index')).data()
+          app.updateStatus(STATUS_STORED, $(this).data('index'), rowData)
+        })
       },
       columnDefs: [
         {
-          targets: 'location_name',
-          render : function (data, type, full, meta) {
+          targets  : 3,
+          className: 'dt-center',
+          render   : function (data, type, full, meta) {
             if (full.to_warehouse_location_id === '') {
-              return `<span style="color: orange">${data}
+              return `<span style="color: orange">${data} - Level ${full.to_warehouse_location_level}
                         <sup>
                           <a href="javascript:;" class="popoverButton">
                             <i style="color: red" class="fa flaticon2-information"></i>
@@ -881,11 +956,11 @@ export default {
                         </sup>
                       </span>`
             } else
-              return data
+              return `${data} - Level ${full.to_warehouse_location_level}`
           },
         },
         {
-          targets  : 'expired_date',
+          targets  : -3,
           className: 'dt-center',
           render   : function (data, type, full, meta) {
             if (data !== '')
@@ -895,14 +970,44 @@ export default {
           },
         },
         {
-          targets: 'actions',
+          targets: -1,
           render : function (data, type, full, meta) {
-            return `<a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit">
-                      <i class="la la-edit"></i>
-                    </a>
-                    <a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Delete">
-                      <i class="la la-trash"></i>
-                    </a>`
+            let additionalButton
+            if (full.id === '')
+              additionalButton = `<a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Delete"><i class="la la-trash"></i></a>`
+            else {
+              let openButton  = ''
+              let blockButton = ''
+              let storeButton = ''
+              if (full.status !== STATUS_OPEN)
+                openButton = `<a class="dropdown-item status-open" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-folder-open"></i> Open</a>`
+              if (full.status !== STATUS_BLOCK)
+                blockButton = `<a class="dropdown-item status-block" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-list"></i> Block</a>`
+              if (full.status !== STATUS_STORED)
+                storeButton = `<a class="dropdown-item status-store" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-list-alt"></i> Store</a>`
+              additionalButton = `<span class="dropdown">
+                                      <a href="javascript:void(0)" class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="dropdown" aria-expanded="true">
+                                        <i class="la la-ellipsis-h"></i>
+                                      </a>
+                                      <div class="dropdown-menu dropdown-menu-right" rolw="menu">
+                                          ${openButton}${blockButton}${storeButton}
+                                      </div>
+                                  </span>`
+            }
+            return `<a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit"><i class="la la-edit"></i></a>
+                    ${additionalButton}`
+          },
+        },
+        {
+          targets  : 5,
+          className: 'dt-center',
+          render   : function (data, type, full, meta) {
+            if (typeof data === 'undefined')
+              return data
+            for (const statusIndex in INCOMING_STATUS) {
+              if (data === INCOMING_STATUS[statusIndex].id)
+                return `<span class="kt-badge kt-badge--${INCOMING_STATUS[statusIndex].class} kt-badge--inline">${INCOMING_STATUS[statusIndex].text}</span>`
+            }
           },
         },
       ],
@@ -927,16 +1032,40 @@ export default {
     $('#product_table').on('click', '.la-edit', function () {
       const rowData        = app.datatable.row($(this).parents('tr')).data()
       app.productPackingId = rowData.product_packing_id
+      app.rowId            = rowData.id
+      app.statusProduct    = rowData.status
       app.locationIdBefore = rowData.to_warehouse_location_id
-      $('#product_id').val(rowData.product_id).trigger('change')
+
+      app.usage         = rowData.to_warehouse_location_usage
+      app.capacityMax   = rowData.to_warehouse_location_capacity_max
+      app.locationName  = rowData.to_warehouse_location_name
+      app.locationLevel = rowData.to_warehouse_location_level
+
+      if (app.modalHasOpen === true) {
+        $('#product_id').val(rowData.product_id).trigger('change')
+        $('#to_warehouse_location_id').val(rowData.to_warehouse_location_id).trigger('change')
+      } else {
+        const newOptionProduct  = new Option(rowData.product_name, rowData.product_id, true, true)
+        $('#product_id').append(newOptionProduct).trigger('change')
+        const locationName      = `${rowData.to_warehouse_location_name} - Level ${rowData.to_warehouse_location_level} 
+                                (${rowData.to_warehouse_location_usage} / ${rowData.to_warehouse_location_capacity_max})`
+        const newOptionLocation = new Option(locationName, rowData.to_warehouse_location_id, true, true)
+        newOptionLocation.setAttribute('data-location-name', rowData.to_warehouse_location_name)
+        newOptionLocation.setAttribute('data-location-level', rowData.to_warehouse_location_level)
+        newOptionLocation.setAttribute('data-usage', rowData.to_warehouse_location_usage)
+        newOptionLocation.setAttribute('data-capacity-max', rowData.to_warehouse_location_capacity_max)
+        $('#to_warehouse_location_id').append(newOptionLocation).trigger('change')
+      }
+
       $('#description_modal').val(rowData.description)
       $('#qty').val(rowData.qty)
-      $('#to_warehouse_location_id').val(rowData.to_warehouse_location_id).trigger('change')
+      if (app.productPackingOption === null)
+        $('#qty_max').val(rowData.to_warehouse_location_capacity_max)
       if (rowData.expired_date !== '')
         $('#expired_date').val(moment(rowData.expired_date).format('DD/MM/Y'))
       $('#batch').val(rowData.batch)
       $('#product_modal').modal('show')
-      app.rowIndex  = app.datatable.row($(this).parents('tr')).index()
+      app.rowIndex = app.datatable.row($(this).parents('tr')).index()
     })
 
     // validator modal
@@ -1000,6 +1129,21 @@ export default {
           this.productPackingSelect.push(dataTemporary)
         })
       }
+
+      if (this.productPackingOption === null) {
+        const customAdapter       = $.fn.select2.amd.require('select2/data/customAdapter')
+        this.productPackingOption = $('#product_packing_id').select2({
+          placeholder      : 'Select a product packing',
+          allowClear       : true,
+          dataAdapter      : customAdapter,
+          data             : this.productPackingSelect,
+          templateSelection: function (data, container) {
+            $(data.element).attr('data-packing-name', data.packing_name)
+            $(data.element).attr('data-qty-max', data.qty_max)
+            return data.text
+          },
+        })
+      }
       this.productPackingOption.data('select2').dataAdapter.updateOptions(this.productPackingSelect)
     },
     saveProduct () {
@@ -1054,16 +1198,21 @@ export default {
           locationId   = ''
 
         product = {
-          product_id              : parseInt($('#product_id').val()),
-          product_packing_id      : parseInt($('#product_packing_id').val()),
-          to_warehouse_location_id: locationId,
-          product_name            : $('#product_id option:selected').text(),
-          packing_name            : $('#product_packing_id').find(':selected').data('packing-name'),
-          location_name           : $('#to_warehouse_location_id').find(':selected').data('location-name'),
-          expired_date            : $('#expired_date').val() !== '' ? moment($('#expired_date').val(), 'DD/MM/YYYY').format('Y-MM-DD HH:mm:ss') : '',
-          qty                     : qtyPerRow,
-          batch                   : $('#batch').val(),
-          description             : $('#description_modal').val(),
+          id                                : this.rowId,
+          product_id                        : parseInt($('#product_id').val()),
+          product_packing_id                : parseInt($('#product_packing_id').val()),
+          to_warehouse_location_id          : locationId,
+          product_name                      : $('#product_id option:selected').text(),
+          product_packing_name              : $('#product_packing_id').find(':selected').data('packing-name'),
+          to_warehouse_location_name        : $('#to_warehouse_location_id').find(':selected').data('location-name'),
+          to_warehouse_location_level       : $('#to_warehouse_location_id').find(':selected').data('location-level'),
+          to_warehouse_location_usage       : $('#to_warehouse_location_id').find(':selected').data('usage'),
+          to_warehouse_location_capacity_max: capacityMax,
+          expired_date                      : $('#expired_date').val() !== '' ? moment($('#expired_date').val(), 'DD/MM/YYYY').format('Y-MM-DD HH:mm:ss') : '',
+          qty                               : qtyPerRow,
+          batch                             : $('#batch').val(),
+          description                       : $('#description_modal').val(),
+          status                            : this.statusProduct,
         }
         if (this.rowIndex === null)
           this.datatable.row.add(product).draw()
@@ -1095,11 +1244,17 @@ export default {
       $('#qty').val('')
       $('#product_id').val(null).trigger('change')
       $('#to_warehouse_location_id').val(null).trigger('change')
-      $('#product_packing_id').val(null).trigger('change')
       $('#expired_date').val('')
       $('#batch').val('')
       this.productPackingId = null
+      this.statusProduct    = STATUS_OPEN
+      this.rowId            = ''
       this.locationIdBefore = ''
+
+      this.usage         = 0
+      this.capacityMax   = 0
+      this.locationName  = ''
+      this.locationLevel = ''
     },
     setDataPost (data) {
       this.incoming.company_id = parseInt($('#company_id').val())
@@ -1118,12 +1273,12 @@ export default {
       this.incoming.to_warehouse_id = parseInt($('#to_warehouse_id').val())
       this.incoming.products        = data
     },
-    async addIncoming (data) {
+    async editIncoming (data) {
       if ($('#incoming_form').valid()) {
         await this.setDataPost(data)
         try {
           this.$nuxt.$loading.start()
-          await this.$store.dispatch('incoming/addIncoming', { data: this.incoming })
+          await this.$store.dispatch('incoming/editIncoming', { data: this.incoming })
           const data      = this.$store.getters['incoming/getAddSuccess']
           const parameter = {
             alertClass: 'alert-success',
@@ -1157,6 +1312,10 @@ export default {
         if (parseInt(value.location_id) === locationId)
           this.remainingLocation[key].usage = this.remainingLocation[key].usage + 1
       })
+    },
+    async updateStatus (statusId, rowIndex, data) {
+      data.status = statusId
+      setTimeout(() => this.datatable.row(rowIndex).data(data).draw(), 100)
     },
   },
 }

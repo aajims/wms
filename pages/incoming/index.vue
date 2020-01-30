@@ -230,21 +230,47 @@
       >
         <thead>
           <tr>
-            <th>#</th>
+            <th class="noorder">
+              #
+            </th>
             <th>Incoming No.</th>
             <th>Tracking</th>
-            <th>Company</th>
-            <th>Warehouse</th>
-            <th>Country</th>
-            <th>Status</th>
-            <th>Created</th>
-            <th>Shipment</th>
-            <th>Order</th>
-            <th>ETD</th>
-            <th>ETA</th>
-            <th>Updated</th>
-            <th>Close Date</th>
-            <th>Actions</th>
+            <th class="noorder">
+              Company
+            </th>
+            <th class="noorder">
+              Warehouse
+            </th>
+            <th class="noorder">
+              Country
+            </th>
+            <th class="status">
+              Status
+            </th>
+            <th class="created_at">
+              Created
+            </th>
+            <th class="date">
+              Shipment
+            </th>
+            <th class="date">
+              Order
+            </th>
+            <th class="date">
+              ETD
+            </th>
+            <th class="date">
+              ETA
+            </th>
+            <th class="updated_at">
+              Updated
+            </th>
+            <th class="date">
+              Close Date
+            </th>
+            <th class="actions">
+              Actions
+            </th>
           </tr>
         </thead>
       </table>
@@ -408,32 +434,29 @@ export default {
       ],
       columnDefs: [
         {
-          targets: [
-            0,
-            2,
-            3,
-            4,
-            5,
-          ],
+          targets  : 'noorder',
           orderable: false,
         },
         {
-          targets  : -1,
+          targets  : 'actions',
           title    : 'Actions',
           className: 'dt-center',
           width    : '100px',
           orderable: false,
           render   : function (data, type, full, meta) {
             let actionButtonCancel = ''
-            if (full.status === STATUS_OPEN && full.tracking === '')
-              actionButtonCancel = `<a class="dropdown-item action-button-cancel"  data-index="${meta.row}" href="javascript:void(0)"><i class="la la-times-circle"></i> Cancel Job</a>`
-
+            let actionButtonEdit   = ''
+            if (full.status === STATUS_OPEN) {
+              actionButtonEdit = `<a href="/incoming/edit/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
+                                    <i class="la la-edit"></i>
+                                  </a>`
+              if (full.tracking === '')
+                actionButtonCancel = `<a class="dropdown-item action-button-cancel"  data-index="${meta.row}" href="javascript:void(0)"><i class="la la-times-circle"></i> Cancel Job</a>`
+            }
             return `<a href="/incoming/detail/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
                       <i class="la la-eye"></i>
                     </a>
-                    <a href="/incoming/edit/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
-                      <i class="la la-edit"></i>
-                    </a>
+                    ${actionButtonEdit}
                     <span class="dropdown">
                         <a href="javascript:void(0)" class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="dropdown" aria-expanded="true">
                           <i class="la la-ellipsis-h"></i>
@@ -447,7 +470,7 @@ export default {
           },
         },
         {
-          targets  : 6,
+          targets  : 'status',
           className: 'dt-center',
           render   : function (data, type, full, meta) {
             if (typeof data === 'undefined')
@@ -459,14 +482,8 @@ export default {
           },
         },
         {
-          targets: [
-            8,
-            9,
-            10,
-            11,
-            13,
-          ],
-          render: function (data, type, full, meta) {
+          targets: 'date',
+          render : function (data, type, full, meta) {
             if (data !== '')
               return moment(data).format('DD/MM/Y HH:mm')
             else
@@ -474,7 +491,7 @@ export default {
           },
         },
         {
-          targets: 7,
+          targets: 'created_at',
           render : function (data, type, full, meta) {
             if (data !== '')
               return `${moment(data).format('DD/MM/Y HH:mm:ss')}<br>${full.created_by_name}`
@@ -483,7 +500,7 @@ export default {
           },
         },
         {
-          targets: 12,
+          targets: 'updated_at',
           render : function (data, type, full, meta) {
             if (data !== '')
               return `${moment(data).format('DD/MM/Y HH:mm:ss')}<br>${full.updated_by_name}`
