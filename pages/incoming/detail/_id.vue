@@ -278,20 +278,30 @@
               <!--begin: Datatable -->
               <table
                 id="product_table"
-                class="table table-hover table-checkable"
+                class="table table-hover table-checkable nowrap"
               >
                 <thead>
                   <tr>
                     <th>SKU - Product</th>
                     <th>Packing</th>
                     <th>Qty</th>
-                    <th>Location</th>
+                    <th class="to_warehouse_location_name">
+                      Location
+                    </th>
                     <th>Batch</th>
-                    <th>Expired</th>
+                    <th class="expired_date">
+                      Expired
+                    </th>
                     <th>Description</th>
-                    <th>Status</th>
-                    <th>Created</th>
-                    <th>Updated</th>
+                    <th class="status">
+                      Status
+                    </th>
+                    <th class="created_at">
+                      Created
+                    </th>
+                    <th class="updated_at">
+                      Updated
+                    </th>
                   </tr>
                 </thead>
               </table>
@@ -363,7 +373,7 @@ export default {
         { data: 'product_name' },
         { data: 'product_packing_name' },
         { data: 'qty' },
-        { data: 'to_location_name' },
+        { data: 'to_warehouse_location_name' },
         { data: 'batch' },
         { data: 'expired_date' },
         { data: 'description' },
@@ -373,7 +383,7 @@ export default {
       ],
       columnDefs: [
         {
-          targets: -1,
+          targets: 'updated_at',
           render : function (data, type, full, meta) {
             if (data !== '')
               return `${moment(data).format('DD/MM/Y HH:mm:ss')}<br>${full.updated_by_name}`
@@ -382,7 +392,7 @@ export default {
           },
         },
         {
-          targets: -2,
+          targets: 'created_at',
           render : function (data, type, full, meta) {
             if (data !== '')
               return `${moment(data).format('DD/MM/Y HH:mm:ss')}<br>${full.created_by_name}`
@@ -391,16 +401,22 @@ export default {
           },
         },
         {
-          targets: 5,
+          targets: 'to_warehouse_location_name',
+          render : function (data, type, full, meta) {
+            return `${data} - Level ${full.to_warehouse_location_level}`
+          },
+        },
+        {
+          targets: 'expired_date',
           render : function (data, type, full, meta) {
             if (data !== '0000-00-00 00:00:00')
-              return moment(data).format('DD/MM/Y HH:mm')
+              return moment(data).format('DD/MM/Y')
             else
               return ''
           },
         },
         {
-          targets  : -3,
+          targets  : 'status',
           className: 'dt-center',
           render   : function (data, type, full, meta) {
             if (typeof data === 'undefined')
