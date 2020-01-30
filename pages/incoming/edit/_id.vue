@@ -288,11 +288,11 @@
               </div>
             </div>
             <div class="form-group row">
-              <div class="col-lg-10">
+              <div class="col-lg-12">
                 <!--begin: Datatable -->
                 <table
                   id="product_table"
-                  class="table table-hover table-checkable"
+                  class="table table-hover table-checkable nowrap"
                 >
                   <thead>
                     <tr>
@@ -301,6 +301,7 @@
                       <th>Qty</th>
                       <th>Location</th>
                       <th>Batch</th>
+                      <th>Status</th>
                       <th>Expired</th>
                       <th>Description</th>
                       <th>Actions</th>
@@ -473,15 +474,14 @@
 
 <script>
 import moment from 'moment'
-import { TRANSPORT_TYPE } from '@/utils/constants'
+import { TRANSPORT_TYPE, INCOMING_STATUS, STATUS_OPEN, STATUS_BLOCK, STATUS_STORED } from '@/utils/constants'
 
 export default {
   data () {
     return {
-      rowIndex     : null,
-      emptyLocation: false,
-      countries    : [],
-      incoming     : {
+      rowIndex : null,
+      countries: [],
+      incoming : {
         company_id      : 0,
         order_no        : '',
         type            : 1,
@@ -502,15 +502,23 @@ export default {
         description     : '',
         products        : [],
       },
-      datatable           : [],
-      productPackingSelect: [],
-      productPackingOption: null,
-      productPackingId    : null,
-      remainingLocation   : [],
-      incomingNo          : '',
-      company_name        : '',
-      warehouse_name      : '',
-      rowId               : '',
+      datatable               : [],
+      productPackingSelect    : [],
+      productPackingOption    : null,
+      productPackingId        : null,
+      remainingLocation       : [],
+      incomingNo              : '',
+      company_name            : '',
+      warehouse_name          : '',
+      rowId                   : '',
+      locationIdBefore        : '',
+      statusProduct           : STATUS_OPEN,
+      modalHasOpen            : false,
+      toWarehouseIdBefore     : '',
+      toWarehouseNameBefore   : '',
+      toWarehouseCountryBefore: '',
+      toCompanyIdBefore       : '',
+      isRestore               : false,
     }
   },
   async mounted () {
@@ -534,7 +542,33 @@ export default {
       this.incoming.to_warehouse_id  = incomingDetail.to_warehouse_id
       this.company_name              = incomingDetail.company_name
       this.warehouse_name            = incomingDetail.to_warehouse_name
-      this.incoming.products         = incomingDetail.products
+
+      this.toWarehouseIdBefore      = incomingDetail.to_warehouse_id
+      this.toWarehouseNameBefore    = incomingDetail.to_warehouse_name
+      this.toWarehouseCountryBefore = incomingDetail.to_country_id
+
+      // set products
+      incomingDetail.products.forEach((value) => {
+        const products     = {
+          id                                : value.id,
+          product_id                        : value.product_id,
+          product_packing_id                : value.product_packing_id,
+          to_warehouse_location_id          : value.to_warehouse_location_id,
+          product_name                      : value.product_name,
+          product_packing_name              : value.product_packing_name,
+          // to_country_id                     : value.to_warehouse_location_name,
+          to_warehouse_location_name        : value.to_warehouse_location_name,
+          to_warehouse_location_level       : value.to_warehouse_location_level,
+          to_warehouse_location_usage       : value.to_warehouse_location_usage,
+          to_warehouse_location_capacity_max: value.to_warehouse_location_capacity_max,
+          expired_date                      : value.expired_date,
+          qty                               : value.qty,
+          batch                             : value.batch,
+          description                       : value.description,
+          status                            : value.status,
+        }
+        this.incoming.products.push(products)
+      })
 
       if (incomingDetail.etd !== '')
         $('#etd').val(moment(incomingDetail.etd).format('DD/MM/YYYY HH:mm'))
@@ -549,10 +583,10 @@ export default {
       const holder = {}
       this.incoming.products.forEach(function (value) {
         // eslint-disable-next-line no-prototype-builtins
-        if (holder.hasOwnProperty(value.to_location_id))
-          holder[value.to_location_id] = holder[value.to_location_id] + 1
+        if (holder.hasOwnProperty(value.to_warehouse_location_id))
+          holder[value.to_warehouse_location_id] = holder[value.to_warehouse_location_id] + 1
         else
-          holder[value.to_location_id] = 1
+          holder[value.to_warehouse_location_id] = 1
       })
       for (const property in holder)
         this.remainingLocation.push({ location_id: parseInt(property), usage: holder[property] })
@@ -613,9 +647,44 @@ export default {
       },
     })
     const newOptionWarehouse = new Option(this.warehouse_name, this.incoming.to_warehouse_id, true, true)
+    newOptionWarehouse.setAttribute('data-country-id', this.incoming.to_country_id)
     $('#to_warehouse_id').append(newOptionWarehouse).trigger('change')
     $('#to_warehouse_id').on('change', function () {
       validator.element($(this))
+      const data = app.datatable.rows().data().toArray()
+      if (data.length !== 0 && app.isRestore === false) {
+        // eslint-disable-next-line no-undef
+        swal.fire({
+          title             : 'Are you sure?',
+          text              : 'If you change warehouse, all product will be deleted',
+          type              : 'question',
+          showCancelButton  : true,
+          buttonsStyling    : false,
+          confirmButtonClass: 'btn btn-success',
+          cancelButtonClass : 'btn btn-default',
+        }).then(function (result) {
+          if (result.value) {
+            app.remainingLocation = []
+            app.datatable.clear().draw()
+          } else {
+            app.isRestore            = true
+            const newOptionWarehouse = new Option(app.toWarehouseNameBefore, app.toWarehouseIdBefore, true, true)
+            newOptionWarehouse.setAttribute('data-country-id', app.toWarehouseCountryBefore)
+            $('#to_warehouse_id').append(newOptionWarehouse).trigger('change')
+            setTimeout(function () { app.isRestore = false }, 500)
+          }
+        })
+        return false
+      }
+    })
+    $('#to_warehouse_id').on('select2:select', function () {
+      const data = app.datatable.rows().data().toArray()
+      console.log(data.length)
+      if (data.length === 0) {
+        app.toWarehouseIdBefore      = $(this).val()
+        app.toWarehouseCountryBefore = parseInt($(this).find(':selected').data('country-id'))
+        app.toWarehouseNameBefore    = $('#to_warehouse_id option:selected').text()
+      }
     })
 
     $('#etd, #eta').datetimepicker({
@@ -721,7 +790,19 @@ export default {
       app.setPackingValue($('#product_id').val())
     })
     $('#product_packing_id').prop('disabled', true)
+
+    $('#to_warehouse_location_id').on('change', function () {
+      validatorModal.element($(this))
+      if (app.rowIndex !== null) {
+        if (app.locationIdBefore === parseInt($(this).val()))
+          app.addRemainingUsage(app.locationIdBefore)
+        else
+          app.deleteRemainingUsage(app.locationIdBefore)
+      }
+    })
+
     $('#product_modal').on('shown.bs.modal', function () {
+      app.modalHasOpen = true
       $('#product_id').select2({
         placeholder       : 'Select product',
         minimumInputLength: 1,
@@ -732,7 +813,6 @@ export default {
           url : function () {
             return `/api/product/select?id_company=${$('#company_id').val()}`
           },
-          // url           : `/api/product/select?id_company=1`,
           cache         : true,
           processResults: function (data) {
             return {
@@ -760,7 +840,8 @@ export default {
       })
       $('#product_packing_id').on('change', function () {
         validatorModal.element($(this))
-        $('#qty_max').val($('#product_packing_id').find(':selected').data('qty-max'))
+        if (this.productPackingOption !== null)
+          $('#qty_max').val($('#product_packing_id').find(':selected').data('qty-max'))
       })
 
       $('#expired_date').datetimepicker({
@@ -783,18 +864,23 @@ export default {
           url : function () {
             return `/api/location/select?id_warehouse=${$('#to_warehouse_id').val()}`
           },
-          // url           : `/api/location/select?id_warehouse=2`,
           cache         : true,
           processResults: function (data) {
             return {
               results: $.map(data.result, function (object) {
-                if (object.usage !== object.capacity_max) {
+                let usageRemaining = 0
+                app.remainingLocation.forEach((value, key) => {
+                  if (parseInt(value.location_id) === parseInt(object.id))
+                    usageRemaining = value.usage
+                })
+                if (object.usage !== object.capacity_max && usageRemaining < object.capacity_max) {
                   return {
-                    id           : object.id,
-                    text         : `${object.name} - Level ${object.level} (${object.usage} / ${object.capacity_max})`,
-                    location_name: object.name,
-                    usage        : object.usage,
-                    capacity_max : object.capacity_max,
+                    id            : object.id,
+                    text          : `${object.name} - Level ${object.level} (${object.usage} / ${object.capacity_max})`,
+                    location_name : `${object.name}`,
+                    location_level: `${object.level}`,
+                    usage         : object.usage,
+                    capacity_max  : object.capacity_max,
                   }
                 }
               }),
@@ -803,13 +889,11 @@ export default {
         },
         templateSelection: function (data, container) {
           $(data.element).attr('data-location-name', data.location_name)
+          $(data.element).attr('data-location-level', data.location_level)
           $(data.element).attr('data-usage', data.usage)
           $(data.element).attr('data-capacity-max', data.capacity_max)
           return data.text
         },
-      })
-      $('#to_warehouse_location_id').on('change', function () {
-        validatorModal.element($(this))
       })
     })
     $('#product_modal').on('hidden.bs.modal', function () {
@@ -828,8 +912,9 @@ export default {
         { data: 'product_name' },
         { data: 'product_packing_name' },
         { data: 'qty' },
-        { data: 'to_location_name' },
+        { data: 'to_warehouse_location_name' },
         { data: 'batch' },
+        { data: 'status' },
         { data: 'expired_date' },
         { data: 'description' },
         { data: 'actions', responsivePriority: -1 },
@@ -844,6 +929,18 @@ export default {
             return 'The location is <span class="kt-badge kt-badge--danger kt-badge--inline">FULL</span> Please select another location.'
           },
         })
+        $('.status-open').click(function () {
+          const rowData = app.datatable.row($(this).data('index')).data()
+          app.updateStatus(STATUS_OPEN, $(this).data('index'), rowData)
+        })
+        $('.status-block').click(function () {
+          const rowData = app.datatable.row($(this).data('index')).data()
+          app.updateStatus(STATUS_BLOCK, $(this).data('index'), rowData)
+        })
+        $('.status-store').click(function () {
+          const rowData = app.datatable.row($(this).data('index')).data()
+          app.updateStatus(STATUS_STORED, $(this).data('index'), rowData)
+        })
       },
       columnDefs: [
         {
@@ -851,11 +948,15 @@ export default {
           className: 'dt-center',
           render   : function (data, type, full, meta) {
             if (full.to_warehouse_location_id === '') {
-              return `<a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-icon-md popoverButton">
-                        <i style="color: red" class="fa flaticon-warning"></i>
-                      </a>`
+              return `<span style="color: orange">${data} - Level ${full.to_warehouse_location_level}
+                        <sup>
+                          <a href="javascript:;" class="popoverButton">
+                            <i style="color: red" class="fa flaticon2-information"></i>
+                          </a>
+                        </sup>
+                      </span>`
             } else
-              return data
+              return `${data} - Level ${full.to_warehouse_location_level}`
           },
         },
         {
@@ -871,58 +972,100 @@ export default {
         {
           targets: -1,
           render : function (data, type, full, meta) {
-            const iconAdditional  = full.id === '' ? 'la la-trash' : 'la la-power-off'
-            const titleAdditional = full.id === '' ? 'Delete' : 'Update Status'
-            return `<a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit">
-                      <i class="la la-edit"></i>
-                    </a>
-                    <a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="${titleAdditional}">
-                      <i class="${iconAdditional}"></i>
-                    </a>`
+            let additionalButton
+            if (full.id === '')
+              additionalButton = `<a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Delete"><i class="la la-trash"></i></a>`
+            else {
+              let openButton  = ''
+              let blockButton = ''
+              let storeButton = ''
+              if (full.status !== STATUS_OPEN)
+                openButton = `<a class="dropdown-item status-open" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-folder-open"></i> Open</a>`
+              if (full.status !== STATUS_BLOCK)
+                blockButton = `<a class="dropdown-item status-block" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-list"></i> Block</a>`
+              if (full.status !== STATUS_STORED)
+                storeButton = `<a class="dropdown-item status-store" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-list-alt"></i> Store</a>`
+              additionalButton = `<span class="dropdown">
+                                      <a href="javascript:void(0)" class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="dropdown" aria-expanded="true">
+                                        <i class="la la-ellipsis-h"></i>
+                                      </a>
+                                      <div class="dropdown-menu dropdown-menu-right" rolw="menu">
+                                          ${openButton}${blockButton}${storeButton}
+                                      </div>
+                                  </span>`
+            }
+            return `<a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit"><i class="la la-edit"></i></a>
+                    ${additionalButton}`
+          },
+        },
+        {
+          targets  : 5,
+          className: 'dt-center',
+          render   : function (data, type, full, meta) {
+            if (typeof data === 'undefined')
+              return data
+            for (const statusIndex in INCOMING_STATUS) {
+              if (data === INCOMING_STATUS[statusIndex].id)
+                return `<span class="kt-badge kt-badge--${INCOMING_STATUS[statusIndex].class} kt-badge--inline">${INCOMING_STATUS[statusIndex].text}</span>`
+            }
           },
         },
       ],
     })
 
     // add popover
-    $('#product_table').on('mouseover', '.flaticon-warning', function () {
+    $('#product_table').on('mouseover', '.flaticon2-information', function () {
       $($(this).parents('.popoverButton')).popover('show')
     })
-    $('#product_table').on('mouseleave', '.flaticon-warning', function () {
+    $('#product_table').on('mouseleave', '.flaticon2-information', function () {
       $($(this).parents('.popoverButton')).popover('hide')
     })
 
     // delete datatable row
     $('#product_table').on('click', '.la-trash', function () {
       const rowData = app.datatable.row($(this).parents('tr')).data()
-      app.remainingLocation.forEach((value, key) => {
-        if (parseInt(value.location_id) === rowData.to_warehouse_location_id)
-          app.remainingLocation[key].usage = app.remainingLocation[key].usage - 1
-      })
+      app.deleteRemainingUsage(rowData.to_warehouse_location_id)
       app.datatable.row($(this).parents('tr')).remove().draw()
     })
 
     // edit datatable row
     $('#product_table').on('click', '.la-edit', function () {
-      app.rowIndex         = app.datatable.row($(this).parents('tr')).index()
       const rowData        = app.datatable.row($(this).parents('tr')).data()
       app.productPackingId = rowData.product_packing_id
       app.rowId            = rowData.id
-      if (rowData.to_warehouse_location_id === '')
-        app.emptyLocation = true
+      app.statusProduct    = rowData.status
+      app.locationIdBefore = rowData.to_warehouse_location_id
 
-      const newOptionProduct  = new Option(rowData.product_name, rowData.product_id, true, true)
-      $('#product_id').append(newOptionProduct).trigger('change')
+      app.usage         = rowData.to_warehouse_location_usage
+      app.capacityMax   = rowData.to_warehouse_location_capacity_max
+      app.locationName  = rowData.to_warehouse_location_name
+      app.locationLevel = rowData.to_warehouse_location_level
+
+      if (app.modalHasOpen === true) {
+        $('#product_id').val(rowData.product_id).trigger('change')
+        $('#to_warehouse_location_id').val(rowData.to_warehouse_location_id).trigger('change')
+      } else {
+        const newOptionProduct  = new Option(rowData.product_name, rowData.product_id, true, true)
+        $('#product_id').append(newOptionProduct).trigger('change')
+        const locationName      = `${rowData.to_warehouse_location_name} - Level ${rowData.to_warehouse_location_level} 
+                                (${rowData.to_warehouse_location_usage} / ${rowData.to_warehouse_location_capacity_max})`
+        const newOptionLocation = new Option(locationName, rowData.to_warehouse_location_id, true, true)
+        newOptionLocation.setAttribute('data-location-name', rowData.to_warehouse_location_name)
+        newOptionLocation.setAttribute('data-location-level', rowData.to_warehouse_location_level)
+        newOptionLocation.setAttribute('data-usage', rowData.to_warehouse_location_usage)
+        newOptionLocation.setAttribute('data-capacity-max', rowData.to_warehouse_location_capacity_max)
+        $('#to_warehouse_location_id').append(newOptionLocation).trigger('change')
+      }
+
       $('#description_modal').val(rowData.description)
       $('#qty').val(rowData.qty)
-
-      const newOptionLocation = new Option(rowData.to_location_name, rowData.to_warehouse_location_id, true, true)
-      $('#to_warehouse_location_id').append(newOptionLocation).trigger('change')
+      if (app.productPackingOption === null)
+        $('#qty_max').val(rowData.to_warehouse_location_capacity_max)
       if (rowData.expired_date !== '')
         $('#expired_date').val(moment(rowData.expired_date).format('DD/MM/Y'))
       $('#batch').val(rowData.batch)
-
       $('#product_modal').modal('show')
+      app.rowIndex = app.datatable.row($(this).parents('tr')).index()
     })
 
     // validator modal
@@ -986,6 +1129,21 @@ export default {
           this.productPackingSelect.push(dataTemporary)
         })
       }
+
+      if (this.productPackingOption === null) {
+        const customAdapter       = $.fn.select2.amd.require('select2/data/customAdapter')
+        this.productPackingOption = $('#product_packing_id').select2({
+          placeholder      : 'Select a product packing',
+          allowClear       : true,
+          dataAdapter      : customAdapter,
+          data             : this.productPackingSelect,
+          templateSelection: function (data, container) {
+            $(data.element).attr('data-packing-name', data.packing_name)
+            $(data.element).attr('data-qty-max', data.qty_max)
+            return data.text
+          },
+        })
+      }
       this.productPackingOption.data('select2').dataAdapter.updateOptions(this.productPackingSelect)
     },
     saveProduct () {
@@ -1013,12 +1171,15 @@ export default {
     },
     async execSaveProduct (qtyMax, qty, totalRow) {
       let locationId    = parseInt($('#to_warehouse_location_id').val())
-      let locationName  = $('#to_warehouse_location_id').find(':selected').data('location-name')
       const capacityMax = $('#to_warehouse_location_id').find(':selected').data('capacity-max')
       let usage         = $('#to_warehouse_location_id').find(':selected').data('usage')
       let product       = {}
       let qtyPerRow     = qtyMax
       const location    = locationId
+
+      // -1 usage location id before
+      if (this.locationIdBefore !== '')
+        this.deleteRemainingUsage(this.locationIdBefore)
 
       // add existing usage
       this.remainingLocation.forEach((value) => {
@@ -1032,30 +1193,26 @@ export default {
         else if (totalRow === 1)
           qtyPerRow = qty
 
-        // location full
-        if (
-          this.rowIndex === null
-            || (this.rowIndex !== null && i !== 0 && usage !== 0)
-            || (this.rowIndex !== null && this.emptyLocation === true)
-        )
-          usage = usage + 1
-        if (usage > capacityMax) {
+        usage = usage + 1
+        if (usage > capacityMax)
           locationId   = ''
-          locationName = ''
-        }
 
         product = {
-          id                      : this.rowId,
-          product_id              : parseInt($('#product_id').val()),
-          product_packing_id      : parseInt($('#product_packing_id').val()),
-          to_warehouse_location_id: locationId,
-          product_name            : $('#product_id option:selected').text(),
-          product_packing_name    : $('#product_packing_id').find(':selected').data('packing-name'),
-          to_location_name        : locationName,
-          expired_date            : $('#expired_date').val() !== '' ? moment($('#expired_date').val(), 'DD/MM/YYYY').format('Y-MM-DD HH:mm:ss') : '',
-          qty                     : qtyPerRow,
-          batch                   : $('#batch').val(),
-          description             : $('#description_modal').val(),
+          id                                : this.rowId,
+          product_id                        : parseInt($('#product_id').val()),
+          product_packing_id                : parseInt($('#product_packing_id').val()),
+          to_warehouse_location_id          : locationId,
+          product_name                      : $('#product_id option:selected').text(),
+          product_packing_name              : $('#product_packing_id').find(':selected').data('packing-name'),
+          to_warehouse_location_name        : $('#to_warehouse_location_id').find(':selected').data('location-name'),
+          to_warehouse_location_level       : $('#to_warehouse_location_id').find(':selected').data('location-level'),
+          to_warehouse_location_usage       : $('#to_warehouse_location_id').find(':selected').data('usage'),
+          to_warehouse_location_capacity_max: capacityMax,
+          expired_date                      : $('#expired_date').val() !== '' ? moment($('#expired_date').val(), 'DD/MM/YYYY').format('Y-MM-DD HH:mm:ss') : '',
+          qty                               : qtyPerRow,
+          batch                             : $('#batch').val(),
+          description                       : $('#description_modal').val(),
+          status                            : this.statusProduct,
         }
         if (this.rowIndex === null)
           this.datatable.row.add(product).draw()
@@ -1082,17 +1239,22 @@ export default {
       $('#product_modal').modal('hide')
     },
     clearForm () {
+      this.rowIndex         = null
       $('#description_modal').val(null)
       $('#qty').val('')
       $('#product_id').val(null).trigger('change')
       $('#to_warehouse_location_id').val(null).trigger('change')
-      $('#product_packing_id').val(null).trigger('change')
       $('#expired_date').val('')
       $('#batch').val('')
       this.productPackingId = null
-      this.rowIndex         = null
-      this.emptyLocation    = false
+      this.statusProduct    = STATUS_OPEN
       this.rowId            = ''
+      this.locationIdBefore = ''
+
+      this.usage         = 0
+      this.capacityMax   = 0
+      this.locationName  = ''
+      this.locationLevel = ''
     },
     setDataPost (data) {
       this.incoming.company_id = parseInt($('#company_id').val())
@@ -1138,6 +1300,22 @@ export default {
           KTUtil.scrollTop()
         }
       }
+    },
+    deleteRemainingUsage (locationId) {
+      this.remainingLocation.forEach((value, key) => {
+        if (parseInt(value.location_id) === locationId)
+          this.remainingLocation[key].usage = this.remainingLocation[key].usage - 1
+      })
+    },
+    addRemainingUsage (locationId) {
+      this.remainingLocation.forEach((value, key) => {
+        if (parseInt(value.location_id) === locationId)
+          this.remainingLocation[key].usage = this.remainingLocation[key].usage + 1
+      })
+    },
+    async updateStatus (statusId, rowIndex, data) {
+      data.status = statusId
+      setTimeout(() => this.datatable.row(rowIndex).data(data).draw(), 100)
     },
   },
 }
