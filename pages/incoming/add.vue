@@ -150,7 +150,7 @@
             <div class="form-group row">
               <div class="col-lg-4">
                 <div class="kt-form__label">
-                  <label>Order Date</label>
+                  <label>Order Date <span style="color:red">*</span></label>
                 </div>
                 <div class="kt-form__control">
                   <div class="input-group date">
@@ -687,6 +687,7 @@ export default {
         to_warehouse_id: { required: true },
         eta            : { required: true },
         etd            : { required: true },
+        order_date     : { required: true },
         transport_type : { required: true },
       },
       invalidHandler: function (event, validator) {
