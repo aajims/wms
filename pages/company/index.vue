@@ -48,12 +48,6 @@
                       <option value="address">
                         Address
                       </option>
-                      <option value="city_name">
-                        City
-                      </option>
-                      <option value="country_name">
-                        Country
-                      </option>
                     </select>
                   </div>
                 </div>
@@ -191,10 +185,6 @@ export default {
         data: function (d) {
           d.params = app.params
         },
-        // "complete": function(xhr, status){
-        //     console.log(JSON.parse(xhr.responseText));
-        //     console.log(status);
-        // }
       },
       order  : [[7, 'desc']],
       columns: [

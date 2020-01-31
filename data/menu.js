@@ -73,5 +73,11 @@ export default [
     icon    : 'fa flaticon2-shopping-cart-1',
     url     : '/order',
     children: [],
+    name        : 'Outgoing Stock',
+    icon        : 'fa flaticon-layer',
+    url         : '/outgoing',
+    folder      : false,
+    childDisplay: false,
+    children    : [],
   },
 ]
