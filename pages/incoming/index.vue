@@ -473,12 +473,11 @@ export default {
           targets  : 'status',
           className: 'dt-center',
           render   : function (data, type, full, meta) {
-            if (typeof data === 'undefined')
-              return data
             for (const statusIndex in JOB_STATUS) {
               if (data === JOB_STATUS[statusIndex].id)
                 return `<span class="kt-badge kt-badge--${JOB_STATUS[statusIndex].class} kt-badge--inline">${JOB_STATUS[statusIndex].text}</span>`
             }
+            return data
           },
         },
         {

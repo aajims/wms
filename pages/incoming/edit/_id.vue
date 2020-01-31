@@ -16,12 +16,12 @@
                 <i class="kt-font-brand flaticon-edit-1" />
               </span>
               <h3 class="kt-portlet__head-title">
-                Edit Incoming Stock &nbsp;&nbsp;#{{ incomingNo }}
+                Edit Incoming Stock
               </h3>
             </div>
             <div class="kt-portlet__head-toolbar">
               <a
-                :href="`/incoming/`"
+                href="/incoming"
                 class="btn btn-clean kt-margin-r-10"
               >
                 <i class="la la-arrow-left" />
@@ -39,6 +39,47 @@
           <div class="kt-portlet__body">
             <div class="form-group row">
               <div class="col-lg-4">
+                <label>Job No.</label>
+                <input
+                  :value="incoming.job_no"
+                  type="text"
+                  class="form-control"
+                  disabled
+                >
+              </div>
+              <div class="col-lg-4">
+                <label>Unique Code</label>
+                <input
+                  :value="incoming.unique_code"
+                  type="text"
+                  class="form-control"
+                  disabled
+                >
+              </div>
+              <div class="col-lg-4">
+                <label>Company</label>
+                <input
+                  :value="companyName"
+                  type="text"
+                  class="form-control"
+                  disabled
+                >
+              </div>
+            </div>
+            <div class="form-group row">
+              <div class="col-lg-4">
+                <label>Warehouse</label>
+                <input
+                  :value="warehouseName"
+                  type="text"
+                  class="form-control"
+                  disabled
+                >
+              </div>
+            </div>
+            <div class="kt-separator kt-separator--border-dashed kt-separator--space-xs" />
+            <div class="form-group row">
+              <div class="col-lg-4">
                 <label>Order No. <span style="color:red">*</span></label>
                 <input
                   v-model="incoming.order_no"
@@ -48,38 +89,6 @@
                   placeholder="Enter order number"
                 >
               </div>
-              <div class="col-lg-4">
-                <div class="kt-form__label">
-                  <label>Company <span style="color:red">*</span></label>
-                </div>
-                <div class="kt-form__control">
-                  <select
-                    id="company_id"
-                    class="form-control kt-select2"
-                    name="company_id"
-                  >
-                    <option />
-                  </select>
-                  <span class="form-text text-muted" />
-                </div>
-              </div>
-              <div class="col-lg-4">
-                <div class="kt-form__label">
-                  <label>Warehouse <span style="color:red">*</span></label>
-                </div>
-                <div class="kt-form__control">
-                  <select
-                    id="to_warehouse_id"
-                    class="form-control kt-select2"
-                    name="to_warehouse_id"
-                  >
-                    <option />
-                  </select>
-                  <span class="form-text text-muted" />
-                </div>
-              </div>
-            </div>
-            <div class="form-group row">
               <div class="col-lg-4">
                 <div class="kt-form__label">
                   <label>ETD <span style="color:red">*</span></label>
@@ -101,6 +110,38 @@
                   </div>
                   <span class="form-text text-muted" />
                 </div>
+              </div>
+              <div class="col-lg-4">
+                <div class="kt-form__label">
+                  <label>Order Date <span style="color:red">*</span></label>
+                </div>
+                <div class="kt-form__control">
+                  <div class="input-group date">
+                    <input
+                      id="order_date"
+                      name="order_date"
+                      type="text"
+                      class="form-control"
+                      readonly
+                      placeholder="Select order date"
+                    >
+                    <div class="input-group-append">
+                      <span class="input-group-text">
+                        <i class="la la-calendar" />
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group row">
+              <div class="col-lg-4">
+                <label for="description">Description</label>
+                <textarea
+                  v-model="incoming.description"
+                  class="form-control"
+                  rows="4"
+                />
               </div>
               <div class="col-lg-4">
                 <div class="kt-form__label">
@@ -145,38 +186,6 @@
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-            <div class="form-group row">
-              <div class="col-lg-4">
-                <div class="kt-form__label">
-                  <label>Order Date</label>
-                </div>
-                <div class="kt-form__control">
-                  <div class="input-group date">
-                    <input
-                      id="order_date"
-                      name="order_date"
-                      type="text"
-                      class="form-control"
-                      readonly
-                      placeholder="Select order date"
-                    >
-                    <div class="input-group-append">
-                      <span class="input-group-text">
-                        <i class="la la-calendar" />
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-lg-4">
-                <label for="description">Description</label>
-                <textarea
-                  v-model="incoming.description"
-                  class="form-control"
-                  rows="3"
-                />
               </div>
             </div>
             <div class="kt-separator kt-separator--border-dashed kt-separator--space-xs" />
@@ -395,6 +404,28 @@
                   >
                 </div>
                 <div class="col-lg-6">
+                  <label>Location <span style="color:red">*</span></label>
+                  <select
+                    id="to_warehouse_location_id"
+                    name="to_warehouse_location_id"
+                    class="form-control kt-select2"
+                  >
+                    <option />
+                  </select>
+                  <span class="form-text text-muted" />
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-lg-6">
+                  <label>Batch <span style="color:red">*</span></label>
+                  <input
+                    id="batch"
+                    name="batch"
+                    type="text"
+                    class="form-control"
+                  >
+                </div>
+                <div class="col-lg-6">
                   <div class="kt-form__label">
                     <label>Expired Date</label>
                   </div>
@@ -414,28 +445,6 @@
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
-              <div class="form-group row">
-                <div class="col-lg-6">
-                  <label>Batch <span style="color:red">*</span></label>
-                  <input
-                    id="batch"
-                    name="batch"
-                    type="text"
-                    class="form-control"
-                  >
-                </div>
-                <div class="col-lg-6">
-                  <label>Location <span style="color:red">*</span></label>
-                  <select
-                    id="to_warehouse_location_id"
-                    name="to_warehouse_location_id"
-                    class="form-control kt-select2"
-                  >
-                    <option />
-                  </select>
-                  <span class="form-text text-muted" />
                 </div>
               </div>
               <div class="form-group row">
@@ -484,6 +493,8 @@ export default {
       incoming : {
         company_id      : 0,
         order_no        : '',
+        job_no          : '',
+        unique_code     : '',
         type            : 1,
         etd             : '',
         eta             : '',
@@ -502,34 +513,38 @@ export default {
         description     : '',
         products        : [],
       },
-      datatable               : [],
-      productPackingSelect    : [],
-      productPackingOption    : null,
-      productPackingId        : null,
-      remainingLocation       : [],
-      incomingNo              : '',
-      company_name            : '',
-      warehouse_name          : '',
-      rowId                   : '',
-      locationIdBefore        : '',
-      statusProduct           : STATUS_OPEN,
-      modalHasOpen            : false,
-      toWarehouseIdBefore     : '',
-      toWarehouseNameBefore   : '',
-      toWarehouseCountryBefore: '',
-      toCompanyIdBefore       : '',
-      isRestore               : false,
+      datatable           : [],
+      productPackingSelect: [],
+      productPackingOption: null,
+      productPackingId    : null,
+      remainingLocation   : [],
+      companyName         : '',
+      warehouseName       : '',
+      rowId               : 0,
+      locationIdBefore    : '',
+      statusProduct       : STATUS_OPEN,
+      modalHasOpen        : false,
+      isRestore           : false,
+      formChanged         : false,
     }
   },
   async mounted () {
     const app           = this
+    // prevent refresh page
+    document.querySelector('#incoming_form').addEventListener('change', function () { app.formChanged = true })
+    window.addEventListener('beforeunload', (event) => {
+      if (app.formChanged)
+        event.returnValue = 'You have unfinished changes!'
+    })
     const customAdapter = $.fn.select2.amd.require('select2/data/customAdapter')
     try {
       await this.$store.dispatch('incoming/getIncomingDetail', { idIncoming: atob(this.$route.params.id) })
       const incomingDetail           = this.$store.getters['incoming/getIncomingDetail'].result
 
+      this.incoming.id               = incomingDetail.id
       this.incoming.order_no         = incomingDetail.order_no
-      this.incomingNo                = incomingDetail.job_no
+      this.incoming.job_no           = incomingDetail.job_no
+      this.incoming.unique_code      = incomingDetail.unique_code
       this.incoming.transport_number = incomingDetail.transport_number
       this.incoming.flight           = incomingDetail.flight
       this.incoming.from             = incomingDetail.from
@@ -540,12 +555,11 @@ export default {
       this.incoming.from_country_id  = incomingDetail.from_country_id
       this.incoming.company_id       = incomingDetail.company_id
       this.incoming.to_warehouse_id  = incomingDetail.to_warehouse_id
-      this.company_name              = incomingDetail.company_name
-      this.warehouse_name            = incomingDetail.to_warehouse_name
+      this.incoming.to_country_id    = incomingDetail.to_country_id
+      this.incoming.status           = incomingDetail.status
 
-      this.toWarehouseIdBefore      = incomingDetail.to_warehouse_id
-      this.toWarehouseNameBefore    = incomingDetail.to_warehouse_name
-      this.toWarehouseCountryBefore = incomingDetail.to_country_id
+      this.companyName   = incomingDetail.company_name
+      this.warehouseName = incomingDetail.to_warehouse_name
 
       // set products
       incomingDetail.products.forEach((value) => {
@@ -556,7 +570,6 @@ export default {
           to_warehouse_location_id          : value.to_warehouse_location_id,
           product_name                      : value.product_name,
           product_packing_name              : value.product_packing_name,
-          // to_country_id                     : value.to_warehouse_location_name,
           to_warehouse_location_name        : value.to_warehouse_location_name,
           to_warehouse_location_level       : value.to_warehouse_location_level,
           to_warehouse_location_usage       : value.to_warehouse_location_usage,
@@ -570,13 +583,13 @@ export default {
         this.incoming.products.push(products)
       })
 
-      if (incomingDetail.etd !== '')
+      if (incomingDetail.etd !== '' && incomingDetail.etd !== '0000-00-00 00:00:00')
         $('#etd').val(moment(incomingDetail.etd).format('DD/MM/YYYY HH:mm'))
-      if (incomingDetail.eta !== '')
+      if (incomingDetail.eta !== '' && incomingDetail.eta !== '0000-00-00 00:00:00')
         $('#eta').val(moment(incomingDetail.eta).format('DD/MM/YYYY HH:mm'))
-      if (incomingDetail.order_date !== '')
+      if (incomingDetail.order_date !== '' && incomingDetail.order_date !== '0000-00-00 00:00:00')
         $('#order_date').val(moment(incomingDetail.order_date).format('DD/MM/YYYY HH:mm'))
-      if (incomingDetail.shipment_date !== '')
+      if (incomingDetail.shipment_date !== '' && incomingDetail.shipment_date !== '0000-00-00 00:00:00')
         $('#shipment_date').val(moment(incomingDetail.shipment_date).format('DD/MM/YYYY HH:mm'))
 
       // set usage existing
@@ -593,99 +606,6 @@ export default {
     } catch (error) {
 
     }
-    $('#company_id').select2({
-      placeholder       : 'Select company',
-      minimumInputLength: 1,
-      width             : '100%',
-      allowClear        : true,
-      ajax              : {
-        type          : 'GET',
-        url           : '/api/company/select',
-        cache         : true,
-        processResults: function (data) {
-          return {
-            results: $.map(data.result, function (object) {
-              return {
-                id  : object.id,
-                text: object.name,
-              }
-            }),
-          }
-        },
-      },
-    })
-    const newOptionCompany = new Option(this.company_name, this.incoming.company_id, true, true)
-    $('#company_id').append(newOptionCompany).trigger('change')
-    $('#company_id').on('change', function () {
-      validator.element($(this))
-    })
-
-    $('#to_warehouse_id').select2({
-      placeholder       : 'Select warehouse',
-      minimumInputLength: 1,
-      width             : '100%',
-      allowClear        : true,
-      ajax              : {
-        type          : 'GET',
-        url           : '/api/warehouse/select',
-        cache         : true,
-        processResults: function (data) {
-          return {
-            results: $.map(data.result, function (object) {
-              return {
-                id        : object.id,
-                text      : object.name,
-                country_id: object.country_id,
-              }
-            }),
-          }
-        },
-      },
-      templateSelection: function (data, container) {
-        $(data.element).attr('data-country-id', data.country_id)
-        return data.text
-      },
-    })
-    const newOptionWarehouse = new Option(this.warehouse_name, this.incoming.to_warehouse_id, true, true)
-    newOptionWarehouse.setAttribute('data-country-id', this.incoming.to_country_id)
-    $('#to_warehouse_id').append(newOptionWarehouse).trigger('change')
-    $('#to_warehouse_id').on('change', function () {
-      validator.element($(this))
-      const data = app.datatable.rows().data().toArray()
-      if (data.length !== 0 && app.isRestore === false) {
-        // eslint-disable-next-line no-undef
-        swal.fire({
-          title             : 'Are you sure?',
-          text              : 'If you change warehouse, all product will be deleted',
-          type              : 'question',
-          showCancelButton  : true,
-          buttonsStyling    : false,
-          confirmButtonClass: 'btn btn-success',
-          cancelButtonClass : 'btn btn-default',
-        }).then(function (result) {
-          if (result.value) {
-            app.remainingLocation = []
-            app.datatable.clear().draw()
-          } else {
-            app.isRestore            = true
-            const newOptionWarehouse = new Option(app.toWarehouseNameBefore, app.toWarehouseIdBefore, true, true)
-            newOptionWarehouse.setAttribute('data-country-id', app.toWarehouseCountryBefore)
-            $('#to_warehouse_id').append(newOptionWarehouse).trigger('change')
-            setTimeout(function () { app.isRestore = false }, 500)
-          }
-        })
-        return false
-      }
-    })
-    $('#to_warehouse_id').on('select2:select', function () {
-      const data = app.datatable.rows().data().toArray()
-      console.log(data.length)
-      if (data.length === 0) {
-        app.toWarehouseIdBefore      = $(this).val()
-        app.toWarehouseCountryBefore = parseInt($(this).find(':selected').data('country-id'))
-        app.toWarehouseNameBefore    = $('#to_warehouse_id option:selected').text()
-      }
-    })
 
     $('#etd, #eta').datetimepicker({
       todayHighlight: true,
@@ -734,6 +654,7 @@ export default {
         to_warehouse_id: { required: true },
         eta            : { required: true },
         etd            : { required: true },
+        order_date     : { required: true },
         transport_type : { required: true },
       },
       invalidHandler: function (event, validator) {
@@ -774,7 +695,24 @@ export default {
           })
           return false
         }
-        app.editIncoming(data)
+
+        // eslint-disable-next-line no-undef
+        swal.fire({
+          title             : 'Are you sure?',
+          text              : `All data will be saved`,
+          type              : 'question',
+          showCancelButton  : true,
+          buttonsStyling    : false,
+          confirmButtonText : 'Save',
+          confirmButtonClass: 'btn btn-success',
+          cancelButtonClass : 'btn btn-default',
+        }).then(function (result) {
+          if (result.value) {
+            app.editIncoming(data)
+            app.formChanged = false
+          }
+        })
+        return false
       },
     })
 
@@ -811,7 +749,7 @@ export default {
         ajax              : {
           type: 'GET',
           url : function () {
-            return `/api/product/select?id_company=${$('#company_id').val()}`
+            return `/api/product/select?id_company=${app.incoming.company_id}`
           },
           cache         : true,
           processResults: function (data) {
@@ -862,7 +800,7 @@ export default {
         ajax              : {
           type: 'GET',
           url : function () {
-            return `/api/location/select?id_warehouse=${$('#to_warehouse_id').val()}`
+            return `/api/location/select?id_warehouse=${app.incoming.to_warehouse_id}`
           },
           cache         : true,
           processResults: function (data) {
@@ -973,7 +911,7 @@ export default {
           targets: -1,
           render : function (data, type, full, meta) {
             let additionalButton
-            if (full.id === '')
+            if (full.id === 0)
               additionalButton = `<a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Delete"><i class="la la-trash"></i></a>`
             else {
               let openButton  = ''
@@ -1082,23 +1020,13 @@ export default {
       },
       submitHandler: function (form) {
         app.saveProduct()
+        app.formChanged = true
         return false
       },
     })
   },
   methods: {
     openModal () {
-      if ($('#company_id').val() === '' || $('#to_warehouse_id').val() === '') {
-        // eslint-disable-next-line no-undef
-        swal.fire({
-          title             : 'Warning!',
-          text              : 'Please select company and warehouse',
-          type              : 'warning',
-          buttonsStyling    : false,
-          confirmButtonClass: 'btn btn-warning',
-        })
-        return false
-      }
       $('#product_modal').modal('show')
     },
     async setPackingValue (productId) {
@@ -1248,7 +1176,7 @@ export default {
       $('#batch').val('')
       this.productPackingId = null
       this.statusProduct    = STATUS_OPEN
-      this.rowId            = ''
+      this.rowId            = 0
       this.locationIdBefore = ''
 
       this.usage         = 0
@@ -1257,7 +1185,6 @@ export default {
       this.locationLevel = ''
     },
     setDataPost (data) {
-      this.incoming.company_id = parseInt($('#company_id').val())
       if ($('#etd').val() !== '')
         this.incoming.etd = moment($('#etd').val(), 'DD/MM/YYYY HH:mm').format('Y-MM-DD HH:mm:ss')
       if ($('#eta').val() !== '')
@@ -1269,8 +1196,6 @@ export default {
       this.incoming.transport_type = $('#transport_type').val()
       if ($('#from_country_id').val() !== '')
         this.incoming.from_country_id = parseInt($('#from_country_id').val())
-      this.incoming.to_country_id   = parseInt($('#to_warehouse_id').find(':selected').data('country-id'))
-      this.incoming.to_warehouse_id = parseInt($('#to_warehouse_id').val())
       this.incoming.products        = data
     },
     async editIncoming (data) {
@@ -1278,11 +1203,11 @@ export default {
         await this.setDataPost(data)
         try {
           this.$nuxt.$loading.start()
-          await this.$store.dispatch('incoming/editIncoming', { data: this.incoming })
-          const data      = this.$store.getters['incoming/getAddSuccess']
+          await this.$store.dispatch('incoming/editIncoming', { idIncoming: atob(this.$route.params.id), data: this.incoming })
+          const data      = this.$store.getters['incoming/getEditIncoming']
           const parameter = {
             alertClass: 'alert-success',
-            message   : `Job incoming ${data.result.job_no} has been added`,
+            message   : `Job incoming ${data.result.job_no} has been edited`,
           }
           this.$nuxt.$emit('alertShow', parameter)
           this.$nuxt.$loading.finish()
@@ -1314,7 +1239,8 @@ export default {
       })
     },
     async updateStatus (statusId, rowIndex, data) {
-      data.status = statusId
+      this.formChanged = true
+      data.status      = statusId
       setTimeout(() => this.datatable.row(rowIndex).data(data).draw(), 100)
     },
   },

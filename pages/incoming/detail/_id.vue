@@ -11,12 +11,12 @@
               <i class="kt-font-brand flaticon-add" />
             </span>
             <h3 class="kt-portlet__head-title">
-              Incoming Stock Detail &nbsp;&nbsp;#{{ incoming.job_no }}
+              Incoming Stock Detail
             </h3>
           </div>
           <div class="kt-portlet__head-toolbar">
             <a
-              :href="`/incoming/`"
+              href="/incoming"
               class="btn btn-clean kt-margin-r-10"
             >
               <i class="la la-arrow-left" />
@@ -25,6 +25,27 @@
           </div>
         </div>
         <div class="kt-portlet__body">
+          <div class="form-group row">
+            <div class="col-lg-4">
+              <label>Job No.</label>
+              <input
+                :value="incoming.job_no"
+                type="text"
+                class="form-control"
+                readonly
+              >
+            </div>
+            <div class="col-lg-4">
+              <label>Unique Code</label>
+              <input
+                :value="incoming.unique_code"
+                type="text"
+                class="form-control"
+                readonly
+              >
+            </div>
+          </div>
+          <div class="kt-separator kt-separator--border-dashed kt-separator--space-xs" />
           <div class="form-group row">
             <div class="col-lg-4">
               <label>Order No.</label>
@@ -345,12 +366,13 @@ export default {
     const app = this
     try {
       await this.$store.dispatch('incoming/getIncomingDetail', { idIncoming: atob(this.$route.params.id) })
-      this.incoming     = this.$store.getters['incoming/getIncomingDetail'].result
-      this.etd          = moment(this.incoming.etd).format('DD/MM/Y HH:mm')
-      this.eta          = moment(this.incoming.eta).format('DD/MM/Y HH:mm')
-      this.orderDate    = moment(this.incoming.order_date).format('DD/MM/Y HH:mm')
-      this.shipmentDate = moment(this.incoming.shipment_date).format('DD/MM/Y HH:mm')
-      this.createdDate  = moment(this.incoming.created_at).format('DD/MM/Y HH:mm:ss')
+      this.incoming    = this.$store.getters['incoming/getIncomingDetail'].result
+      this.etd         = moment(this.incoming.etd).format('DD/MM/Y HH:mm')
+      this.eta         = moment(this.incoming.eta).format('DD/MM/Y HH:mm')
+      this.orderDate   = moment(this.incoming.order_date).format('DD/MM/Y HH:mm')
+      this.createdDate = moment(this.incoming.created_at).format('DD/MM/Y HH:mm:ss')
+      if (this.incoming.shipment_date !== '' && this.incoming.shipment_date !== '0000-00-00 00:00:00')
+        this.shipmentDate = moment(this.incoming.shipment_date).format('DD/MM/Y HH:mm')
       if (this.incoming.updated_at !== '' && this.incoming.updated_at !== null)
         this.updatedDate      = moment(this.incoming.updated_at).format('DD/MM/Y HH:mm:ss')
       for (const statusIndex in JOB_STATUS) {
@@ -422,8 +444,8 @@ export default {
             if (typeof data === 'undefined')
               return data
             for (const statusIndex in INCOMING_STATUS) {
-              if (data === JOB_STATUS[statusIndex].id)
-                return `<span class="kt-badge kt-badge--${JOB_STATUS[statusIndex].class} kt-badge--inline">${JOB_STATUS[statusIndex].text}</span>`
+              if (data === INCOMING_STATUS[statusIndex].id)
+                return `<span class="kt-badge kt-badge--${INCOMING_STATUS[statusIndex].class} kt-badge--inline">${INCOMING_STATUS[statusIndex].text}</span>`
             }
           },
         },
