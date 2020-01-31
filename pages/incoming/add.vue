@@ -296,6 +296,7 @@
                 >
                   <thead>
                     <tr>
+                      <th>SKU Number</th>
                       <th>SKU - Product</th>
                       <th>Packing</th>
                       <th>Qty</th>
@@ -784,12 +785,17 @@ export default {
             return {
               results: $.map(data.result, function (object) {
                 return {
-                  id  : object.id,
-                  text: object.name,
+                  id         : object.id,
+                  text       : object.name,
+                  product_sku: object.sku,
                 }
               }),
             }
           },
+        },
+        templateSelection: function (data, container) {
+          $(data.element).attr('data-product-sku', data.product_sku)
+          return data.text
         },
       })
 
@@ -872,6 +878,7 @@ export default {
       info      : false,
       searching : false,
       columns   : [
+        { data: 'product_sku' },
         { data: 'product_name' },
         { data: 'packing_name' },
         { data: 'qty' },
@@ -1091,6 +1098,7 @@ export default {
           product_packing_id      : parseInt($('#product_packing_id').val()),
           to_warehouse_location_id: locationId,
           product_name            : $('#product_id option:selected').text(),
+          product_sku             : $('#product_id').find(':selected').data('product-sku'),
           packing_name            : $('#product_packing_id').find(':selected').data('packing-name'),
           location_name           : $('#to_warehouse_location_id').find(':selected').data('location-name'),
           expired_date            : $('#expired_date').val() !== '' ? moment($('#expired_date').val(), 'DD/MM/YYYY').format('Y-MM-DD HH:mm:ss') : '',

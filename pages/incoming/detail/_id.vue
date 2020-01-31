@@ -303,6 +303,7 @@
               >
                 <thead>
                   <tr>
+                    <th>SKU Number</th>
                     <th>SKU - Product</th>
                     <th>Packing</th>
                     <th>Qty</th>
@@ -392,6 +393,7 @@ export default {
       searching : false,
       data      : app.incoming.products,
       columns   : [
+        { data: 'product_sku' },
         { data: 'product_name' },
         { data: 'product_packing_name' },
         { data: 'qty' },

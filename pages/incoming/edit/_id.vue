@@ -305,6 +305,7 @@
                 >
                   <thead>
                     <tr>
+                      <th>SKU Number</th>
                       <th>SKU - Product</th>
                       <th>Packing</th>
                       <th>Qty</th>
@@ -569,6 +570,7 @@ export default {
           product_packing_id                : value.product_packing_id,
           to_warehouse_location_id          : value.to_warehouse_location_id,
           product_name                      : value.product_name,
+          product_sku                       : value.product_sku,
           product_packing_name              : value.product_packing_name,
           to_warehouse_location_name        : value.to_warehouse_location_name,
           to_warehouse_location_level       : value.to_warehouse_location_level,
@@ -756,12 +758,17 @@ export default {
             return {
               results: $.map(data.result, function (object) {
                 return {
-                  id  : object.id,
-                  text: object.name,
+                  id         : object.id,
+                  text       : object.name,
+                  product_sku: object.sku,
                 }
               }),
             }
           },
+        },
+        templateSelection: function (data, container) {
+          $(data.element).attr('data-product-sku', data.product_sku)
+          return data.text
         },
       })
 
@@ -847,6 +854,7 @@ export default {
       searching : false,
       data      : this.incoming.products,
       columns   : [
+        { data: 'product_sku' },
         { data: 'product_name' },
         { data: 'product_packing_name' },
         { data: 'qty' },
@@ -882,7 +890,7 @@ export default {
       },
       columnDefs: [
         {
-          targets  : 3,
+          targets  : 4,
           className: 'dt-center',
           render   : function (data, type, full, meta) {
             if (full.to_warehouse_location_id === '') {
@@ -937,7 +945,7 @@ export default {
           },
         },
         {
-          targets  : 5,
+          targets  : 6,
           className: 'dt-center',
           render   : function (data, type, full, meta) {
             if (typeof data === 'undefined')
@@ -984,6 +992,7 @@ export default {
         $('#to_warehouse_location_id').val(rowData.to_warehouse_location_id).trigger('change')
       } else {
         const newOptionProduct  = new Option(rowData.product_name, rowData.product_id, true, true)
+        newOptionProduct.setAttribute('data-product-sku', rowData.product_sku)
         $('#product_id').append(newOptionProduct).trigger('change')
         const locationName      = `${rowData.to_warehouse_location_name} - Level ${rowData.to_warehouse_location_level} 
                                 (${rowData.to_warehouse_location_usage} / ${rowData.to_warehouse_location_capacity_max})`
@@ -1139,6 +1148,7 @@ export default {
           product_packing_id                : parseInt($('#product_packing_id').val()),
           to_warehouse_location_id          : locationId,
           product_name                      : $('#product_id option:selected').text(),
+          product_sku                       : $('#product_id').find(':selected').data('product-sku'),
           product_packing_name              : $('#product_packing_id').find(':selected').data('packing-name'),
           to_warehouse_location_name        : $('#to_warehouse_location_id').find(':selected').data('location-name'),
           to_warehouse_location_level       : $('#to_warehouse_location_id').find(':selected').data('location-level'),
