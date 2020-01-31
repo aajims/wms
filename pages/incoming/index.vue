@@ -534,10 +534,11 @@ export default {
       const app         = this
       for (const statusIndex in JOB_STATUS) {
         if (statusId === JOB_STATUS[statusIndex].id) {
+          const statusText = `${JOB_STATUS[statusIndex].text.charAt(0).toLowerCase()}${JOB_STATUS[statusIndex].text.slice(1)}`
           // eslint-disable-next-line no-undef
           swal.fire({
             title             : 'Are you sure?',
-            text              : `Job incoming "${row.job_no}" will be ${JOB_STATUS[statusIndex].text.charAt(0).toLowerCase()}${JOB_STATUS[statusIndex].text.slice(1)}`,
+            text              : `Job incoming "${row.job_no}" will be ${statusText}`,
             type              : 'question',
             showCancelButton  : true,
             confirmButtonText : `${JOB_STATUS[statusIndex].text} Job`,
@@ -561,7 +562,7 @@ export default {
         const data      = this.$store.getters['incoming/getEditIncoming']
         const parameter = {
           alertClass: 'alert-success',
-          message   : `Job incoming ${data.result.job_no} has been canceled`,
+          message   : `Job incoming ${data.result.job_no} has been edited`,
         }
         this.$nuxt.$emit('alertShow', parameter)
         this.$nuxt.$loading.finish()
