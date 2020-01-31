@@ -104,7 +104,7 @@
           v-if="menus.length > 0"
           class="kt-menu__nav "
         >
-          <!-- genereta menu parent -->
+          <!-- generete menu parent -->
           <li
             v-for="menu in menus"
             :key="menu.name"
@@ -113,7 +113,7 @@
             data-ktmenu-submenu-toggle="hover"
           >
             <a
-              v-if="menu.children.length > 0"
+              v-if="menu.childDisplay === true"
               href="javascript:;"
               class="kt-menu__link kt-menu__toggle"
             >
@@ -136,7 +136,7 @@
 
             <!-- generete menu children -->
             <div
-              v-if="menu.children.length > 0"
+              v-if="menu.children.length > 0 && menu.childDisplay === true"
               class="kt-menu__submenu "
               :kt-hidden-height="menu.children.length * 40"
               style=""
@@ -147,11 +147,11 @@
                   v-for="subMenu in menu.children"
                   :key="subMenu.name"
                   aria-haspopup="true"
-                  :class="'kt-menu__item ' + [route === subMenu.url ? 'kt-menu__item--active' : '']"
-                  :v-model="[route === subMenu.url ? parentOpen=menu.name : '']"
+                  :class="'kt-menu__item ' + [childRoute === subMenu.url ? 'kt-menu__item--active' : '']"
+                  :v-model="[route === menu.url ? parentOpen=menu.name : '']"
                 >
                   <a
-                    :href="subMenu.url"
+                    :href="`${menu.url}${subMenu.url}`"
                     class="kt-menu__link "
                   >
                     <i :class="subMenu.icon"><span /></i>
@@ -176,6 +176,7 @@ export default {
     return {
       menus     : menus,
       route     : `/${this.$nuxt.$route.path.split('/')[1]}`,
+      childRoute: `/${this.$nuxt.$route.path.split('/')[2]}`,
       parentOpen: '',
     }
   },

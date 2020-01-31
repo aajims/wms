@@ -8,12 +8,12 @@ app.use(bodyParser.urlencoded({ extended: true }))
 
 const library = require('./library.js')
 
-app.post('/category/list', (request, response) => {
+app.post('/product/list', (request, response) => {
   const params = library.generateDatatableParameter(request.body)
   const token  = request.cookies[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
-    url    : `${process.env.API_URL}/v1/product-category/`,
+    url    : `${process.env.API_URL}/v1/product/`,
     headers: {
       'Content-Type' : 'application/x-www-form-urlencoded',
       'Authorization': `Bearer ${token}`,
@@ -28,11 +28,11 @@ app.post('/category/list', (request, response) => {
   })
 })
 
-app.post('/category/add', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+app.post('/product/add', (request, response) => {
+  const token    = request.cookies[`${process.env.APP_ENV}_token`]
   axios({
     method : 'post',
-    url    : `${process.env.API_URL}/v1/product-category`,
+    url    : `${process.env.API_URL}/v1/product/`,
     headers: {
       'Content-Type' : 'application/x-www-form-urlencoded',
       'Authorization': `Bearer ${token}`,
@@ -45,27 +45,11 @@ app.post('/category/add', (request, response) => {
   })
 })
 
-app.get('/category/detail', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
-  axios({
-    method : 'get',
-    url    : `${process.env.API_URL}/v1/product-category/${request.query.id_category}`,
-    headers: {
-      'Content-Type' : 'application/x-www-form-urlencoded',
-      'Authorization': `Bearer ${token}`,
-    },
-  }).then(function (responseApi) {
-    response.send(responseApi.data)
-  }).catch(function (error) {
-    response.status(error.response.status).send(error.response.data)
-  })
-})
-
-app.put('/category/edit', (request, response) => {
+app.put('/product/edit', (request, response) => {
   const token = request.cookies[`${process.env.APP_ENV}_token`]
   axios({
     method : 'put',
-    url    : `${process.env.API_URL}/v1/product-category/${request.body.id_category}`,
+    url    : `${process.env.API_URL}/v1/product/${request.body.id_product}`,
     headers: {
       'Content-Type' : 'application/x-www-form-urlencoded',
       'Authorization': `Bearer ${token}`,
@@ -78,23 +62,14 @@ app.put('/category/edit', (request, response) => {
   })
 })
 
-app.get('/category/select', (request, response) => {
+app.get('/product/detail', (request, response) => {
   const token = request.cookies[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
-    url    : `${process.env.API_URL}/v1/product-category`,
+    url    : `${process.env.API_URL}/v1/product/${request.query.id_product}`,
     headers: {
       'Content-Type' : 'application/x-www-form-urlencoded',
       'Authorization': `Bearer ${token}`,
-    },
-    params: {
-      'page'          : 1,
-      'per_page'      : 100,
-      'sort_by'       : 'name',
-      'sort'          : 'asc',
-      'search_by'     : 'name',
-      'keyword'       : request.query.term,
-      'filter[status]': 1,
     },
   }).then(function (responseApi) {
     response.send(responseApi.data)

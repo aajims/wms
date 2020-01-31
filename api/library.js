@@ -14,6 +14,7 @@ function generateDatatableParameter (requestBody) {
       for (const requestKey in requestBody.params.filter)
         filter[`filter[${requestKey}]`] = requestBody.params.filter[requestKey]
       const resultParams = Object.assign({}, mixedParams, filter)
+      delete resultParams.filter
       params = resultParams
     }
   }

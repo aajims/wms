@@ -6,21 +6,21 @@
     <div class="kt-portlet__head kt-portlet__head--lg">
       <div class="kt-portlet__head-label">
         <span class="kt-portlet__head-icon">
-          <i class="kt-font-brand la la-building" />
+          <i class="kt-font-brand flaticon2-open-box" />
         </span>
         <h3 class="kt-portlet__head-title">
-          Company List
+          Product List ({{ company.name }})
         </h3>
       </div>
       <div class="kt-portlet__head-toolbar">
         <div class="kt-portlet__head-wrapper">
           <div class="kt-portlet__head-actions">
             <a
-              href="/company/add"
+              :href="`/company/product/add/${idCompany}`"
               class="btn btn-brand btn-elevate btn-icon-sm"
             >
               <i class="la la-plus" />
-              <span class="kt-hidden-mobile">Add Company</span>
+              <span class="kt-hidden-mobile">Add Product</span>
             </a>
           </div>
         </div>
@@ -43,16 +43,10 @@
                       class="form-control bootstrap-select selectpicker"
                     >
                       <option value="name">
-                        Company Name
+                        Name
                       </option>
-                      <option value="address">
-                        Address
-                      </option>
-                      <option value="city_name">
-                        City
-                      </option>
-                      <option value="country_name">
-                        Country
+                      <option value="sku">
+                        SKU / Model
                       </option>
                     </select>
                   </div>
@@ -64,19 +58,18 @@
                 </div>
                 <div class="kt-input-icon kt-input-icon--left">
                   <input
-                    id="kt_form_search"
                     v-model="params.keyword"
                     type="text"
                     class="form-control"
                     placeholder="Search..."
-                    @keyup="getCompany()"
+                    @keyup="getProduct()"
                   >
                   <span class="kt-input-icon__icon kt-input-icon__icon--left">
                     <span><i class="la la-search" /></span>
                   </span>
                 </div>
               </div>
-              <div class="col-md-2 kt-margin-b-20-tablet-and-mobile">
+              <div class="col-md-3 kt-margin-b-20-tablet-and-mobile">
                 <div class="kt-form__group">
                   <div class="kt-form__label">
                     <label>Status:</label>
@@ -122,21 +115,22 @@
       </div>
       <!--end: Search Form -->
     </div>
+
     <div class="kt-portlet__body">
       <!--begin: Datatable -->
       <table
-        id="company_table"
+        id="product_table"
         class="table table-hover table-checkable"
       >
         <thead>
           <tr>
             <th>#</th>
-            <th>Company Name</th>
-            <th>Address</th>
-            <th>City</th>
-            <th>Country</th>
+            <th>SKU / Model</th>
+            <th>Name</th>
             <th>Status</th>
-            <th>Create By</th>
+            <th>Category</th>
+            <th>Type</th>
+            <th>Created By</th>
             <th>Created</th>
             <th>Actions</th>
           </tr>
@@ -158,52 +152,64 @@
 
 <script>
 import moment from 'moment'
+import { PRODUCT_TYPE } from '@/utils/constants'
 
 export default {
   data () {
     return {
+      idCompany: null,
       datatable: [],
+      company  : [],
       params   : {
         keyword  : '',
         search_by: '',
-        filter   : {},
+        filter   : { company_id: '' },
       },
     }
   },
-  mounted () {
+  async mounted () {
+    const param = atob(this.$route.params.id)
+    if (this.$route.params.id !== undefined)
+      this.params.filter.company_id = param
+
+    try {
+      await this.$store.dispatch('company/getCompanyDetail', { idCompany: param })
+      this.company   = this.$store.getters['company/getCompanyDetail'].result
+      this.idCompany = btoa(this.company.id)
+    } catch (error) {
+      this.company = { id: '', name: '' }
+    }
+
     const app = this
     $('#kt_form_status').on('change', function () {
       if ($('#kt_form_status').val() !== '' && $('#kt_form_status').val() !== null)
         app.params.filter.status = $('#kt_form_status').val()
       else
         app.$delete(app.params.filter, 'status')
-      app.getCompany()
+      app.getProduct()
     })
+
     // begin first table
-    this.datatable = $('#company_table').DataTable({
+    this.datatable = $('#product_table').DataTable({
       responsive: true,
       searching : false,
       processing: true,
       serverSide: true,
       ajax      : {
-        url : 'api/company/list',
+        url : '/api/product/list',
         type: 'POST',
         data: function (d) {
           d.params = app.params
         },
-        // "complete": function(xhr, status){
-        //     console.log(JSON.parse(xhr.responseText));
-        //     console.log(status);
-        // }
       },
       order  : [[7, 'desc']],
       columns: [
         { data: 'row_number' },
+        { data: 'sku' },
         { data: 'name' },
-        { data: 'address' },
-        { data: 'city_name' },
-        { data: 'country_name' },
         { data: 'status' },
+        { data: 'product_category_name' },
+        { data: 'type' },
         { data: 'created_by_name' },
         { data: 'created_at' },
         { data: 'actions', responsivePriority: -1 },
@@ -214,10 +220,6 @@ export default {
           orderable: false,
         },
         {
-          targets  : 1,
-          orderable: true,
-        },
-        {
           targets  : -1,
           title    : 'Actions',
           className: 'dt-center',
@@ -225,35 +227,19 @@ export default {
           orderable: false,
           render   : function (data, type, full, meta) {
             const idEncoded = btoa(full.id)
-            return `
-                        <a href="/company/detail/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
-                          <i class="la la-eye"></i>
-                        </a>
-                        <a href="/company/edit/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
-                          <i class="la la-edit"></i>
-                        </a>
-                        <span class="dropdown">
-                            <a href="javascript:void(0)" class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="dropdown" aria-expanded="true">
-                              <i class="la la-ellipsis-h"></i>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item action-button-status" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-power-off"></i> Update Status</a>
-                                <a class="dropdown-item" href="/company/packing/list/${idEncoded}"><i class="fa flaticon2-open-box"></i> Packing</a>
-                                <a class="dropdown-item" href="/company/product/list/${idEncoded}"><i class="fa flaticon2-supermarket"></i> Product</a>
-                                <a class="dropdown-item" href="javascript:void(0)"><i class="la la-qrcode"></i> Print QR Code</a>
-                            </div>
-                        </span>`
+            return `<a href="/company/product/detail/${idEncoded}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
+                      <i class="la la-eye"></i>
+                    </a>
+                    <a href="/company/product/edit/${idEncoded}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
+                      <i class="la la-edit"></i>
+                    </a>
+                    <a class="btn btn-sm btn-clean btn-icon btn-icon-md action-button-status" data-index="${meta.row}" href="javascript:void(0)" title="Update Status">
+                        <i class="la la-power-off"></i>
+                    </a>`
           },
         },
         {
-          targets  : -2,
-          className: 'dt-center',
-          render   : function (data, type, full, meta) {
-            return moment(data).format('DD/MM/Y HH:mm:ss')
-          },
-        },
-        {
-          targets  : -4,
+          targets  : 3,
           className: 'dt-center',
           render   : function (data, type, full, meta) {
             const status = {
@@ -266,18 +252,41 @@ export default {
             return `<span class="kt-badge ${status[data].class} kt-badge--inline">${status[data].title}</span>`
           },
         },
+        {
+          targets  : 5,
+          className: 'dt-center',
+          render   : function (data, type, full, meta) {
+            let productType = ''
+            for (const type in PRODUCT_TYPE) {
+              if (PRODUCT_TYPE[type].id === full.type)
+                productType = PRODUCT_TYPE[type].text
+            }
+
+            return productType
+          },
+        },
+        {
+          targets  : -2,
+          className: 'dt-center',
+          render   : function (data, type, full, meta) {
+            return moment(data).format('DD/MM/Y HH:mm:ss')
+          },
+        },
       ],
     })
 
     this.datatable.on('draw.dt', function () {
       $('.action-button-status').click(function () {
         const rowData = app.datatable.row($(this).data('index')).data()
-        // app.$delete(rowData, 'unique_code')
         app.setStatus(rowData)
       })
     })
   },
   methods: {
+    async getProduct () {
+      this.params.search_by = $('#kt_form_filter').val()
+      this.datatable.ajax.reload()
+    },
     async setStatus (row) {
       const app         = this
       const statusText  = row.status === 1 ? 'Deactivated' : 'Activated'
@@ -285,7 +294,7 @@ export default {
       // eslint-disable-next-line no-undef
       swal.fire({
         title             : 'Are you sure?',
-        text              : `Company "${row.name}" in Company "${row.name}" ${statusText}`,
+        text              : `Product "${row.name}" ${statusText}`,
         type              : 'question',
         showCancelButton  : true,
         confirmButtonText : statusText,
@@ -297,15 +306,15 @@ export default {
           app.updateStatus(row.id, row)
       })
     },
-    async updateStatus (idLocation, param) {
+    async updateStatus (idProduct, param) {
       try {
         this.$nuxt.$loading.start()
         param.status    = param.status === 1 ? 0 : 1
-        await this.$store.dispatch('company/editCompany', { idCompany: idLocation, data: param })
-        const data      = this.$store.getters['company/getEditCompany']
+        await this.$store.dispatch('product/editProduct', { idProduct: idProduct, data: param })
+        const data      = this.$store.getters['product/getEditProduct']
         const parameter = {
           alertClass: 'alert-success',
-          message   : `Company ${data.result.name} in Company ${data.result.warehouse_name} has been edited`,
+          message   : `Product ${data.result.name} has been edited`,
         }
         this.$nuxt.$emit('alertShow', parameter)
         this.$nuxt.$loading.finish()
@@ -324,18 +333,16 @@ export default {
         KTUtil.scrollTop()
       }
     },
-    async getCompany () {
-      this.params.search_by = $('#kt_form_filter').val()
-      this.datatable.ajax.reload()
-    },
     async clearForm () {
       this.params = {
         keyword  : '',
         search_by: '',
-        filter   : {},
+        filter   : { company_id: atob(this.$route.params.id) },
       }
       this.datatable.ajax.reload()
+      $('#kt_form_filter').val('name')
       $('#kt_form_status').val('')
+      $('.selectpicker').selectpicker('refresh')
     },
   },
 }
