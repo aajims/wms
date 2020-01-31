@@ -64,6 +64,21 @@ export const JOB_STATUS = [
   },
 ]
 
+export const OUTGOING_STATUS = [
+  {
+    id: 3, text: 'Open', class: 'success',
+  },
+  {
+    id: 6, text: 'Pick', class: 'warning',
+  },
+  {
+    id: 7, text: 'Pack', class: 'default',
+  },
+  {
+    id: 8, text: 'Ready Shipping', class: 'primary',
+  },
+]
+
 export const TRANSPORT_TYPE = [
   { id: 'air-freight', text: 'Air Freight' },
   { id: 'sea-freight', text: 'Sea Freight' },
