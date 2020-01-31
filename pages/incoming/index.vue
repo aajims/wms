@@ -290,7 +290,7 @@
 
 <script>
 import moment from 'moment'
-import { JOB_STATUS, STATUS_OPEN, STATUS_CANCEL } from '@/utils/constants'
+import { JOB_STATUS, STATUS_OPEN, STATUS_CANCEL, STATUS_STORED_NAME, STATUS_CLOSE } from '@/utils/constants'
 
 export default {
   data () {
@@ -446,12 +446,15 @@ export default {
           render   : function (data, type, full, meta) {
             let actionButtonCancel = ''
             let actionButtonEdit   = ''
+            let actionButtonClose  = ''
             if (full.status === STATUS_OPEN) {
               actionButtonEdit = `<a href="/incoming/edit/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
                                     <i class="la la-edit"></i>
                                   </a>`
               if (full.tracking === '')
                 actionButtonCancel = `<a class="dropdown-item action-button-cancel"  data-index="${meta.row}" href="javascript:void(0)"><i class="la la-times-circle"></i> Cancel Job</a>`
+              else if (full.tracking === STATUS_STORED_NAME)
+                actionButtonClose = `<a class="dropdown-item action-button-close"  data-index="${meta.row}" href="javascript:void(0)"><i class="la la-folder"></i> Close Job</a>`
             }
             return `<a href="/incoming/detail/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
                       <i class="la la-eye"></i>
@@ -463,8 +466,8 @@ export default {
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">
                             <a class="dropdown-item" href="javascript:void(0)"><i class="la la-print"></i> Print</a>
-                            <a class="dropdown-item" href="/incoming/qrcode/${btoa(full.id)}"><i class="la la-qrcode"></i> Print QR Code</a>
-                            ${actionButtonCancel}
+                            <a class="dropdown-item" href="/incoming/qrcode/${btoa(full.id)}" target="_blank"><i class="la la-qrcode"></i> Print QR Code</a>
+                            ${actionButtonCancel}${actionButtonClose}
                         </div>
                     </span>`
           },
@@ -483,10 +486,10 @@ export default {
         {
           targets: 'date',
           render : function (data, type, full, meta) {
-            if (data !== '')
+            if (data !== '' && data !== '0000-00-00 00:00:00')
               return moment(data).format('DD/MM/Y HH:mm')
             else
-              return data
+              return ''
           },
         },
         {
@@ -514,7 +517,11 @@ export default {
     this.datatable.on('draw.dt', function () {
       $('.action-button-cancel').click(function () {
         const rowData = app.datatable.row($(this).data('index')).data()
-        app.setStatus(rowData)
+        app.setStatus(STATUS_CANCEL, rowData)
+      })
+      $('.action-button-close').click(function () {
+        const rowData = app.datatable.row($(this).data('index')).data()
+        app.setStatus(STATUS_CLOSE, rowData)
       })
     })
   },
@@ -523,27 +530,33 @@ export default {
       this.params.search_by = $('#kt_form_filter').val()
       this.datatable.ajax.reload()
     },
-    async setStatus (row) {
+    async setStatus (statusId, row) {
       const app         = this
-      // eslint-disable-next-line no-undef
-      swal.fire({
-        title             : 'Are you sure?',
-        text              : `Job incoming "${row.job_no}" will be canceled`,
-        type              : 'question',
-        showCancelButton  : true,
-        confirmButtonText : 'Cancel Job',
-        buttonsStyling    : false,
-        confirmButtonClass: 'btn btn-danger',
-        cancelButtonClass : 'btn btn-default',
-      }).then(function (result) {
-        if (result.value)
-          app.updateStatus(row.id, row)
-      })
+      for (const statusIndex in JOB_STATUS) {
+        if (statusId === JOB_STATUS[statusIndex].id) {
+          // eslint-disable-next-line no-undef
+          swal.fire({
+            title             : 'Are you sure?',
+            text              : `Job incoming "${row.job_no}" will be ${JOB_STATUS[statusIndex].text.charAt(0).toLowerCase()}${JOB_STATUS[statusIndex].text.slice(1)}`,
+            type              : 'question',
+            showCancelButton  : true,
+            confirmButtonText : `${JOB_STATUS[statusIndex].text} Job`,
+            buttonsStyling    : false,
+            confirmButtonClass: `btn btn-${JOB_STATUS[statusIndex].class}`,
+            cancelButtonClass : 'btn btn-default',
+          }).then(function (result) {
+            if (result.value)
+              app.updateStatus(row.id, statusId, row)
+          })
+          break
+        }
+      }
     },
-    async updateStatus (idIncoming, param) {
+    async updateStatus (idIncoming, statusId, param) {
       try {
         this.$nuxt.$loading.start()
-        param.status    = STATUS_CANCEL
+        param.status    = statusId
+        this.$delete(param, 'job_close_date')
         await this.$store.dispatch('incoming/editIncoming', { idIncoming: idIncoming, data: param })
         const data      = this.$store.getters['incoming/getEditIncoming']
         const parameter = {
