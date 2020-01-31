@@ -517,10 +517,17 @@ export default {
       toWarehouseIdBefore : '',
       toCompanyIdBefore   : '',
       isRestore           : false,
+      formChanged         : false,
     }
   },
   async mounted () {
     const app           = this
+    // prevent refresh page
+    document.querySelector('#incoming_form').addEventListener('change', function () { app.formChanged = true })
+    window.addEventListener('beforeunload', (event) => {
+      if (app.formChanged)
+        event.returnValue = 'You have unfinished changes!'
+    })
     const customAdapter = $.fn.select2.amd.require('select2/data/customAdapter')
     $('#company_id').select2({
       placeholder       : 'Select company',
@@ -719,7 +726,24 @@ export default {
           })
           return false
         }
-        app.addIncoming(data)
+
+        // eslint-disable-next-line no-undef
+        swal.fire({
+          title             : 'Are you sure?',
+          text              : `All data will be saved`,
+          type              : 'question',
+          showCancelButton  : true,
+          buttonsStyling    : false,
+          confirmButtonText : 'Save',
+          confirmButtonClass: 'btn btn-success',
+          cancelButtonClass : 'btn btn-default',
+        }).then(function (result) {
+          if (result.value) {
+            app.addIncoming(data)
+            app.formChanged = false
+          }
+        })
+        return false
       },
     })
 
@@ -953,6 +977,7 @@ export default {
       },
       submitHandler: function (form) {
         app.saveProduct()
+        app.formChanged = true
         return false
       },
     })
