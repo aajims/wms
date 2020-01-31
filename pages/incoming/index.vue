@@ -463,7 +463,7 @@ export default {
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">
                             <a class="dropdown-item" href="javascript:void(0)"><i class="la la-print"></i> Print</a>
-                            <a class="dropdown-item" href="javascript:void(0)"><i class="la la-qrcode"></i> Print QR Code</a>
+                            <a class="dropdown-item" href="/incoming/qrcode/${btoa(full.id)}"><i class="la la-qrcode"></i> Print QR Code</a>
                             ${actionButtonCancel}
                         </div>
                     </span>`
