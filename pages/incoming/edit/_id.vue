@@ -1013,7 +1013,11 @@ export default {
         product_packing_id      : { required: true },
         to_warehouse_location_id: { required: true },
         batch                   : { required: true },
-        qty                     : { required: true, number: true },
+        qty                     : {
+          required      : true,
+          number        : true,
+          positiveNumber: true,
+        },
       },
       invalidHandler: function (event, validator) {
         event.preventDefault()
@@ -1024,6 +1028,10 @@ export default {
         return false
       },
     })
+    $.validator.addMethod('positiveNumber',
+      function (value) {
+        return Number(value) >= 0
+      }, 'Enter a positive number.')
   },
   methods: {
     openModal () {

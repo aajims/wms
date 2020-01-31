@@ -75,7 +75,7 @@ body {
                 >
                   SKU Number :<br><br>
                   <div style="margin-top: -10px;">
-                    <center><span style="font-size: 10px;">HPSGXN1</span></center>
+                    <center><span style="font-size: 10px;">{{ data.product_sku }}</span></center>
                   </div>
                 </td>
                 <td
