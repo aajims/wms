@@ -19,10 +19,7 @@ export const mutations = {
   },
   EDIT_OUTGOING (state, editOutgoing) {
     state.editOutgoing = editOutgoing
-  },
-  ADD_PRODUCT (state, addProduct) {
-    state.addProduct = addProduct
-  },
+  }
 }
 
 export const actions = {
@@ -77,11 +74,11 @@ export const actions = {
     await axios({
       method : 'put',
       url    : `/api/outgoing/edit`,
-      params: { id_outgoing: idOutgoing },
+      // params: { id_outgoing: idOutgoing },
       data: dataPut,
     }).then(function (response) {
       if (response.status === 200 && response.data.general_response.response_status === true)
-        commit('EDIT_outgoing', response.data)
+        commit('EDIT_OUTGOING', response.data)
       else if (response.data.general_response.response_code === 4003)
         dispatch('removeToken', null, { root: true })
       else

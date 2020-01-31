@@ -51,3 +51,47 @@ export const STATUS = [
     id: 1, text: 'Active', class: 'success',
   },
 ]
+
+export const JOB_STATUS = [
+  {
+    id: 3, text: 'Open', class: 'success',
+  },
+  {
+    id: 9, text: 'Cancel', class: 'danger',
+  },
+  {
+    id: 10, text: 'Close', class: 'dark',
+  },
+]
+
+export const TRANSPORT_TYPE = [
+  { id: 'air-freight', text: 'Air Freight' },
+  { id: 'sea-freight', text: 'Sea Freight' },
+  { id: 'truck', text: 'Truck' },
+  { id: 'courier', text: 'Courier' },
+  { id: 'production', text: 'Production' },
+]
+
+export const STATUS_INCATIVE = 0
+export const STATUS_ACTIVE = 1
+export const STATUS_DELETED = 2
+export const STATUS_OPEN = 3
+export const STATUS_BLOCK = 4
+export const STATUS_STORED = 5
+export const STATUS_PICK = 6
+export const STATUS_PACK = 7
+export const STATUS_READY_SHIPING = 8
+export const STATUS_CANCEL = 9
+export const STATUS_CLOSE = 10
+
+export const STATUS_INCATIVE_NAME       = 'INACTIVE'
+export const STATUS_ACTIVE_NAME         = 'ACTIVE'
+export const STATUS_DELETED_NAME        = 'DELETED'
+export const STATUS_OPEN_NAME           = 'OPEN'
+export const STATUS_BLOCK_NAME          = 'BLOCKED'
+export const STATUS_STORED_NAME         = 'STORED'
+export const STATUS_PICK_NAME           = 'PICKED'
+export const STATUS_PACK_NAME           = 'PACKED'
+export const STATUS_READY_SHIPPING_NAME = 'READY FOR SHIP'
+export const STATUS_CANCEL_NAME         = 'CANCEL'
+export const STATUS_CLOSE_NAME          = 'CLOSE'

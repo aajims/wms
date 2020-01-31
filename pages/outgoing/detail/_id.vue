@@ -5,7 +5,6 @@
             id="outgoing_form"
             ref="form"
             class="kt-form kt-form--label-right"
-            @submit.prevent="addOutgoing()"
         >
         <div
             id="kt_page_portlet"
@@ -89,7 +88,7 @@
                 <div class="col-lg-6">
                 <label>Transport Number <span style="color:red">*</span></label>
                     <input
-                        v-model="outgoing.tranport_number"
+                        v-model="outgoing.transport_number"
                         type="text"
                         class="form-control"
                         name="number"
@@ -99,9 +98,9 @@
             </div>
             <div class="form-group row">
                 <div class="col-lg-4">
-                <label for="country">From Country <span style="color:red">*</span></label>
-                   <input
-                        v-model="outgoing.from_country_id"
+                <label for="state">Shipment Date <span style="color:red">*</span></label>
+                    <input
+                        v-model="shipment_date"
                         type="text"
                         class="form-control"
                         name="number"
@@ -109,9 +108,9 @@
                     >
                 </div>
                 <div class="col-lg-4">
-                <label for="state">From State <span style="color:red">*</span></label>
-                    <input
-                        v-model="outgoing.from_state_id"
+                <label for="country">From Country <span style="color:red">*</span></label>
+                   <input
+                        v-model="outgoing.from_country_name"
                         type="text"
                         class="form-control"
                         name="number"
@@ -130,30 +129,20 @@
                 </div>
             </div>
             <div class="form-group row">
-                <div class="col-lg-4">
+                <div class="col-lg-6">
                 <label for="country">To Country <span style="color:red">*</span></label>
                     <input
-                        v-model="outgoing.to_country_id"
+                        v-model="outgoing.to_country_name"
                         type="text"
                         class="form-control"
                         name="number"
                         readonly
                     >
                 </div>
-                <div class="col-lg-4">
-                <label for="state">To State <span style="color:red">*</span></label>
+                <div class="col-lg-6">
+                <label>To  <span style="color:red">*</span></label>
                     <input
-                        v-model="outgoing.to_state_id"
-                        type="text"
-                        class="form-control"
-                        name="number"
-                        readonly
-                    >
-                </div>
-                <div class="col-lg-4">
-                <label>To Warehouse <span style="color:red">*</span></label>
-                    <input
-                        v-model="outgoing.to_warehouse_name"
+                        v-model="outgoing.to"
                         type="text"
                         class="form-control"
                         name="number"
@@ -187,6 +176,16 @@
             </div>
             <div class="form-group row">
                 <div class="col-lg-6">
+                <label>Order Date <span style="color:red">*</span></label>
+                    <input
+                        id="order_date"
+                        v-model="order_date"
+                        class="form-control"
+                        name="order_date"
+                        readonly
+                    />
+                </div>
+                <div class="col-lg-6">
                 <label for="description">Description</label>
                 <textarea
                     id="description"
@@ -219,9 +218,6 @@
                     <th>From Warehouse</th>
                     <th>Batch</th>
                     <th>Qty</th>
-                    <th>Net Weight</th>
-                    <th>Gross Weight</th>
-                    <th>Dimension</th>
                     <th>Expired</th>
                     <th>Description</th>
                 </tr>
@@ -233,9 +229,7 @@
                         <td>{{ row.from_warehouse_location_name }}</td>
                         <td>{{ row.batch }}</td>
                         <td>{{ row.qty }}</td>
-                        <td>{{ row.nett_weight }} /{{ row.nett_weight_type }}</td>
-                        <td>{{ row.gross_weight }} /{{ row.gross_weight_type }}</td>
-                        <td>{{ row.dimension_type }}</td>
+                       
                         <td>{{ row.expired_date }}</td>
                         <td>{{ row.description }}</td>
                     </tr>
@@ -264,21 +258,27 @@ import moment from 'moment'
 export default {
   data () {
     return {
+      idOutgoingEncoded  : null,
       outgoing   : [],
       product : [],
       etd   : '',
       eta   : '',
+      shipment_date : '',
+      order_date : '',
       updatedDate: '',
     }
   },
   async mounted () {
-    await this.$store.dispatch('outgoing/getOutgoingDetail', { idOutgoing: this.$route.params.id })
+    await this.$store.dispatch('outgoing/getOutgoingDetail', { idOutgoing: atob(this.$route.params.id) })
+    this.idOutgoingEncoded = btoa(this.outgoing.id_outgoing)
     this.outgoing    = this.$store.getters['outgoing/getOutgoingDetail'].result
     this.product    = this.$store.getters['outgoing/getOutgoingDetail'].result.products
-    this.expired = moment(this.expired_date).format('DD/MM/Y')
+    this.expired = moment(this.expired_date).format('DD/MM/Y HH:mm')
     this.updatedDate = moment(this.outgoing.updated_at).format('DD/MM/Y HH:mm:ss')
-    this.etd = moment(this.outgoing.etd).format('DD/MM/Y')
-    this.eta = moment(this.outgoing.eta).format('DD/MM/Y')
+    this.etd = moment(this.outgoing.etd).format('DD/MM/Y HH:mm')
+    this.eta = moment(this.outgoing.eta).format('DD/MM/Y HH:mm')
+    this.shipment_date = moment(this.outgoing.shipment_date).format('DD/MM/Y HH:mm')
+    this.order_date = moment(this.outgoing.order_date).format('DD/MM/Y HH:mm')
   },
 }
 </script>

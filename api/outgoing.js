@@ -12,8 +12,8 @@ app.post('/outgoing/list', (request, response) => {
   const params = library.generateDatatableParameter(request.body)
   const token  = request.cookies[`${process.env.APP_ENV}_token`]
   axios({
-    method : 'get',
-    url    : `${process.env.API_URL}/v1/job-outgoing/`,
+    method : 'GET',
+    url    : `${process.env.API_URL}/v1/job-outgoing`,
     headers: {
       'Content-Type' : 'application/x-www-form-urlencoded',
       'Authorization': `Bearer ${token}`,

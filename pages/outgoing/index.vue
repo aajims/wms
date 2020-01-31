@@ -42,17 +42,12 @@
                       id="kt_form_filter"
                       class="form-control bootstrap-select selectpicker"
                     >
-                      <option value="name">
-                        Company Name
-                      </option>
-                      <option value="order_no">
-                        No Order
-                      </option>
-                      <option value="from_warehouse_name">
-                        From Warehouse
-                      </option>
-                      <option value="from_warehouse_name">
-                        To Warehouse
+                      <option
+                        v-for="(item, index) in filter_by"
+                        :key="index"
+                        :value="index"
+                      >
+                        {{ item }}
                       </option>
                     </select>
                   </div>
@@ -86,14 +81,15 @@
                       id="kt_form_status"
                       class="form-control bootstrap-select selectpicker"
                     >
-                      <option value="">
+                       <option value="">
                         All
                       </option>
-                      <option value="1">
-                        Active
-                      </option>
-                      <option value="0">
-                        Inactive
+                      <option
+                        v-for="item in job_status"
+                        :key="item.id"
+                        :value="item.id"
+                      >
+                        {{ item.text }}
                       </option>
                     </select>
                   </div>
@@ -120,6 +116,95 @@
           </div>
         </div>
       </div>
+      <br/>
+      <div class="row align-items-center">
+        <div class="col-xl-12 order-2 order-xl-1">
+          <div class="row align-items-center">
+            <div class="col-md-2 kt-margin-b-20-tablet-and-mobile">
+              <div class="kt-form__group">
+                <div class="kt-form__label">
+                  <label>Filter Date By:</label>
+                </div>
+                <div class="kt-form__control">
+                  <select
+                    id="kt_form_filter_date"
+                    class="form-control bootstrap-select selectpicker"
+                  >
+                    <option
+                      v-for="(item, index) in filter_date_by"
+                      :key="index"
+                      :value="index"
+                    >
+                      {{ item }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-2 kt-margin-b-20-tablet-and-mobile">
+              <div class="kt-form__group">
+                <div class="kt-form__label">
+                  <label>From:</label>
+                </div>
+                <div class="kt-form__control">
+                  <div class="input-group date">
+                    <input
+                      id="from"
+                      type="text"
+                      class="form-control"
+                      readonly
+                      placeholder="Select from"
+                    >
+                    <div class="input-group-append">
+                      <span class="input-group-text">
+                        <i class="la la-calendar" />
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-2 kt-margin-b-20-tablet-and-mobile">
+              <div class="kt-form__group">
+                <div class="kt-form__label">
+                  <label>To:</label>
+                </div>
+                <div class="kt-form__control">
+                  <div class="input-group date">
+                    <input
+                      id="to"
+                      type="text"
+                      class="form-control"
+                      readonly
+                      placeholder="Select to"
+                    >
+                    <div class="input-group-append">
+                      <span class="input-group-text">
+                        <i class="la la-calendar" />
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 kt-margin-b-20-tablet-and-mobile">
+              <div class="kt-form__group">
+                <div class="kt-form__label">
+                  <label>Company:</label>
+                </div>
+                <div class="kt-form__control">
+                  <select
+                    id="company"
+                    class="form-control kt-select2"
+                  >
+                    <option />
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <!--end: Search Form -->
     </div>
     <div class="kt-portlet__body">
@@ -131,14 +216,17 @@
         <thead>
           <tr>
             <th>#</th>
-            <th>No Job</th>
-            <th>Company Name</th>
-            <th>No Order</th>
-            <th>Order Date</th>
-            <th>From Warehouse</th>
-            <th>To Warehouse</th>
-            <th>Status</th>
-            <th>Created</th>
+            <th>Outgoing No.</th>
+            <th>Company</th>
+            <th>Warehouse</th>
+            <th>Country</th>
+            <th >Transport Type</th>
+            <th class="date">Shipment</th>
+            <th class="date">Order</th>
+            <th class="date">ETD</th>
+            <th class="date">ETA</th>
+             <th class="created_date">Created</th>
+            <th class="update_date">Updated</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -159,10 +247,27 @@
 
 <script>
 import moment from 'moment'
+import { JOB_STATUS, STATUS_OPEN, STATUS_CANCEL } from '@/utils/constants'
 
 export default {
   data () {
     return {
+      filter_by: {
+        job_no          : 'Job No',
+        from            : 'From',
+        to              : 'To',
+        flight          : 'Flight',
+        transport_number: 'Transport Number',
+      },
+      filter_date_by: {
+        created_at   : 'Created Date',
+        updated_at   : 'Updated Date',
+        etd          : 'ETD',
+        eta          : 'ETA',
+        order_date   : 'Order Date',
+        shipment_date: 'Shipment Date',
+      },
+      job_status: JOB_STATUS,
       datatable: [],
       params   : {
         keyword  : '',
@@ -173,6 +278,64 @@ export default {
   },
   mounted () {
     const app = this
+    $('#warehouse').select2({
+      placeholder       : 'Select warehouse',
+      minimumInputLength: 1,
+      width             : '100%',
+      allowClear        : true,
+      ajax              : {
+        type          : 'GET',
+        url           : '/api/warehouse/select',
+        cache         : true,
+        processResults: function (data) {
+          return {
+            results: $.map(data.result, function (object) {
+              return {
+                id  : object.id,
+                text: object.name,
+              }
+            }),
+          }
+        },
+      },
+    })
+    $('#warehouse').on('change', function () {
+      if ($('#warehouse').val() !== '' && $('#warehouse').val() !== null)
+        app.params.filter.to_warehouse_id = $('#warehouse').val()
+      else
+        app.$delete(app.params.filter, 'to_warehouse_id')
+      app.getOutgoing()
+    })
+
+    $('#company').select2({
+      placeholder       : 'Select company',
+      minimumInputLength: 1,
+      width             : '100%',
+      allowClear        : true,
+      ajax              : {
+        type          : 'GET',
+        url           : '/api/company/select',
+        cache         : true,
+        processResults: function (data) {
+          return {
+            results: $.map(data.result, function (object) {
+              return {
+                id  : object.id,
+                text: object.name,
+              }
+            }),
+          }
+        },
+      },
+    })
+    $('#company').on('change', function () {
+      if ($('#company').val() !== '' && $('#company').val() !== null)
+        app.params.filter.company_id = $('#company').val()
+      else
+        app.$delete(app.params.filter, 'company_id')
+      app.getOutgoing()
+    })
+
     $('#kt_form_status').on('change', function () {
       if ($('#kt_form_status').val() !== '' && $('#kt_form_status').val() !== null)
         app.params.filter.status = $('#kt_form_status').val()
@@ -180,6 +343,20 @@ export default {
         app.$delete(app.params.filter, 'status')
       app.getOutgoing()
     })
+    $('#from, #to').datetimepicker({
+      todayHighlight: true,
+      orientation   : 'bottom left',
+      todayBtn      : 'linked',
+      format        : 'dd/mm/yyyy',
+    }).on('changeDate', function (event) {
+      app.params.date_by   = $('#kt_form_filter_date').val()
+      if ($('#from').val() !== '')
+        app.params.date_from = moment($('#from').val(), 'DD/MM/YYYY').format('Y-MM-DD HH:mm:ss')
+      if ($('#to').val() !== '')
+        app.params.date_to   = moment(`${$('#to').val()} 23:59:59`, 'DD/MM/YYYY HH:mm:ss').format('Y-MM-DD HH:mm:ss')
+      app.getOutgoing()
+    })
+
     // begin first table
     this.datatable = $('#outgoing_table').DataTable({
       responsive: true,
@@ -193,28 +370,23 @@ export default {
           d.params = app.params
         },
       },
-      order  : [[8, 'desc']],
+      order  : [[7, 'desc']],
       columns: [
         { data: 'row_number' },
-        { data: 'job_no' },
+        { data: 'order_no', responsivePriority: -1 },
         { data: 'company_name' },
-        { data: 'order_no' },
-        { data: 'order_date' },
         { data: 'from_warehouse_name' },
-        { data: 'to_warehouse_name' },
-        { data: 'status' },
+        { data: 'from_country_name' },
+        { data: 'transport_type' },
+        { data: 'shipment_date' },
+        { data: 'order_date' },
+        { data: 'etd' },
+        { data: 'eta' },
         { data: 'created_at' },
-        { data: 'actions', responsivePriority: -1 },
+        { data: 'updated_at' },
+        { data: 'actions', responsivePriority: -2 },
       ],
       columnDefs: [
-        {
-          targets  : 0,
-          orderable: false,
-        },
-        {
-          targets  : 1,
-          orderable: true,
-        },
         {
           targets  : -1,
           title    : 'Actions',
@@ -222,42 +394,65 @@ export default {
           width    : '110px',
           orderable: false,
           render   : function (data, type, full, meta) {
-            return `
-                        <a href="/outgoing/detail/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
-                          <i class="la la-eye"></i>
+            let actionButtonCancel = ''
+            if (full.status === STATUS_OPEN && full.tracking === '')
+              actionButtonCancel = `<a class="dropdown-item action-button-cancel"  data-index="${meta.row}" href="javascript:void(0)"><i class="la la-times-circle"></i> Cancel Job</a>`
+            return `<a href="/outgoing/detail/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
+                      <i class="la la-eye"></i>
+                    </a>
+                    <a href="/outgoing/edit/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
+                      <i class="la la-edit"></i>
+                    </a>
+                    <span class="dropdown">
+                        <a href="javascript:void(0)" class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="dropdown" aria-expanded="true">
+                          <i class="la la-ellipsis-h"></i>
                         </a>
-                        <a href="/outgoing/edit/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
-                          <i class="la la-edit"></i>
-                        </a>
-                        <span class="dropdown">
-                            <a href="javascript:void(0)" class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="dropdown" aria-expanded="true">
-                              <i class="la la-ellipsis-h"></i>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item action-button-status" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-power-off"></i> Update Status</a>
-                            </div>
-                        </span>`
-          },
-        },
-        {
-          targets  : -2,
-          className: 'dt-center',
-          render   : function (data, type, full, meta) {
-            return moment(data).format('DD/MM/Y HH:mm:ss')
-          },
-        },
-        {
-          targets  : -3,
-          className: 'dt-center',
-          render   : function (data, type, full, meta) {
-            const status = {
-              0: { title: 'Inactive', class: ' kt-badge--danger' },
-              1: { title: 'Active', class: ' kt-badge--success' },
-            }
-            if (typeof status[data] === 'undefined')
-              return data
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="javascript:void(0)"><i class="la la-print"></i> Print</a>
+                            <a class="dropdown-item" href="javascript:void(0)"><i class="la la-qrcode"></i> Print QR Code</a>
+                            ${actionButtonCancel}
+                        </div>
+                    </span>`
 
-            return `<span class="kt-badge ${status[data].class} kt-badge--inline">${status[data].title}</span>`
+          },
+        },
+        // {
+        //   targets  : 'jobStatus',
+        //   className: 'dt-center',
+        //   render   : function (data, type, full, meta) {
+        //     if (typeof data === 'undefined')
+        //       return data
+        //     for (const statusIndex in JOB_STATUS) {
+        //       if (data === JOB_STATUS[statusIndex].id)
+        //         return `<span class="kt-badge kt-badge--${JOB_STATUS[statusIndex].class} kt-badge--inline">${JOB_STATUS[statusIndex].text}</span>`
+        //     }
+        //   },
+        // },
+        {
+          targets: 'date',
+          render: function (data, type, full, meta) {
+            if (data !== '')
+              return moment(data).format('DD/MM/Y HH:mm')
+            else
+              return data
+          },
+        },
+        {
+          targets: 'update_date',
+          render : function (data, type, full, meta) {
+            if (data !== '')
+              return `${moment(data).format('DD/MM/Y HH:mm:ss')}<br>${full.updated_by_name}`
+            else
+              return data
+          },
+        },
+        {
+          targets: 'created_date',
+          render : function (data, type, full, meta) {
+            if (data !== '')
+              return `${moment(data).format('DD/MM/Y HH:mm:ss')}<br>${full.created_by_name}`
+            else
+              return data
           },
         },
       ],
@@ -272,6 +467,10 @@ export default {
     })
   },
   methods: {
+    async getOutgoing () {
+      this.params.search_by = $('#kt_form_filter').val()
+      this.datatable.ajax.reload()
+    },
     async setStatus (row) {
       const app         = this
       const statusText  = row.status === 1 ? 'Deactivated' : 'Activated'
@@ -318,10 +517,6 @@ export default {
         KTUtil.scrollTop()
       }
     },
-    async getOutgoing () {
-      this.params.search_by = $('#kt_form_filter').val()
-      this.datatable.ajax.reload()
-    },
     async clearForm () {
       this.params = {
         keyword  : '',
@@ -330,9 +525,8 @@ export default {
       }
       this.datatable.ajax.reload()
       $('#kt_form_status').val('')
-      $('#kt_form_filter').val('name')
+      $('#kt_form_filter').val('company_name')
       $('#kt_form_filter').val('order_no')
-      $('#kt_form_filter').val('from_warehouse_name')
       $('#kt_form_filter').val('from_warehouse_name')
     },
   },
