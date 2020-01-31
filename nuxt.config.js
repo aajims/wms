@@ -43,6 +43,8 @@ module.exports = {
       { src: '/js/sweetalert2.init.js', body: true },
       { src: '/vendors/bootstrap-select.min.js', body: true },
       { src: '/vendors/datatables.bundle.min.js', body: true },
+      { src: '/vendors/bootstrap-datepicker.min.js', body: true },
+      { src: '/vendors/bootstrap-datetimepicker.min.js', body: true },
       { src: '/vendors/jquery.repeater.min.js', body: true },
       { src: '/vendors/jquery.bootstrap-touchspin.min.js', body: true },
       { src: '/vendors/bootstrap-datetimepicker.min.js', body: true },

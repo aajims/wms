@@ -191,10 +191,6 @@ export default {
         data: function (d) {
           d.params = app.params
         },
-        // "complete": function(xhr, status){
-        //     console.log(JSON.parse(xhr.responseText));
-        //     console.log(status);
-        // }
       },
       order  : [[7, 'desc']],
       columns: [
