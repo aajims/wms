@@ -1,3 +1,8 @@
+<style scoped>
+.col-lg-4 {
+  margin-top: 20px;
+}
+</style>
 <template>
   <div class="row">
     <div class="col-lg-12">
@@ -65,7 +70,7 @@
               </div>
               <div class="col-lg-4">
                 <div class="kt-form__label">
-                  <label>Warehouse <span style="color:red">*</span></label>
+                  <label>To Warehouse <span style="color:red">*</span></label>
                 </div>
                 <div class="kt-form__control">
                   <select
@@ -78,8 +83,6 @@
                   <span class="form-text text-muted" />
                 </div>
               </div>
-            </div>
-            <div class="form-group row">
               <div class="col-lg-4">
                 <div class="kt-form__label">
                   <label>ETD <span style="color:red">*</span></label>
@@ -146,8 +149,6 @@
                   </div>
                 </div>
               </div>
-            </div>
-            <div class="form-group row">
               <div class="col-lg-4">
                 <div class="kt-form__label">
                   <label>Order Date <span style="color:red">*</span></label>
@@ -171,19 +172,8 @@
                 </div>
               </div>
               <div class="col-lg-4">
-                <label for="description">Description</label>
-                <textarea
-                  v-model="incoming.description"
-                  class="form-control"
-                  rows="3"
-                />
-              </div>
-            </div>
-            <div class="kt-separator kt-separator--border-dashed kt-separator--space-xs" />
-            <div class="form-group row">
-              <div class="col-lg-4">
                 <div class="kt-form__label">
-                  <label>Country</label>
+                  <label>From Country</label>
                 </div>
                 <div class="kt-form__control">
                   <select
@@ -197,28 +187,6 @@
                 </div>
               </div>
               <div class="col-lg-4">
-                <label>Cargo Insurance</label>
-                <input
-                  v-model="incoming.cargo_insurance"
-                  type="text"
-                  class="form-control"
-                  name="cargo_insurance"
-                  placeholder="Enter cargo insurance"
-                >
-              </div>
-              <div class="col-lg-4">
-                <label>Custom Permit</label>
-                <input
-                  v-model="incoming.custom_permit"
-                  type="text"
-                  class="form-control"
-                  name="custom_permit"
-                  placeholder="Enter custom permit"
-                >
-              </div>
-            </div>
-            <div class="form-group row">
-              <div class="col-lg-4">
                 <label>From</label>
                 <textarea
                   id="from"
@@ -228,9 +196,6 @@
                   rows="3"
                 />
               </div>
-            </div>
-            <div class="kt-separator kt-separator--border-dashed kt-separator--space-xs" />
-            <div class="form-group row">
               <div class="col-lg-4">
                 <div class="kt-form__label">
                   <label>Transport Type <span style="color:red">*</span></label>
@@ -272,6 +237,34 @@
                   placeholder="Enter flight"
                 >
               </div>
+              <div class="col-lg-4">
+                <label>Custom Permit</label>
+                <input
+                  v-model="incoming.custom_permit"
+                  type="text"
+                  class="form-control"
+                  name="custom_permit"
+                  placeholder="Enter custom permit"
+                >
+              </div>
+              <div class="col-lg-4">
+                <label>Cargo Insurance</label>
+                <input
+                  v-model="incoming.cargo_insurance"
+                  type="text"
+                  class="form-control"
+                  name="cargo_insurance"
+                  placeholder="Enter cargo insurance"
+                >
+              </div>
+              <div class="col-lg-4">
+                <label for="description">Description</label>
+                <textarea
+                  v-model="incoming.description"
+                  class="form-control"
+                  rows="3"
+                />
+              </div>
             </div>
             <div class="kt-separator kt-separator--border-dashed kt-separator--space-xs" />
             <div class="form-group row">
@@ -297,9 +290,9 @@
                   <thead>
                     <tr>
                       <th>SKU Number</th>
-                      <th>SKU - Product</th>
+                      <th>Product</th>
                       <th>Packing</th>
-                      <th>Qty</th>
+                      <th>Quantity</th>
                       <th class="location_name">
                         Location
                       </th>
@@ -383,7 +376,7 @@
               </div>
               <div class="form-group row">
                 <div class="col-lg-3">
-                  <label>Quantity Max</label>
+                  <label>Qty Max (Packing)</label>
                   <input
                     id="qty_max"
                     type="text"
@@ -392,7 +385,7 @@
                   >
                 </div>
                 <div class="col-lg-3">
-                  <label>Quantity <span style="color:red">*</span></label>
+                  <label>Product Qty <span style="color:red">*</span></label>
                   <input
                     id="qty"
                     name="qty"
@@ -845,13 +838,13 @@ export default {
                   if (parseInt(value.location_id) === parseInt(object.id))
                     usageRemaining = value.usage
                 })
-                if (object.usage !== object.capacity_max && usageRemaining < object.capacity_max) {
+                if (object.usage !== object.capacity && usageRemaining < object.capacity) {
                   return {
                     id           : object.id,
-                    text         : `${object.name} - Level ${object.level} (${object.usage} / ${object.capacity_max})`,
+                    text         : `${object.name} - Level ${object.level} (${object.usage} / ${object.capacity})`,
                     location_name: `${object.name} - Level ${object.level}`,
                     usage        : object.usage,
-                    capacity_max : object.capacity_max,
+                    capacity     : object.capacity,
                   }
                 }
               }),
@@ -861,7 +854,7 @@ export default {
         templateSelection: function (data, container) {
           $(data.element).attr('data-location-name', data.location_name)
           $(data.element).attr('data-usage', data.usage)
-          $(data.element).attr('data-capacity-max', data.capacity_max)
+          $(data.element).attr('data-capacity', data.capacity)
           return data.text
         },
       })
@@ -1068,7 +1061,7 @@ export default {
     },
     async execSaveProduct (qtyMax, qty, totalRow) {
       let locationId    = parseInt($('#to_warehouse_location_id').val())
-      const capacityMax = $('#to_warehouse_location_id').find(':selected').data('capacity-max')
+      const capacity = $('#to_warehouse_location_id').find(':selected').data('capacity')
       let usage         = $('#to_warehouse_location_id').find(':selected').data('usage')
       let product       = {}
       let qtyPerRow     = qtyMax
@@ -1091,7 +1084,7 @@ export default {
           qtyPerRow = qty
 
         usage = usage + 1
-        if (usage > capacityMax)
+        if (usage > capacity)
           locationId   = ''
 
         product = {
@@ -1118,8 +1111,8 @@ export default {
       }
 
       // add new usage to existing usage
-      if (usage > capacityMax)
-        usage = capacityMax
+      if (usage > capacity)
+        usage = capacity
       let found = false
       this.remainingLocation.forEach((value, key) => {
         if (parseInt(value.location_id) === location) {

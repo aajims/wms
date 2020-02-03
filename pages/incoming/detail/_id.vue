@@ -1,3 +1,8 @@
+<style scoped>
+.margin-top-20 {
+  margin-top: 20px;
+}
+</style>
 <template>
   <div class="row">
     <div class="col-lg-12">
@@ -47,7 +52,7 @@
           </div>
           <div class="kt-separator kt-separator--border-dashed kt-separator--space-xs" />
           <div class="form-group row">
-            <div class="col-lg-4">
+            <div class="col-lg-4 margin-top-20">
               <label>Order No.</label>
               <input
                 :value="incoming.order_no"
@@ -56,7 +61,7 @@
                 readonly
               >
             </div>
-            <div class="col-lg-4">
+            <div class="col-lg-4 margin-top-20">
               <label>Company</label>
               <input
                 :value="incoming.company_name"
@@ -65,8 +70,8 @@
                 readonly
               >
             </div>
-            <div class="col-lg-4">
-              <label>Warehouse</label>
+            <div class="col-lg-4 margin-top-20">
+              <label>To Warehouse</label>
               <input
                 :value="incoming.to_warehouse_name"
                 type="text"
@@ -74,9 +79,7 @@
                 readonly
               >
             </div>
-          </div>
-          <div class="form-group row">
-            <div class="col-lg-4">
+            <div class="col-lg-4 margin-top-20">
               <div class="kt-form__label">
                 <label>ETD</label>
               </div>
@@ -97,7 +100,7 @@
                 <span class="form-text text-muted" />
               </div>
             </div>
-            <div class="col-lg-4">
+            <div class="col-lg-4 margin-top-20">
               <div class="kt-form__label">
                 <label>ETA</label>
               </div>
@@ -118,7 +121,7 @@
                 <span class="form-text text-muted" />
               </div>
             </div>
-            <div class="col-lg-4">
+            <div class="col-lg-4 margin-top-20">
               <div class="kt-form__label">
                 <label>Shipment Date</label>
               </div>
@@ -138,9 +141,7 @@
                 </div>
               </div>
             </div>
-          </div>
-          <div class="form-group row">
-            <div class="col-lg-4">
+            <div class="col-lg-4 margin-top-20">
               <div class="kt-form__label">
                 <label>Order Date</label>
               </div>
@@ -160,66 +161,8 @@
                 </div>
               </div>
             </div>
-            <div class="col-lg-4">
-              <label>Created Date</label>
-              <input
-                :value="createdDate"
-                type="text"
-                class="form-control"
-                readonly
-              >
-            </div>
-            <div class="col-lg-4">
-              <label>Created By</label>
-              <input
-                :value="incoming.created_by_name"
-                type="text"
-                class="form-control"
-                readonly
-              >
-            </div>
-          </div>
-          <div class="form-group row">
-            <div class="col-lg-4">
-              <label for="description">Description</label>
-              <textarea
-                :value="incoming.description"
-                class="form-control"
-                rows="6"
-                readonly
-              />
-            </div>
-            <div class="col-lg-4">
-              <label>Updated Date</label>
-              <input
-                :value="updatedDate"
-                type="text"
-                class="form-control"
-                readonly
-              ><br>
-              <label>Status</label><br>
-              <span
-                :class="`btn btn-${status.class}`"
-              > {{ status.text }} </span>
-            </div>
-            <div class="col-lg-4">
-              <label>Updated By</label>
-              <input
-                :value="incoming.updated_by_name"
-                type="text"
-                class="form-control"
-                readonly
-              >
-            </div>
-          </div>
-          <div class="form-group row">
-            <div class="col-lg-4" />
-            <div class="col-lg-4" />
-          </div>
-          <div class="kt-separator kt-separator--border-dashed kt-separator--space-xs" />
-          <div class="form-group row">
-            <div class="col-lg-4">
-              <label>Country</label>
+            <div class="col-lg-4 margin-top-20">
+              <label>From Country</label>
               <input
                 :value="incoming.from_country_name"
                 type="text"
@@ -227,27 +170,7 @@
                 readonly
               >
             </div>
-            <div class="col-lg-4">
-              <label>Cargo Insurance</label>
-              <input
-                :value="incoming.cargo_insurance"
-                type="text"
-                class="form-control"
-                readonly
-              >
-            </div>
-            <div class="col-lg-4">
-              <label>Custom Permit</label>
-              <input
-                :value="incoming.custom_permit"
-                type="text"
-                class="form-control"
-                readonly
-              >
-            </div>
-          </div>
-          <div class="form-group row">
-            <div class="col-lg-4">
+            <div class="col-lg-4 margin-top-20">
               <label>From</label>
               <textarea
                 :value="incoming.from"
@@ -256,10 +179,7 @@
                 readonly
               />
             </div>
-          </div>
-          <div class="kt-separator kt-separator--border-dashed kt-separator--space-xs" />
-          <div class="form-group row">
-            <div class="col-lg-4">
+            <div class="col-lg-4 margin-top-20">
               <label>Transport Type</label>
               <input
                 :value="transportType"
@@ -270,7 +190,7 @@
             </div>
             <div
               v-if="incoming.transport_type === 'truck'"
-              class="col-lg-4"
+              class="col-lg-4 margin-top-20"
             >
               <label>Transport Number</label>
               <input
@@ -282,7 +202,7 @@
             </div>
             <div
               v-if="incoming.transport_type === 'air-freight'"
-              class="col-lg-4"
+              class="col-lg-4 margin-top-20"
             >
               <label>Flight</label>
               <input
@@ -291,6 +211,75 @@
                 class="form-control"
                 readonly
               >
+            </div>
+            <div class="col-lg-4 margin-top-20">
+              <label>Custom Permit</label>
+              <input
+                :value="incoming.custom_permit"
+                type="text"
+                class="form-control"
+                readonly
+              >
+            </div>
+            <div class="col-lg-4 margin-top-20">
+              <label>Cargo Insurance</label>
+              <input
+                :value="incoming.cargo_insurance"
+                type="text"
+                class="form-control"
+                readonly
+              >
+            </div>
+            <div class="col-lg-4 margin-top-20">
+              <label for="description">Description</label>
+              <textarea
+                :value="incoming.description"
+                class="form-control"
+                rows="3"
+                readonly
+              />
+            </div>
+            <div class="col-lg-4 margin-top-20">
+              <label>Created Date</label>
+              <input
+                :value="createdDate"
+                type="text"
+                class="form-control"
+                readonly
+              >
+            </div>
+            <div class="col-lg-4 margin-top-20">
+              <label>Created By</label>
+              <input
+                :value="incoming.created_by_name"
+                type="text"
+                class="form-control"
+                readonly
+              >
+            </div>
+            <div class="col-lg-4 margin-top-20">
+              <label>Updated Date</label>
+              <input
+                :value="updatedDate"
+                type="text"
+                class="form-control"
+                readonly
+              >
+            </div>
+            <div class="col-lg-4 margin-top-20">
+              <label>Updated By</label>
+              <input
+                :value="incoming.updated_by_name"
+                type="text"
+                class="form-control"
+                readonly
+              >
+            </div>
+            <div class="col-lg-4 margin-top-20">
+              <label>Status</label><br>
+              <span
+                :class="`btn btn-${status.class}`"
+              > {{ status.text }} </span>
             </div>
           </div>
           <div class="kt-separator kt-separator--border-dashed kt-separator--space-xs" />
@@ -304,9 +293,9 @@
                 <thead>
                   <tr>
                     <th>SKU Number</th>
-                    <th>SKU - Product</th>
+                    <th>Product</th>
                     <th>Packing</th>
-                    <th>Qty</th>
+                    <th>Quantity</th>
                     <th class="to_warehouse_location_name">
                       Location
                     </th>
@@ -443,12 +432,11 @@ export default {
           targets  : 'status',
           className: 'dt-center',
           render   : function (data, type, full, meta) {
-            if (typeof data === 'undefined')
-              return data
             for (const statusIndex in INCOMING_STATUS) {
               if (data === INCOMING_STATUS[statusIndex].id)
                 return `<span class="kt-badge kt-badge--${INCOMING_STATUS[statusIndex].class} kt-badge--inline">${INCOMING_STATUS[statusIndex].text}</span>`
             }
+            return data
           },
         },
       ],
