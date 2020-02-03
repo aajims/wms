@@ -162,13 +162,14 @@
               </div>
               <div class="col-lg-6">
                 <label>From</label>
-                <input
+                <textarea
                     v-model="outgoing.from"
                     type="text"
+                    rows="3"
                     name="from"
                     class="form-control"
                     placeholder="Enter Address "
-                >
+                />
               </div>
             </div>
             <div class="form-group row">
@@ -184,12 +185,13 @@
                 </div>
                 <div class="col-lg-6">
                 <label>To  <span style="color:red">*</span></label>
-                    <input
-                        v-model="outgoing.to"
-                        type="text"
-                        class="form-control"
-                        name="to"
-                    >
+                    <textarea
+                      v-model="outgoing.to"
+                      type="text"
+                      rows="3"
+                      class="form-control"
+                      name="to"
+                    />
                 </div>
             </div>
             <div class="kt-separator kt-separator--border-dashed kt-separator--space-xs"></div>
@@ -625,7 +627,7 @@ export default {
       autoclose     : true,
       pickerPosition: 'bottom-left',
       todayBtn      : 'linked',
-      format        : 'dd/mm/yyyy hh:ii',
+      format        : 'dd/mm/yyyy HH:mm',
       minuteStep    : 1,
     }).on('changeDate', function (event) {
       validator.element($(this))
@@ -636,7 +638,7 @@ export default {
       autoclose     : true,
       pickerPosition: 'bottom-left',
       todayBtn      : 'linked',
-      format        : 'dd/mm/yyyy hh:ii',
+      format        : 'dd/mm/yyyy HH:mm',
       minuteStep    : 1,
     })
 
@@ -1047,7 +1049,7 @@ export default {
       if (qty > qtyMax) {
         // eslint-disable-next-line no-undef
         swal.fire({
-          title             : 'Are you sure?',
+          title             : 'Your Input Not Allow',
           text              : `Quantity is larger than maximum quantity. Product Max ${qtyMax} Qty`,
           type              : 'question',
           buttonsStyling    : false,

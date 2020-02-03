@@ -160,13 +160,14 @@
             </div>
             <div class="col-lg-6">
               <label>From</label>
-              <input
+              <textarea
                   v-model="outgoing.from"
                   type="text"
+                  rows="3"
                   name="from"
                   class="form-control"
                   placeholder="Enter Address "
-              >
+              />
             </div>
           </div>
           <div class="form-group row">
@@ -183,13 +184,14 @@
             </div>
             <div class="col-lg-6">
               <label>To</label>
-              <input
+              <textarea
                   v-model="outgoing.to"
                   type="text"
+                  rows="3"
                   name="to"
                   class="form-control"
                   placeholder="Enter Address "
-              >
+              />
             </div><input type="hidden" v-model="outgoing.to_warehouse_id">
           </div>
           <div class="form-group row">
@@ -240,7 +242,7 @@
                 <tr>
                     <th>SKU Product </th>
                     <th>Packing </th>
-                    <th>From Warehouse</th>
+                    <th>Location</th>
                     <th>Batch</th>
                     <th>Qty</th>
                     <th>Expired</th>
@@ -444,35 +446,28 @@ export default {
     }
   },
   async mounted () {
-     $('#date_etd').datetimepicker({
+     $('#date_etd, #date_eta').datetimepicker({
           todayHighlight: true,
-          autoclose: true,
+          autoclose     : true,
           pickerPosition: 'bottom-left',
-          format: 'dd/mm/yyyy HH:mm'
+          todayBtn      : 'linked',
+          format        : 'dd/mm/yyyy HH:mm',
+          minuteStep    : 1,
       });
-      $('#date_eta').datetimepicker({
+      $('#shipment_date, #date_order').datetimepicker({
           todayHighlight: true,
-          autoclose: true,
+          autoclose     : true,
           pickerPosition: 'bottom-left',
-          format: 'dd/mm/yyyy HH:mm'
-      });
-      $('#shipment_date').datetimepicker({
-          todayHighlight: true,
-          autoclose: true,
-          pickerPosition: 'bottom-left',
-          format: 'dd/mm/yyyy HH:mm'
+          todayBtn      : 'linked',
+          format        : 'dd/mm/yyyy HH:mm',
+          minuteStep    : 1,
       });
       $('#date_exp').datepicker({
-        rtl: KTUtil.isRTL(),
         todayHighlight: true,
-        orientation: "bottom left",
-        format : 'dd/mm/yyyy'
-      });
-      $('#date_order').datepicker({
-        rtl: KTUtil.isRTL(),
-        todayHighlight: true,
-        orientation: "bottom left",
-        format : 'dd/mm/yyyy'
+        autoclose     : true,
+        pickerPosition: 'bottom-left',
+        todayBtn      : 'linked',
+        format        : 'dd/mm/yyyy ',
       });
 
         $('#warehouse_from').select2({
@@ -496,9 +491,9 @@ export default {
             },
         },
         })
-        // $('#warehouse_from').on('change', function () {
-        // validator.element($(this))
-        // })
+        $('#warehouse_from').on('change', function () {
+        validator.element($(this))
+        })
         $('#warehouse_to').select2({
         placeholder       : 'Select warehouse',
         minimumInputLength: 1,
@@ -780,7 +775,7 @@ export default {
       $('#product_id').val(rowData.product_id).trigger('change')
       $('#desc').val(rowData.description)
       $('#qty').val(rowData.qty)
-      $('#warehouse').val(rowData.to_warehouse_location_id).trigger('change')
+      $('#warehouse').val(rowData.from_warehouse_location_id).trigger('change')
       if (rowData.expired !== '')
         $('#date_exp').val(moment(rowData.expired).format('DD/MM/Y'))
       $('#batch').val(rowData.batch)
@@ -793,7 +788,6 @@ export default {
         product_packing_id      : { required: true },
         warehouse               : { required: true },
         batch                   : { required: true },
-        date_exp                : { required: true },
         qty                     : { required: true, number: true },
       },
       invalidHandler: function (event, validator) {
@@ -869,14 +863,14 @@ export default {
       if (qty > qtyMax) {
         // eslint-disable-next-line no-undef
         swal.fire({
-          title             : 'Are you sure?',
+          title             : 'Your Input Not Allow',
           text              : `Quantity is larger than maximum quantity. Product Max ${qtyMax} Qty`,
           type              : 'question',
           buttonsStyling    : false,
           confirmButtonClass: 'btn btn-success',
         }).then(function (result) {
           if (result.value)
-            app.execSaveProduct(qtyMax, qty, totalRow)
+            app.execSaveProduct(qtyMax, qty)
         })
         return false
       }
