@@ -730,6 +730,7 @@ export default {
       app.setPackingValue($('#product_id').val())
     })
     $('#product_packing_id').prop('disabled', true)
+
     $('#product_modal').on('shown.bs.modal', function () {
       $('#product_id').select2({
         placeholder       : 'Select product',
@@ -739,20 +740,24 @@ export default {
         ajax              : {
           type: 'GET',
           url : function () {
-            return `/api/product/select?id_company=${$('#company_id').val()}`
+            return `/api/product/select?id_company=${app.outgoing.company_id}`
           },
-          // url           : `/api/product/select?id_company=1`,
-          cache         : true,
+           cache         : true,
           processResults: function (data) {
             return {
               results: $.map(data.result, function (object) {
                 return {
-                  id  : object.id,
-                  text: object.name,
+                  id         : object.id,
+                  text       : object.name,
+                  product_sku: object.sku,
                 }
               }),
             }
           },
+        },
+        templateSelection: function (data, container) {
+          $(data.element).attr('data-product-sku', data.product_sku)
+          return data.text
         },
       })
 
@@ -834,7 +839,7 @@ export default {
       searching : false,
       data      : this.outgoing.products,
       columns   : [
-        { data: 'product_id' },
+        { data: 'product_sku' },
         { data: 'product_name' },
         { data: 'product_packing_name' },
         { data: 'from_warehouse_location_name' },
@@ -929,7 +934,7 @@ export default {
         $('#from_warehouse_location_id').val(rowData.from_warehouse_location_id).trigger('change')
       } else {
         const newOptionProduct  = new Option(rowData.product_name, rowData.product_id, true, true)
-        newOptionProduct.setAttribute('data-product-sku', rowData.product_id)
+        newOptionProduct.setAttribute('data-product-sku', rowData.product_sku)
         $('#product_id').append(newOptionProduct).trigger('change')
         const locationName      = `${rowData.from_warehouse_location_name} - Level ${rowData.from_warehouse_location_level} 
                                 (${rowData.from_warehouse_location_usage} / ${rowData.from_warehouse_location_capacity})`
@@ -1039,23 +1044,21 @@ export default {
       const qtyMax   = parseInt($('#qty_max').val())
       const qty      = parseInt($('#qty').val())
       const totalRow = Math.floor((qty + qtyMax - 1) / qtyMax)
-      if (totalRow > 1) {
+      if (qty > qtyMax) {
         // eslint-disable-next-line no-undef
         swal.fire({
           title             : 'Are you sure?',
-          text              : `Quantity is larger than maximum quantity. Product will be split to ${totalRow} rows`,
+          text              : `Quantity is larger than maximum quantity. Product Max ${qtyMax} Qty`,
           type              : 'question',
-          showCancelButton  : true,
           buttonsStyling    : false,
           confirmButtonClass: 'btn btn-success',
-          cancelButtonClass : 'btn btn-default',
         }).then(function (result) {
           if (result.value)
-            app.execSaveProduct(qtyMax, qty, totalRow)
+            app.execSaveProduct(qtyMax, qty)
         })
         return false
-      }
-      app.execSaveProduct(qtyMax, qty, totalRow)
+      } 
+        app.execSaveProduct(qtyMax, qty, totalRow)
     },
     async execSaveProduct (qtyMax, qty, totalRow) {
       let locationId    = parseInt($('#from_warehouse_location_id').val())
@@ -1096,12 +1099,17 @@ export default {
           product_packing_id      : parseInt($('#product_packing_id').val()),
           from_warehouse_location_id : locationId,
           product_name            : $('#product_id option:selected').text(),
+          product_sku             : $('#product_id').find(':selected').data('product-sku'),
           product_packing_name    : $('#product_packing_id').find(':selected').data('packing-name'),
           from_warehouse_location_name  : locationName,
           expired_date            : $('#expired_date').val() !== '' ? moment($('#expired_date').val(), 'DD/MM/YYYY').format('Y-MM-DD HH:mm:ss') : '',
           qty                     : qtyPerRow,
           batch                   : $('#batch').val(),
           description             : $('#description_modal').val(),
+          created_at                    : this.createdAt,
+          updated_at                    : this.updateAt,
+          created_by_name               : this.createdByName,
+          updated_by_name               : this.updatedByName,
         }
         if (this.rowIndex === null)
           this.datatable.row.add(product).draw()
