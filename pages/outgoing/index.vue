@@ -387,7 +387,7 @@ export default {
           d.params = app.params
         },
       },
-      order  : [[9, 'desc']],
+      order  : [[8, 'desc']],
       columns: [
         { data: 'row_number' },
         { data: 'order_no', responsivePriority: -1 },
@@ -444,6 +444,7 @@ export default {
               if (data === JOB_STATUS[statusIndex].id)
                 return `<span class="kt-badge kt-badge--${JOB_STATUS[statusIndex].class} kt-badge--inline">${JOB_STATUS[statusIndex].text}</span>`
             }
+            return data
           },
         },
         {

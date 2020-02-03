@@ -52,7 +52,7 @@
                 <select
                     id="company_id"
                     class="form-control kt-select2"
-                    name="company"
+                    name="company_id"
                   >
                     <option />
                   </select>
@@ -141,7 +141,8 @@
                 v-model="outgoing.transport_number"
                 type="text"
                 class="form-control"
-                name="number"
+                name="transport_number"
+                id="transport_number"
               >
             </div>
           </div>
@@ -316,7 +317,7 @@
                     </select>
                 </div>
                 <div class="col-lg-4">
-                  <label>Warehouse  <span style="color:red">*</span></label>
+                  <label>Location <span style="color:red">*</span></label>
                       <select
                           id="warehouse"
                           class="form-control kt-select2"
@@ -338,7 +339,7 @@
                     >
                 </div>
                 <div class="col-lg-3">
-                  <label>Location Capacity</label>
+                  <label>Qty Max</label>
                   <input
                     id="qty_max"
                     type="text"
@@ -420,7 +421,7 @@ export default {
           eta    : null,
           order_date    : null,
           transport_type    : null,
-          transport_number    : null,
+          transport_number    : '',
           flight    : '',
           from    : null,
           from_country_id    : null,
@@ -495,9 +496,9 @@ export default {
             },
         },
         })
-        $('#warehouse_from').on('change', function () {
-        validator.element($(this))
-        })
+        // $('#warehouse_from').on('change', function () {
+        // validator.element($(this))
+        // })
         $('#warehouse_to').select2({
         placeholder       : 'Select warehouse',
         minimumInputLength: 1,
@@ -608,7 +609,7 @@ export default {
             })
 
            $('#warehouse').select2({
-            placeholder       : 'Select warehouse',
+            placeholder       : 'Select Capacity',
             minimumInputLength: 1,
             width             : '100%',
             allowClear        : true,
@@ -622,7 +623,7 @@ export default {
                     if (object.usage !== object.capacity_max) {
                       return {
                         id           : object.id,
-                        text         : `${object.name} - Level ${object.level} (${object.usage} / ${object.capacity_max})`,
+                        text         : `${object.name} - Level ${object.level} (${object.usage} / ${object.capacity})`,
                         location_name: object.name,
                         usage        : object.usage,
                         capacity_max : object.capacity_max,
@@ -670,19 +671,18 @@ export default {
         const validator = $('#outgoing_form').validate({
             // define validation rules
             rules: {
-                company                : { required: true },
                 order                  : { required: true },
                 etd                    : { required: true },
                 eta                    : { required: true },
                 order_date             : { required: true },
                 transport_type         : { required: true },
-                number                 : { required: true },
+                transport_number       : { required: true },
                 country_from           : { required: true },
                 from                   : { required: true },
                 warehouse_from         : { required: true },
                 country_to             : { required: true },
                 to                     : { required: true },
-                warehouse_to           : { required: true },
+                company_id             : { required: true },
                 custom                 : { required: true },
                 cargo                  : { required: true },
                 description            : { required: true },
@@ -866,16 +866,14 @@ export default {
       const qtyMax   = parseInt($('#qty_max').val())
       const qty      = parseInt($('#qty').val())
       const totalRow = Math.floor((qty + qtyMax - 1) / qtyMax)
-      if (totalRow > 1) {
+      if (qty > qtyMax) {
         // eslint-disable-next-line no-undef
         swal.fire({
           title             : 'Are you sure?',
-          text              : `Quantity is larger than maximum quantity. Product will be split to ${totalRow} rows`,
+          text              : `Quantity is larger than maximum quantity. Product Max ${qtyMax} Qty`,
           type              : 'question',
-          showCancelButton  : true,
           buttonsStyling    : false,
           confirmButtonClass: 'btn btn-success',
-          cancelButtonClass : 'btn btn-default',
         }).then(function (result) {
           if (result.value)
             app.execSaveProduct(qtyMax, qty, totalRow)
