@@ -32,7 +32,7 @@
         <div class="row align-items-center">
           <div class="col-xl-10 order-2 order-xl-1">
             <div class="row align-items-center">
-              <div class="col-md-3 kt-margin-b-20-tablet-and-mobile">
+              <div class="col-md-2 kt-margin-b-20-tablet-and-mobile">
                 <div class="kt-form__group">
                   <div class="kt-form__label">
                     <label>Filter By:</label>
@@ -53,7 +53,7 @@
                   </div>
                 </div>
               </div>
-              <div class="col-md-4 kt-margin-b-20-tablet-and-mobile">
+              <div class="col-md-3 kt-margin-b-20-tablet-and-mobile">
                 <div class="kt-form__label">
                   <label>Search:</label>
                 </div>
@@ -91,6 +91,22 @@
                       >
                         {{ item.text }}
                       </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 kt-margin-b-20-tablet-and-mobile">
+                <div class="kt-form__group">
+                  <div class="kt-form__label">
+                    <label>Warehouse:</label>
+                  </div>
+                  <div class="kt-form__control">
+                    <select
+                      id="warehouse"
+                      class="form-control kt-select2"
+                      name="to_warehouse_id"
+                    >
+                      <option />
                     </select>
                   </div>
                 </div>
@@ -217,15 +233,16 @@
           <tr>
             <th>#</th>
             <th>Outgoing No.</th>
+            <th>Tracking</th>
             <th>Company</th>
             <th>Warehouse</th>
             <th>Country</th>
-            <th >Transport Type</th>
-            <th class="date">Shipment</th>
+            <th class="Status">Status</th>
+            <th class="created_date">Created</th>
+            <th class="date">Shipment</th> 
             <th class="date">Order</th>
             <th class="date">ETD</th>
             <th class="date">ETA</th>
-             <th class="created_date">Created</th>
             <th class="update_date">Updated</th>
             <th>Actions</th>
           </tr>
@@ -370,14 +387,15 @@ export default {
           d.params = app.params
         },
       },
-      order  : [[7, 'desc']],
+      order  : [[9, 'desc']],
       columns: [
         { data: 'row_number' },
         { data: 'order_no', responsivePriority: -1 },
+        { data: 'tracking' },
         { data: 'company_name' },
         { data: 'from_warehouse_name' },
         { data: 'from_country_name' },
-        { data: 'transport_type' },
+        { data: 'status' },
         { data: 'shipment_date' },
         { data: 'order_date' },
         { data: 'etd' },
@@ -416,18 +434,18 @@ export default {
 
           },
         },
-        // {
-        //   targets  : 'jobStatus',
-        //   className: 'dt-center',
-        //   render   : function (data, type, full, meta) {
-        //     if (typeof data === 'undefined')
-        //       return data
-        //     for (const statusIndex in JOB_STATUS) {
-        //       if (data === JOB_STATUS[statusIndex].id)
-        //         return `<span class="kt-badge kt-badge--${JOB_STATUS[statusIndex].class} kt-badge--inline">${JOB_STATUS[statusIndex].text}</span>`
-        //     }
-        //   },
-        // },
+        {
+          targets  : 'Status',
+          className: 'dt-center',
+          render   : function (data, type, full, meta) {
+            if (typeof data === 'undefined')
+              return data
+            for (const statusIndex in JOB_STATUS) {
+              if (data === JOB_STATUS[statusIndex].id)
+                return `<span class="kt-badge kt-badge--${JOB_STATUS[statusIndex].class} kt-badge--inline">${JOB_STATUS[statusIndex].text}</span>`
+            }
+          },
+        },
         {
           targets: 'date',
           render: function (data, type, full, meta) {

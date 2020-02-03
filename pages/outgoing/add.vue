@@ -75,7 +75,7 @@
               <div class="input-group date">
                 <input type="text" name="date_etd" class="form-control" readonly placeholder="Select date & time" id="date_etd" />
                 <div class="input-group-append">
-                  <span class="input-group-text"><i class="la la-calendar-check-o glyphicon-th"></i></span>
+                  <span class="input-group-text"><i class="la la-calendar"></i></span>
                 </div>
               </div>
             </div>
@@ -84,7 +84,7 @@
               <div class="input-group date">
                 <input type="text" name="date_eta" class="form-control" readonly placeholder="Select date & time" id="date_eta" />
                 <div class="input-group-append">
-                  <span class="input-group-text"><i class="la la-calendar-check-o glyphicon-th"></i></span>
+                  <span class="input-group-text"><i class="la la-calendar"></i></span>
                 </div>
               </div>
             </div>
@@ -93,7 +93,7 @@
               <div class="input-group date">
                 <input type="text" name="shipment_date" class="form-control" readonly placeholder="Select date & time" id="shipment_date" />
                 <div class="input-group-append">
-                  <span class="input-group-text"><i class="la la-calendar-check-o glyphicon-th"></i></span>
+                  <span class="input-group-text"><i class="la la-calendar"></i></span>
                 </div>
               </div>
             </div>
@@ -105,7 +105,7 @@
                   <input type="text" class="form-control" name="order_date" readonly placeholder="Select date" id="date_order" />
                   <div class="input-group-append">
                     <span class="input-group-text">
-                      <i class="la la-calendar-check-o"></i>
+                      <i class="la la-calendar"></i>
                     </span>
                   </div>
                 </div>
