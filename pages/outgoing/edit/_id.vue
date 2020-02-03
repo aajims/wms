@@ -357,7 +357,7 @@
                     </select>
                 </div>
                 <div class="col-lg-4">
-                  <label>Warehouse  <span style="color:red">*</span></label>
+                  <label>Location <span style="color:red">*</span></label>
                       <select
                           id="from_warehouse_location_id"
                           class="form-control kt-select2"
@@ -379,7 +379,7 @@
                     >
                 </div>
                 <div class="col-lg-3">
-                  <label>Location Capacity</label>
+                  <label>Qty Max</label>
                   <input
                     id="qty_max"
                     type="text"
@@ -527,7 +527,7 @@ export default {
           from_warehouse_location_name        : value.from_warehouse_location_name,
           from_warehouse_location_level       : value.from_warehouse_location_level,
           from_warehouse_location_usage       : value.from_warehouse_location_usage,
-          from_warehouse_location_capacity_max: value.from_warehouse_location_capacity_max,
+          from_warehouse_location_capacity: value.from_warehouse_location_capacity,
           expired_date                      : value.expired_date,
           qty                               : value.qty,
           batch                             : value.batch,
@@ -797,13 +797,13 @@ export default {
           processResults: function (data) {
             return {
               results: $.map(data.result, function (object) {
-                if (object.usage !== object.capacity_max) {
+                if (object.usage !== object.capacity) {
                   return {
                     id           : object.id,
-                    text         : `${object.name} - Level ${object.level} (${object.usage} / ${object.capacity_max})`,
+                    text         : `${object.name} - Level ${object.level} (${object.usage} / ${object.capacity})`,
                     location_name: object.name,
                     usage        : object.usage,
-                    capacity_max : object.capacity_max,
+                    capacity : object.capacity,
                   }
                 }
               }),
@@ -813,7 +813,7 @@ export default {
         templateSelection: function (data, container) {
           $(data.element).attr('data-location-name', data.location_name)
           $(data.element).attr('data-usage', data.usage)
-          $(data.element).attr('data-capacity-max', data.capacity_max)
+          $(data.element).attr('data-capacity-max', data.capacity)
           return data.text
         },
       })
@@ -834,7 +834,7 @@ export default {
       searching : false,
       data      : this.outgoing.products,
       columns   : [
-        { data: 'product_sku' },
+        { data: 'product_id' },
         { data: 'product_name' },
         { data: 'product_packing_name' },
         { data: 'from_warehouse_location_name' },
@@ -920,7 +920,7 @@ export default {
       app.locationIdBefore = rowData.from_warehouse_location_id
 
       app.usage         = rowData.from_warehouse_location_usage
-      app.capacityMax   = rowData.from_warehouse_location_capacity_max
+      app.capacityMax   = rowData.from_warehouse_location_capacity
       app.locationName  = rowData.from_warehouse_location_name
       app.locationLevel = rowData.from_warehouse_location_level
 
@@ -932,19 +932,19 @@ export default {
         newOptionProduct.setAttribute('data-product-sku', rowData.product_id)
         $('#product_id').append(newOptionProduct).trigger('change')
         const locationName      = `${rowData.from_warehouse_location_name} - Level ${rowData.from_warehouse_location_level} 
-                                (${rowData.from_warehouse_location_usage} / ${rowData.from_warehouse_location_capacity_max})`
+                                (${rowData.from_warehouse_location_usage} / ${rowData.from_warehouse_location_capacity})`
         const newOptionLocation = new Option(locationName, rowData.from_warehouse_location_id, true, true)
         newOptionLocation.setAttribute('data-location-name', rowData.from_warehouse_location_name)
         newOptionLocation.setAttribute('data-location-level', rowData.from_warehouse_location_level)
         newOptionLocation.setAttribute('data-usage', rowData.from_warehouse_location_usage)
-        newOptionLocation.setAttribute('data-capacity-max', rowData.from_warehouse_location_capacity_max)
+        newOptionLocation.setAttribute('data-capacity-max', rowData.from_warehouse_location_capacity)
         $('#from_warehouse_location_id').append(newOptionLocation).trigger('change')
       }
 
       $('#description_modal').val(rowData.description)
       $('#qty').val(rowData.qty)
       if (app.productPackingOption === null)
-        $('#qty_max').val(rowData.from_warehouse_location_capacity_max)
+        $('#qty_max').val(rowData.from_warehouse_location_capacity)
       if (rowData.expired_date !== '')
         $('#expired_date').val(moment(rowData.expired_date).format('DD/MM/Y'))
       $('#batch').val(rowData.batch)

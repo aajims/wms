@@ -316,7 +316,7 @@
                     </select>
                 </div>
                 <div class="col-lg-4">
-                  <label>Warehouse  <span style="color:red">*</span></label>
+                  <label>Location <span style="color:red">*</span></label>
                       <select
                           id="warehouse"
                           class="form-control kt-select2"
@@ -338,7 +338,7 @@
                     >
                 </div>
                 <div class="col-lg-3">
-                  <label>Location Capacity</label>
+                  <label>Qty Max</label>
                   <input
                     id="qty_max"
                     type="text"
@@ -608,7 +608,7 @@ export default {
             })
 
            $('#warehouse').select2({
-            placeholder       : 'Select warehouse',
+            placeholder       : 'Select Capacity',
             minimumInputLength: 1,
             width             : '100%',
             allowClear        : true,
@@ -622,7 +622,7 @@ export default {
                     if (object.usage !== object.capacity_max) {
                       return {
                         id           : object.id,
-                        text         : `${object.name} - Level ${object.level} (${object.usage} / ${object.capacity_max})`,
+                        text         : `${object.name} - Level ${object.level} (${object.usage} / ${object.capacity})`,
                         location_name: object.name,
                         usage        : object.usage,
                         capacity_max : object.capacity_max,
