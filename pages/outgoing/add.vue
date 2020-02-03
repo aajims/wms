@@ -48,7 +48,7 @@
                 />
               </div>
               <div class="col-lg-4">
-                <label>Company Name <span style="color:red">*</span></label>
+                <label>Company <span style="color:red">*</span></label>
                 <select
                     id="company_id"
                     class="form-control kt-select2"
@@ -338,7 +338,7 @@
                     >
                 </div>
                 <div class="col-lg-3">
-                  <label>Quantity Max</label>
+                  <label>Location Capacity</label>
                   <input
                     id="qty_max"
                     type="text"

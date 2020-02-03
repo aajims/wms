@@ -379,7 +379,7 @@
                     >
                 </div>
                 <div class="col-lg-3">
-                  <label>Quantity Max</label>
+                  <label>Location Capacity</label>
                   <input
                     id="qty_max"
                     type="text"
