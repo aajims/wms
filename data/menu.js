@@ -31,6 +31,14 @@ export default [
     ],
   },
   {
+    name        : 'User',
+    icon        : 'la la-user',
+    url         : '/user',
+    folder      : false,
+    childDisplay: false,
+    children    : [],
+  },
+  {
     name        : 'Incoming Stock',
     icon        : 'la la-sign-in',
     url         : '/incoming',

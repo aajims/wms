@@ -15,6 +15,7 @@ const outgoing   = require('./outgoing')
 const product   = require('./product')
 const order     = require('./order')
 const incoming  = require('./incoming')
+const user  = require('./user')
 
 // Import API Routes
 app.use(login)
@@ -28,6 +29,7 @@ app.use(order)
 app.use(outgoing)
 app.use(product)
 app.use(incoming)
+app.use(user)
 
 // Export the server middleware
 module.exports = {
