@@ -48,12 +48,6 @@
                       <option value="address">
                         Address
                       </option>
-                      <option value="city_name">
-                        City
-                      </option>
-                      <option value="country_name">
-                        Country
-                      </option>
                     </select>
                   </div>
                 </div>

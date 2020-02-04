@@ -39,6 +39,7 @@
                   class="form-control"
                   name="name"
                   placeholder="Enter company name"
+                  readonly
                 >
               </div>
               <div class="col-lg-6">
@@ -49,6 +50,7 @@
                   class="form-control"
                   name="code"
                   placeholder="Enter company Web"
+                  readonly
                 >
               </div>
             </div>
@@ -60,6 +62,7 @@
                   type="email"
                   class="form-control"
                   placeholder="Enter email"
+                  readonly
                 >
               </div>
               <div class="col-lg-6">
@@ -70,6 +73,7 @@
                   class="form-control"
                   name="phone"
                   placeholder="Enter phone"
+                  readonly
                 >
               </div>
             </div>
@@ -82,6 +86,7 @@
                   class="form-control"
                   rows="3"
                   name="address"
+                  readonly
                 />
               </div>
               <div class="col-lg-6">
@@ -92,6 +97,7 @@
                   class="form-control"
                   rows="3"
                   name="description"
+                  readonly
                 />
               </div>
             </div>
@@ -104,6 +110,7 @@
                   class="form-control"
                   name="country"
                   placeholder="Enter country"
+                  readonly
                 >
               </div>
               <div class="col-lg-6">
@@ -114,6 +121,7 @@
                   class="form-control"
                   name="state"
                   placeholder="Enter State"
+                  readonly
                 >
               </div>
             </div>
@@ -126,6 +134,7 @@
                   class="form-control"
                   name="district"
                   placeholder="Enter Name "
+                  readonly
                 >
               </div>
               <div class="col-lg-6">
@@ -136,6 +145,7 @@
                   class="form-control"
                   name="capacity"
                   placeholder="Enter Name "
+                  readonly
                 >
               </div>
             </div>
@@ -148,6 +158,7 @@
                   class="form-control"
                   name="created"
                   placeholder="Enter Name "
+                  readonly
                 >
               </div>
               <div class="col-lg-6">
