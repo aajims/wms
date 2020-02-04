@@ -321,9 +321,9 @@
                 <div class="col-lg-4">
                   <label>Location <span style="color:red">*</span></label>
                       <select
-                          id="warehouse"
+                          id="location"
                           class="form-control kt-select2"
-                          name="warehouse"
+                          name="location"
                           >
                           <option />
                       </select>
@@ -604,26 +604,26 @@ export default {
               $('#qty_max').val($('#product_packing_id').find(':selected').data('qty-max'))
             })
 
-           $('#warehouse').select2({
+           $('#location').select2({
             placeholder       : 'Select Capacity',
             minimumInputLength: 1,
             width             : '100%',
             allowClear        : true,
             ajax              : {
                 type          : 'GET',
-                url           : `/api/location/select?id_warehouse=${$('#warehouse_from').val()}`,
+                 url : function () {
+                    return `/api/location/select-by-product?id_warehouse=${$('#warehouse_from').val()}&product_id=${$('#product_id').val()}&product_packing_id=${$('#product_packing_id').val()}`
+                  },
                 cache         : true,
                 processResults: function (data) {
                 return {
                   results: $.map(data.result, function (object) {
-                    if (object.usage !== object.capacity_max) {
                       return {
                         id           : object.id,
                         text         : `${object.name} - Level ${object.level} (${object.usage} / ${object.capacity})`,
                         location_name: object.name,
                         usage        : object.usage,
                         capacity_max : object.capacity_max,
-                      }
                     }
                   }),
                 }
@@ -636,7 +636,7 @@ export default {
               return data.text
             },
             })
-            $('#warehouse').on('change', function () {
+            $('#location').on('change', function () {
             validatorModal.element($(this))
             })
             $('#packing_modal').on('hidden.bs.modal', function () {
