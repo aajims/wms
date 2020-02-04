@@ -375,13 +375,14 @@
               <div class="form-group row">
                 <div class="col-lg-6">
                   <label>Description<span style="color:red">*</span></label>
-                    <input
+                    <textarea
                       type="text"
+                      rows="3"
                       name="desc"
                       id="desc"
                       class="form-control"
                       placeholder="Enter Description"
-                    >
+                    />
                 </div>
               </div>
             </div>
