@@ -361,15 +361,25 @@
                 <div class="col-lg-4">
                   <label>Location <span style="color:red">*</span></label>
                       <select
-                          id="from_warehouse_location_id"
+                          id="location"
                           class="form-control kt-select2"
-                          name="from_warehouse_location_id"
+                          name="location"
                           >
                           <option />
                       </select>
                 </div>
               </div>
               <div class="form-group row">
+                <div class="col-lg-3">
+                  <label>Product Location <span style="color:red">*</span></label>
+                      <select
+                          id="product-location"
+                          class="form-control kt-select2"
+                          name="product-location"
+                          >
+                          <option />
+                      </select>
+                </div>
                 <div class="col-lg-3">
                   <label>Batch  <span style="color:red">*</span></label>
                     <input
@@ -400,7 +410,9 @@
                       placeholder="Enter Qty"
                   >
                 </div>
-                <div class="col-lg-3">
+              </div>
+              <div class="form-group row">
+                <div class="col-lg-6">
                   <label>Expired Date<span style="color:red">*</span></label>
                     <div class="input-group date">
                       <input type="text" name="expired_date" class="form-control" readonly placeholder="Select date" id="expired_date" />
@@ -411,8 +423,6 @@
                       </div>
                     </div>
                 </div>
-              </div>
-              <div class="form-group row">
                 <div class="col-lg-6">
                   <label>Description<span style="color:red">*</span></label>
                     <textarea
@@ -523,7 +533,7 @@ export default {
           id                                : value.id,
           product_id                        : value.product_id,
           product_packing_id                : value.product_packing_id,
-          from_warehouse_location_id          : value.from_warehouse_location_id,
+          location                        : value.location,
           product_name                      : value.product_name,
           product_sku                       : value.product_sku,
           product_packing_name              : value.product_packing_name,
@@ -701,7 +711,7 @@ export default {
         // validate product location
         let valid = true
         for (const key in data) {
-          if (data[key].from_warehouse_location_id === '') {
+          if (data[key].location === '') {
             valid = false
             break
           }
@@ -790,7 +800,7 @@ export default {
         format        : 'dd/mm/yyyy',
       })
 
-      $('#from_warehouse_location_id').select2({
+      $('#location').select2({
         placeholder       : 'Select location',
         minimumInputLength: 1,
         width             : '100%',
@@ -798,9 +808,8 @@ export default {
         ajax              : {
           type: 'GET',
           url : function () {
-            return `/api/location/select?id_warehouse=${$('#warehouse_from').val()}`
+            return `/api/location/select-by-product?id_warehouse=${$('#warehouse_from').val()}&product_id=${$('#product_id').val()}&product_packing_id=${$('#product_packing_id').val()}`
           },
-          // url           : `/api/location/select?id_warehouse=2`,
           cache         : true,
           processResults: function (data) {
             return {
@@ -825,9 +834,41 @@ export default {
           return data.text
         },
       })
-      $('#from_warehouse_location_id').on('change', function () {
+      $('#location').on('change', function () {
         validatorModal.element($(this))
       })
+
+      $('#product-location').select2({
+        placeholder       : 'Select Product Location',
+        minimumInputLength: 1,
+        width             : '100%',
+        allowClear        : true,
+        ajax              : {
+            type          : 'GET',
+              url : function () {
+                return `/api/product/select-by-inventory?product_id=${$('#product_id').val()}&product_packing_id=${$('#product_packing_id').val()}&warehouse_location_id=${$('#location').val()}`
+              },
+            cache         : true,
+            processResults: function (data) {
+            return {
+              results: $.map(data.result, function (object) {
+                  return {
+                    id           : object.unique_code,
+                    text         : `${object.unique_code}`,
+                    unique_code: object.unique_code,
+                }
+              }),
+            }
+            },
+        },
+        templateSelection: function (data, container) {
+          $(data.element).attr('data-unique-code', data.unique_code)
+          return data.text
+        },
+        })
+        $('#product-location').on('change', function () {
+        validatorModal.element($(this))
+        })
     })
     $('#product_modal').on('hidden.bs.modal', function () {
       app.clearForm()
@@ -868,7 +909,7 @@ export default {
           targets  : 3,
           className: 'dt-center',
           render   : function (data, type, full, meta) {
-            if (full.from_warehouse_location_id === '') {
+            if (full.location === '') {
               return `<a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-icon-md popoverButton">
                         <i style="color: red" class="fa flaticon-warning"></i>
                       </a>`
@@ -913,7 +954,7 @@ export default {
     $('#product_table').on('click', '.la-trash', function () {
       const rowData = app.datatable.row($(this).parents('tr')).data()
       app.remainingLocation.forEach((value, key) => {
-        if (parseInt(value.location_id) === rowData.from_warehouse_location_id)
+        if (parseInt(value.location_id) === rowData.location)
           app.remainingLocation[key].usage = app.remainingLocation[key].usage - 1
       })
       app.datatable.row($(this).parents('tr')).remove().draw()
@@ -925,7 +966,7 @@ export default {
       app.productPackingId = rowData.product_packing_id
       app.rowId            = rowData.id
       app.statusProduct    = rowData.status
-      app.locationIdBefore = rowData.from_warehouse_location_id
+      app.locationIdBefore = rowData.location
 
       app.usage         = rowData.from_warehouse_location_usage
       app.capacityMax   = rowData.from_warehouse_location_capacity
@@ -934,19 +975,19 @@ export default {
 
        if (app.modalHasOpen === true) {
         $('#product_id').val(rowData.product_id).trigger('change')
-        $('#from_warehouse_location_id').val(rowData.from_warehouse_location_id).trigger('change')
+        $('#location').val(rowData.location).trigger('change')
       } else {
         const newOptionProduct  = new Option(rowData.product_name, rowData.product_id, true, true)
         newOptionProduct.setAttribute('data-product-sku', rowData.product_sku)
         $('#product_id').append(newOptionProduct).trigger('change')
         const locationName      = `${rowData.from_warehouse_location_name} - Level ${rowData.from_warehouse_location_level} 
                                 (${rowData.from_warehouse_location_usage} / ${rowData.from_warehouse_location_capacity})`
-        const newOptionLocation = new Option(locationName, rowData.from_warehouse_location_id, true, true)
+        const newOptionLocation = new Option(locationName, rowData.location, true, true)
         newOptionLocation.setAttribute('data-location-name', rowData.from_warehouse_location_name)
         newOptionLocation.setAttribute('data-location-level', rowData.from_warehouse_location_level)
         newOptionLocation.setAttribute('data-usage', rowData.from_warehouse_location_usage)
         newOptionLocation.setAttribute('data-capacity-max', rowData.from_warehouse_location_capacity)
-        $('#from_warehouse_location_id').append(newOptionLocation).trigger('change')
+        $('#location').append(newOptionLocation).trigger('change')
       }
 
       $('#description_modal').val(rowData.description)
@@ -965,7 +1006,7 @@ export default {
       rules: {
         product_id              : { required: true },
         product_packing_id      : { required: true },
-        from_warehouse_location_id: { required: true },
+        location: { required: true },
         batch                   : { required: true },
         qty                     : { required: true, number: true },
       },
@@ -1064,10 +1105,10 @@ export default {
         app.execSaveProduct(qtyMax, qty, totalRow)
     },
     async execSaveProduct (qtyMax, qty, totalRow) {
-      let locationId    = parseInt($('#from_warehouse_location_id').val())
-      let locationName  = $('#from_warehouse_location_id').find(':selected').data('location-name')
-      const capacityMax = $('#from_warehouse_location_id').find(':selected').data('capacity-max')
-      let usage         = $('#from_warehouse_location_id').find(':selected').data('usage')
+      let locationId    = parseInt($('#location').val())
+      let locationName  = $('#location').find(':selected').data('location-name')
+      const capacityMax = $('#location').find(':selected').data('capacity-max')
+      let usage         = $('#location').find(':selected').data('usage')
       let product       = {}
       let qtyPerRow     = qtyMax
       const location    = locationId
@@ -1100,11 +1141,13 @@ export default {
           id                      : this.rowId,
           product_id              : parseInt($('#product_id').val()),
           product_packing_id      : parseInt($('#product_packing_id').val()),
-          from_warehouse_location_id : locationId,
+          location : locationId,
           product_name            : $('#product_id option:selected').text(),
           product_sku             : $('#product_id').find(':selected').data('product-sku'),
           product_packing_name    : $('#product_packing_id').find(':selected').data('packing-name'),
           from_warehouse_location_name  : locationName,
+          location_name           : $('#location').find(':selected').data('location-name'),
+          unique_code              : $('#product_location').find(':selected').data('unique-code'),
           expired_date            : $('#expired_date').val() !== '' ? moment($('#expired_date').val(), 'DD/MM/YYYY').format('Y-MM-DD HH:mm:ss') : '',
           qty                     : qtyPerRow,
           batch                   : $('#batch').val(),
@@ -1142,7 +1185,7 @@ export default {
       $('#description_modal').val(null)
       $('#qty').val('')
       $('#product_id').val(null).trigger('change')
-      $('#from_warehouse_location_id').val(null).trigger('change')
+      $('#location').val(null).trigger('change')
       $('#product_packing_id').val(null).trigger('change')
       $('#expired_date').val('')
       $('#batch').val('')

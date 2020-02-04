@@ -331,6 +331,16 @@
               </div>
               <div class="form-group row">
                 <div class="col-lg-3">
+                  <label>Product Location <span style="color:red">*</span></label>
+                      <select
+                          id="product-location"
+                          class="form-control kt-select2"
+                          name="product-location"
+                          >
+                          <option />
+                      </select>
+                </div>
+                <div class="col-lg-3">
                   <label>Batch  <span style="color:red">*</span></label>
                     <input
                       type="text"
@@ -349,7 +359,6 @@
                     disabled="disabled"
                   >
                 </div>
-
                 <div class="col-lg-3">
                   <label>Qty  <span style="color:red">*</span></label>
                       <input
@@ -360,7 +369,9 @@
                       placeholder="Enter Qty"
                   >
                 </div>
-                <div class="col-lg-3">
+              </div>
+              <div class="form-group row">
+                <div class="col-lg-6">
                   <label>Expired Date<span style="color:red">*</span></label>
                     <div class="input-group date">
                       <input type="text" name="date_exp" class="form-control" readonly placeholder="Select date" id="date_exp" />
@@ -371,8 +382,6 @@
                       </div>
                     </div>
                 </div>
-              </div>
-              <div class="form-group row">
                 <div class="col-lg-6">
                   <label>Description<span style="color:red">*</span></label>
                     <textarea
@@ -605,7 +614,7 @@ export default {
             })
 
            $('#location').select2({
-            placeholder       : 'Select Capacity',
+            placeholder       : 'Select Location',
             minimumInputLength: 1,
             width             : '100%',
             allowClear        : true,
@@ -639,6 +648,39 @@ export default {
             $('#location').on('change', function () {
             validatorModal.element($(this))
             })
+
+            $('#product-location').select2({
+            placeholder       : 'Select Product Location',
+            minimumInputLength: 1,
+            width             : '100%',
+            allowClear        : true,
+            ajax              : {
+                type          : 'GET',
+                 url : function () {
+                    return `/api/product/select-by-inventory?product_id=${$('#product_id').val()}&product_packing_id=${$('#product_packing_id').val()}&warehouse_location_id=${$('#location').val()}`
+                  },
+                cache         : true,
+                processResults: function (data) {
+                return {
+                  results: $.map(data.result, function (object) {
+                      return {
+                        id           : object.unique_code,
+                        text         : `${object.unique_code}`,
+                        unique_code: object.unique_code,
+                    }
+                  }),
+                }
+               },
+            },
+            templateSelection: function (data, container) {
+              $(data.element).attr('data-unique-code', data.unique_code)
+              return data.text
+            },
+            })
+            $('#product-location').on('change', function () {
+            validatorModal.element($(this))
+            })
+
             $('#packing_modal').on('hidden.bs.modal', function () {
               app.clearForm()
             })
@@ -888,10 +930,11 @@ export default {
         product = {
           product_id              : parseInt($('#product_id').val()),
           product_packing_id      : parseInt($('#product_packing_id').val()),
-          from_warehouse_location_id: parseInt($('#warehouse').val()),
+          from_warehouse_location_id: parseInt($('#location').val()),
           product_name            : $('#product_id option:selected').text(),
           packing_name            : $('#product_packing_id').find(':selected').data('packing-name'),
-          location_name           : $('#warehouse').find(':selected').data('location-name'),
+          location_name           : $('#location').find(':selected').data('location-name'),
+          unique_code              : $('#product_location').find(':selected').data('unique-code'),
           expired_date            : $('#date_exp').val() !== '' ? moment($('#date_exp').val(), 'DD/MM/YYYY').format('Y-MM-DD HH:mm:ss') : '',
           qty                     : qtyPerRow,
           batch                   : $('#batch').val(),
