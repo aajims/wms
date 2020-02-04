@@ -95,7 +95,7 @@ app.get('/packing/select', (request, response) => {
       'search_by'         : 'name',
       'keyword'           : '',
       'filter[status]'    : 1,
-      'filter[company_id]': 1,
+      'filter[company_id]': request.query.id_company,
     },
   }).then(function (responseApi) {
     response.send(responseApi.data)

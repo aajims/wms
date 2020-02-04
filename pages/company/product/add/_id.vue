@@ -85,13 +85,13 @@
             </div>
             <div class="form-group row">
               <div class="col-lg-6">
-                <label>Product Quantity <span style="color:red">*</span></label>
+                <label>Minimum Stock Alert (Item Quantity) <span style="color:red">*</span></label>
                 <input
                   v-model="product.minimum_stock_alert"
                   type="text"
                   class="form-control"
                   name="minimum_stock_alert"
-                  placeholder="Enter product quantity (minimum stock alert)"
+                  placeholder="Enter minimum stock alert (item quantity)"
                 >
               </div>
               <div class="col-lg-6">
@@ -337,7 +337,7 @@ export default {
   },
   async mounted () {
     try {
-      await this.$store.dispatch('packing/getPacking')
+      await this.$store.dispatch('packing/getPacking', { idCompany: atob(this.$route.params.id) })
       this.packingSelect      = this.$store.getters['packing/getPacking']
       await this.$store.dispatch('company/getCompanyDetail', { idCompany: atob(this.$route.params.id) })
       this.company            = this.$store.getters['company/getCompanyDetail'].result
@@ -395,8 +395,9 @@ export default {
         type               : { required: true },
         condition          : { required: true },
         minimum_stock_alert: {
-          required: true,
-          digits  : true,
+          required      : true,
+          number        : true,
+          positiveNumber: true,
         },
       },
       invalidHandler: function (event, validator) {
@@ -420,6 +421,10 @@ export default {
         app.addProduct(data)
       },
     })
+    $.validator.addMethod('positiveNumber',
+      function (value) {
+        return Number(value) >= 0
+      }, 'Enter a positive number.')
 
     // form modal
     const app = this
@@ -447,23 +452,6 @@ export default {
     })
     $('#packing_modal').on('hidden.bs.modal', function () {
       app.clearForm()
-    })
-
-    // touchspin
-    $('#qty_max, #nett_weight, #gross_weight').TouchSpin({
-      buttondown_class: 'btn btn-secondary',
-      buttonup_class  : 'btn btn-secondary',
-      verticalbuttons : true,
-      verticalup      : '<i class="la la-plus"></i>',
-      verticaldown    : '<i class="la la-minus"></i>',
-    })
-    $('#qty_max, #nett_weight, #gross_weight').on('change', function () {
-      if ($('#qty_max').val().trim() === '')
-        $('#qty_max').val(0)
-      if ($('#nett_weight').val().trim() === '')
-        $('#nett_weight').val(0)
-      if ($('#gross_weight').val().trim() === '')
-        $('#gross_weight').val(0)
     })
 
     // datatable
@@ -534,12 +522,27 @@ export default {
       $('#packing_modal').modal('show')
     })
 
-    // validator modal
+    // validator modal #qty_max, #nett_weight, #gross_weight
     const validatorModal = $('#packing_form').validate({
       rules: {
         packing_type     : { required: true },
         nett_weight_type : { required: true },
         gross_weight_type: { required: true },
+        qty_max          : {
+          required      : true,
+          number        : true,
+          positiveNumber: true,
+        },
+        nett_weight: {
+          required      : true,
+          number        : true,
+          positiveNumber: true,
+        },
+        gross_weight: {
+          required      : true,
+          number        : true,
+          positiveNumber: true,
+        },
       },
       invalidHandler: function (event, validator) {
         event.preventDefault()

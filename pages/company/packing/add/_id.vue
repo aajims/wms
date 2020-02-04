@@ -206,20 +206,24 @@ export default {
         name  : { required: true },
         code  : { required: true },
         length: {
-          required: true,
-          digits  : true,
+          required      : true,
+          number        : true,
+          positiveNumber: true,
         },
         width: {
-          required: true,
-          digits  : true,
+          required      : true,
+          number        : true,
+          positiveNumber: true,
         },
         height: {
-          required: true,
-          digits  : true,
+          required      : true,
+          number        : true,
+          positiveNumber: true,
         },
         weight: {
-          required: true,
-          digits  : true,
+          required      : true,
+          number        : true,
+          positiveNumber: true,
         },
         dimension_type: { required: true },
         weight_type   : { required: true },
@@ -233,6 +237,11 @@ export default {
         return false
       },
     })
+
+    $.validator.addMethod('positiveNumber',
+      function (value) {
+        return Number(value) >= 0
+      }, 'Enter a positive number.')
   },
   methods: {
     async addPacking () {

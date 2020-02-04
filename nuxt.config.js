@@ -45,6 +45,7 @@ module.exports = {
       { src: '/vendors/datatables.bundle.min.js', body: true },
       { src: '/vendors/jquery.repeater.min.js', body: true },
       { src: '/vendors/jquery.bootstrap-touchspin.min.js', body: true },
+      { src: '/vendors/bootstrap-datetimepicker.min.js', body: true },
     ],
     bodyAttrs: { class: 'kt-quick-panel--right kt-demo-panel--right kt-offcanvas-panel--right kt-header--fixed kt-header-mobile--fixed kt-subheader--enabled kt-subheader--fixed kt-subheader--solid kt-aside--enabled kt-aside--fixed kt-page--loading' },
   },
