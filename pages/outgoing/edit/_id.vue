@@ -70,7 +70,7 @@
                 </div>
             </div>
             <div class="form-group row">
-                <div class="col-lg-3">
+                <div class="col-lg-4">
                   <div class="kt-form__label">
                     <label>ETD <span style="color:red">*</span></label>
                   </div>
@@ -92,7 +92,7 @@
                     <span class="form-text text-muted" />
                   </div>
                 </div>
-                <div class="col-lg-3">
+                <div class="col-lg-4">
                   <div class="kt-form__label">
                     <label>ETA <span style="color:red">*</span></label>
                   </div>
@@ -114,7 +114,7 @@
                     <span class="form-text text-muted" />
                   </div>
                 </div>
-                <div class="col-lg-3">
+                <div class="col-lg-4">
                  <div class="kt-form__label">
                     <label>Shipment Date <span style="color:red">*</span></label>
                   </div>
@@ -136,7 +136,10 @@
                     <span class="form-text text-muted" />
                   </div>
                 </div>
-                <div class="col-lg-3">
+            </div>
+            <div class="kt-separator kt-separator--border-dashed kt-separator--space-xs"></div>
+            <div class="form-group row">
+              <div class="col-lg-6">
                 <label>Order Date <span style="color:red">*</span></label>
                 <div class="input-group date">
                     <input type="text" class="form-control" name="order_date" readonly placeholder="Select date" id="order_date" />
@@ -146,19 +149,6 @@
                       </span>
                     </div>
                   </div>
-              </div>
-            </div>
-            <div class="kt-separator kt-separator--border-dashed kt-separator--space-xs"></div>
-            <div class="form-group row">
-              <div class="col-lg-6">
-                <label for="country">From Country <span style="color:red">*</span></label>
-                  <select
-                      id="country_from"
-                      class="form-control kt-select2"
-                      name="country_from"
-                      >
-                      <option />
-                  </select>
               </div>
               <div class="col-lg-6">
                 <label>From</label>
@@ -284,9 +274,8 @@
                     <th>SKU Product </th>
                     <th>Packing </th>
                     <th>Location</th>
-                    <th>Batch</th>
+                    <th>Unique Code</th>
                     <th>Qty</th>
-                    <th>Expired</th>
                     <th>Description</th>
                     <th>Action</th>
                 </tr>
@@ -373,22 +362,12 @@
                 <div class="col-lg-4">
                   <label>Product Location <span style="color:red">*</span></label>
                       <select
-                          id="product-location"
+                          id="product_location"
                           class="form-control kt-select2"
-                          name="product-location"
+                          name="product_location"
                           >
                           <option />
                       </select>
-                </div>
-                <div class="col-lg-4">
-                  <label>Batch  <span style="color:red">*</span></label>
-                    <input
-                      type="text"
-                      name="batch"
-                      id="batch"
-                      class="form-control"
-                      placeholder="Enter Batch"
-                    >
                 </div>
                 <div class="col-lg-4">
                   <label>Qty  <span style="color:red">*</span></label>
@@ -400,9 +379,7 @@
                       placeholder="Enter Qty"
                   >
                 </div>
-              </div>
-              <div class="form-group row">
-                <div class="col-lg-3">
+                <div class="col-lg-4">
                   <label>Qty Max</label>
                   <input
                     id="qty_max"
@@ -411,18 +388,9 @@
                     disabled="disabled"
                   >
                 </div>
-                <div class="col-lg-4">
-                  <label>Expired Date</label>
-                    <div class="input-group date">
-                      <input type="text" name="expired_date" class="form-control" readonly placeholder="Select date" id="expired_date" />
-                      <div class="input-group-append">
-                        <span class="input-group-text">
-                          <i class="la la-calendar-check-o"></i>
-                        </span>
-                      </div>
-                    </div>
-                </div>
-                <div class="col-lg-5">
+              </div>
+              <div class="form-group row">
+                <div class="col-lg-6">
                   <label>Description</label>
                     <textarea
                       type="text"
@@ -470,6 +438,7 @@ export default {
        outgoing  : {
             company_id  : null,
             type        : 2,
+            status      : 3,
             job_no : null,
             company_name : null,
             warehouse_name : null,
@@ -524,7 +493,7 @@ export default {
         this.outgoing.description           = outgoingDetail.description
         this.company_name     = outgoingDetail.company_name
         this.warehouse_name     = outgoingDetail.from_warehouse_name
-        // this.outgoing.products  = outgoingDetail.products
+        this.status         = outgoingDetail.status
 
       // set products
       outgoingDetail.products.forEach((value) => {
@@ -536,13 +505,13 @@ export default {
           product_name                      : value.product_name,
           product_sku                       : value.product_sku,
           product_packing_name              : value.product_packing_name,
+          from_warehouse_location_id        : value.from_warehouse_location_id,
           from_warehouse_location_name        : value.from_warehouse_location_name,
           from_warehouse_location_level       : value.from_warehouse_location_level,
           from_warehouse_location_usage       : value.from_warehouse_location_usage,
           from_warehouse_location_capacity: value.from_warehouse_location_capacity,
-          expired_date                      : value.expired_date,
+          unique_code                      : value.unique_code,
           qty                               : value.qty,
-          batch                             : value.batch,
           description                       : value.description,
           status                            : value.status,
         }
@@ -627,6 +596,7 @@ export default {
       },
     })
     const newOptionWarehouse = new Option(this.warehouse_name, this.outgoing.from_warehouse_id, true, true)
+        newOptionWarehouse.setAttribute('data-country-id', this.outgoing.from_country_id)
     $('#warehouse_from').append(newOptionWarehouse).trigger('change')
     $('#warehouse_from').on('change', function () {
       validator.element($(this))
@@ -654,13 +624,7 @@ export default {
 
     await this.$store.dispatch('region/getCountries')
     this.countries = this.$store.getters['region/getCountries']
-    $('#country_from').select2({
-      placeholder: 'Select a country',
-      allowClear : true,
-      data       : this.countries,
-    })
-    $('#country_from').val(this.outgoing.from_country_id).trigger('change')
-
+    
     $('#country_to').select2({
       placeholder: 'Select a country',
       allowClear : true,
@@ -837,7 +801,7 @@ export default {
         validatorModal.element($(this))
       })
 
-      $('#product-location').select2({
+      $('#product_location').select2({
         placeholder       : 'Select Product Location',
         minimumInputLength: 1,
         width             : '100%',
@@ -860,12 +824,8 @@ export default {
             }
             },
         },
-        templateSelection: function (data, container) {
-          $(data.element).attr('data-unique-code', data.unique_code)
-          return data.text
-        },
         })
-        $('#product-location').on('change', function () {
+        $('#product_location').on('change', function () {
         validatorModal.element($(this))
         })
     })
@@ -886,9 +846,8 @@ export default {
         { data: 'product_name' },
         { data: 'product_packing_name' },
         { data: 'from_warehouse_location_name' },
-        { data: 'batch' },
+        { data: 'unique_code' },
         { data: 'qty' },
-        { data: 'expired_date' },
         { data: 'description' },
         { data: 'actions', responsivePriority: -1 },
       ],
@@ -966,15 +925,15 @@ export default {
       app.rowId            = rowData.id
       app.statusProduct    = rowData.status
       app.locationIdBefore = rowData.location
-
+      app.unique_code     = rowData.unique_code
       app.usage         = rowData.from_warehouse_location_usage
       app.capacityMax   = rowData.from_warehouse_location_capacity
       app.locationName  = rowData.from_warehouse_location_name
       app.locationLevel = rowData.from_warehouse_location_level
-
        if (app.modalHasOpen === true) {
         $('#product_id').val(rowData.product_id).trigger('change')
         $('#location').val(rowData.location).trigger('change')
+        $('#product_location').val(rowData.unique_code).trigger('change')
       } else {
         const newOptionProduct  = new Option(rowData.product_name, rowData.product_id, true, true)
         newOptionProduct.setAttribute('data-product-sku', rowData.product_sku)
@@ -987,15 +946,15 @@ export default {
         newOptionLocation.setAttribute('data-usage', rowData.from_warehouse_location_usage)
         newOptionLocation.setAttribute('data-capacity-max', rowData.from_warehouse_location_capacity)
         $('#location').append(newOptionLocation).trigger('change')
+        const newOptionUnique = new Option(rowData.unique_code, rowData.unique_code, true, true)
+        $('#product_location').append(newOptionUnique).trigger('change')
       }
 
       $('#description_modal').val(rowData.description)
       $('#qty').val(rowData.qty)
       if (app.productPackingOption === null)
         $('#qty_max').val(rowData.from_warehouse_location_capacity)
-      if (rowData.expired_date !== '')
-        $('#expired_date').val(moment(rowData.expired_date).format('DD/MM/Y'))
-      $('#batch').val(rowData.batch)
+      $('#product_location').val(rowData.unique_code)
       $('#product_modal').modal('show')
       app.rowIndex = app.datatable.row($(this).parents('tr')).index()
     })
@@ -1108,6 +1067,7 @@ export default {
       let locationName  = $('#location').find(':selected').data('location-name')
       const capacityMax = $('#location').find(':selected').data('capacity-max')
       let usage         = $('#location').find(':selected').data('usage')
+      let product_location    = $('#product_location').find(':selected').data('unique-code')
       let product       = {}
       let qtyPerRow     = qtyMax
       const location    = locationId
@@ -1140,13 +1100,13 @@ export default {
           id                      : this.rowId,
           product_id              : parseInt($('#product_id').val()),
           product_packing_id      : parseInt($('#product_packing_id').val()),
-          location : locationId,
           product_name            : $('#product_id option:selected').text(),
           product_sku             : $('#product_id').find(':selected').data('product-sku'),
           product_packing_name    : $('#product_packing_id').find(':selected').data('packing-name'),
           from_warehouse_location_name  : locationName,
+          from_warehouse_location_id  : locationId,
           location_name           : $('#location').find(':selected').data('location-name'),
-          unique_code              : $('#product_location').find(':selected').data('unique-code'),
+          unique_code              : $('#product_location').val(),
           expired_date            : $('#expired_date').val() !== '' ? moment($('#expired_date').val(), 'DD/MM/YYYY').format('Y-MM-DD HH:mm:ss') : '',
           qty                     : qtyPerRow,
           batch                   : $('#batch').val(),
@@ -1204,8 +1164,7 @@ export default {
       if ($('#shipment_date').val() !== '' && this.outgoing.shipment_date === '0000-00-00 00:00:00')
         this.outgoing.shipment_date = moment($('#shipment_date').val(), 'DD/MM/YYYY HH:mm').format('Y-MM-DD HH:mm:ss')
       this.outgoing.transport_type = $('#transport_type').val()
-      if ($('#country_from').val() !== '')
-      this.outgoing.from_country_id = parseInt($('#country_from').val())
+      this.outgoing.from_country_id = $('#warehouse_from').find(':selected').data('country-id')
       this.outgoing.to_country_id   = parseInt($('#country_to').val())
       this.outgoing.from_warehouse_id = parseInt($('#warehouse_from').val())
       this.outgoing.products        = data
@@ -1225,7 +1184,7 @@ export default {
           this.$nuxt.$loading.finish()
           // eslint-disable-next-line no-undef
           KTUtil.scrollTop()
-          // setTimeout(function () { window.location.href = '/outgoing' }, 3000)
+          setTimeout(function () { window.location.href = '/outgoing' }, 3000)
         } catch (error) {
           const parameter = {
             alertClass: 'alert-danger',

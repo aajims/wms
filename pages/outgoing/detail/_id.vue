@@ -128,28 +128,6 @@
                     />
                 </div>
                 <div class="col-lg-4">
-                <label>Created Date </label>
-                    <input
-                        id="created_date"
-                        v-model="created_date"
-                        class="form-control"
-                        name="created_date"
-                        readonly
-                    />
-                </div>
-                <div class="col-lg-4">
-                <label>Created By </label>
-                    <input
-                        id="order_date"
-                        v-model="outgoing.created_by_name"
-                        class="form-control"
-                        name="order_date"
-                        readonly
-                    />
-                </div>
-            </div>
-            <div class="form-group row">
-                <div class="col-lg-4">
                 <label for="description">Description</label>
                 <textarea
                     id="description"
@@ -162,22 +140,13 @@
                 />
                 </div>
                 <div class="col-lg-4">
-                <label>Updated Date </label>
-                    <input
-                        id="updated_date"
-                        v-model="updatedDate"
+                <label>From </label>
+                    <textarea
+                        id="from"
+                        rows="3"
+                        v-model="outgoing.from"
                         class="form-control"
-                        name="updated_date"
-                        readonly
-                    />
-                </div>
-                <div class="col-lg-4">
-                <label>Update By </label>
-                    <input
-                        id="order_date"
-                        v-model="outgoing.updated_by_name"
-                        class="form-control"
-                        name="update"
+                        name="from"
                         readonly
                     />
                 </div>
@@ -217,7 +186,7 @@
                 </div>
             </div>
             <div class="form-group row">
-                <div class="col-lg-6">
+                <div class="col-lg-4">
                 <label for="country">To Country </label>
                     <input
                         v-model="outgoing.to_country_name"
@@ -229,18 +198,17 @@
                 </div>
                 <div class="col-lg-4">
                 <label>To  </label>
-                    <input
+                    <textarea
                         v-model="outgoing.to"
                         type="text"
+                        rows="3"
                         class="form-control"
                         name="number"
                         readonly
-                    >
+                    />
                 </div>
-            </div>
-            <div class="form-group row">
-                <div class="col-lg-6">
-                <label>Tranport Type </label>
+                 <div class="col-lg-4">
+                <label>Transport Type </label>
                     <input
                         v-model="outgoing.transport_type"
                         type="text"
@@ -249,7 +217,9 @@
                         readonly
                     >
                 </div>
-                <div class="col-lg-6">
+            </div>
+            <div class="form-group row">
+                <div class="col-lg-4">
                 <label>Transport Number </label>
                     <input
                         v-model="outgoing.transport_number"
@@ -258,6 +228,48 @@
                         name="number"
                         readonly
                     >
+                </div>
+                <div class="col-lg-4">
+                <label>Created Date </label>
+                    <input
+                        id="created_date"
+                        v-model="created_date"
+                        class="form-control"
+                        name="created_date"
+                        readonly
+                    />
+                </div>
+                <div class="col-lg-4">
+                <label>Created By </label>
+                    <input
+                        id="order_date"
+                        v-model="outgoing.created_by_name"
+                        class="form-control"
+                        name="order_date"
+                        readonly
+                    />
+                </div>
+            </div>
+             <div class="form-group row">
+                <div class="col-lg-4">
+                <label>Updated Date </label>
+                    <input
+                        id="updated_date"
+                        v-model="updatedDate"
+                        class="form-control"
+                        name="updated_date"
+                        readonly
+                    />
+                </div>
+                <div class="col-lg-4">
+                <label>Update By </label>
+                    <input
+                        id="order_date"
+                        v-model="outgoing.updated_by_name"
+                        class="form-control"
+                        name="update"
+                        readonly
+                    />
                 </div>
             </div>
             <div class="kt-separator kt-separator--border-dashed kt-separator--space-lg" />
@@ -279,9 +291,7 @@
                     <th>Product </th>
                     <th>Packing </th>
                     <th>Location</th>
-                    <th>Batch</th>
                     <th>Qty</th>
-                    <th class="expired_date">Expired</th>
                     <th>Description</th>
                     <th class="created_at">
                       Created
@@ -352,10 +362,8 @@ export default {
         { data: 'product_sku' },
         { data: 'product_name' },
         { data: 'product_packing_name' },
-        { data: 'qty' },
         { data: 'from_warehouse_location_name' },
-        { data: 'batch' },
-        { data: 'expired_date' },
+        { data: 'qty' },
         { data: 'description' },
         { data: 'created_at' },
         { data: 'updated_at' },
@@ -379,16 +387,6 @@ export default {
               return data
           },
         },
-        {
-          targets: 'expired_date',
-          render : function (data, type, full, meta) {
-            if (data !== '0000-00-00 00:00:00')
-              return moment(data).format('DD/MM/Y')
-            else
-              return ''
-          },
-        },
-
       ]
     })
   },

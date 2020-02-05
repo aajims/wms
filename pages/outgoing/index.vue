@@ -414,10 +414,14 @@ export default {
           render   : function (data, type, full, meta) {
             let actionButtonCancel = ''
             let actionButtonEdit = ''
+            let actionButtonClose = ''
               if (full.status === STATUS_OPEN && full.tracking === '') {
                 actionButtonCancel = `<a class="dropdown-item action-button-cancel"  data-index="${meta.row}" href="javascript:void(0)"><i class="la la-times-circle"></i> Cancel Job</a>`
                 actionButtonEdit = `<a href="/outgoing/edit/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details"><i class="la la-edit"></i></a>`
               }
+              // if (full.status === STATUS_READY_SHIPING_NAME) {
+              //   actionButtonCLOSE = `<a class="dropdown-item action-button-close"  data-index="${meta.row}" href="javascript:void(0)"><i class="la la-folder"></i> Close Job</a>`
+              // }
                 return `<a href="/outgoing/detail/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
                     <i class="la la-eye"></i>
                   </a>
@@ -430,6 +434,7 @@ export default {
                           <a class="dropdown-item" href="javascript:void(0)"><i class="la la-print"></i> Print</a>
                           <a class="dropdown-item" href="javascript:void(0)"><i class="la la-qrcode"></i> Print QR Code</a>
                           ${actionButtonCancel}
+                          ${actionButtonClose}
                       </div>
                   </span>`
           },
