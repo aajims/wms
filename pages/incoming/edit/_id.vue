@@ -178,6 +178,7 @@
                       </span>
                     </div>
                   </div>
+                  <span class="form-text text-muted" />
                 </div>
               </div>
               <div class="col-lg-4 margin-top-20">

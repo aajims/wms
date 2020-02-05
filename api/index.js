@@ -13,6 +13,7 @@ const region    = require('./region')
 const packing   = require('./packing')
 const product   = require('./product')
 const incoming  = require('./incoming')
+const external  = require('./external')
 
 // Import API Routes
 app.use(login)
@@ -24,6 +25,7 @@ app.use(region)
 app.use(packing)
 app.use(product)
 app.use(incoming)
+app.use(external)
 
 // Export the server middleware
 module.exports = {

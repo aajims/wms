@@ -7,7 +7,7 @@
   <div class="row">
     <div class="col-lg-12">
       <form
-        id="incoming_form"
+        id="external_form"
         ref="form"
         class="kt-form kt-form--label-right"
       >
@@ -21,12 +21,12 @@
                 <i class="kt-font-brand flaticon-add" />
               </span>
               <h3 class="kt-portlet__head-title">
-                Add Incoming Stock
+                Add External Transfer
               </h3>
             </div>
             <div class="kt-portlet__head-toolbar">
               <a
-                :href="`/incoming/`"
+                href="/transfer/external/"
                 class="btn btn-clean kt-margin-r-10"
               >
                 <i class="la la-arrow-left" />
@@ -46,7 +46,7 @@
               <div class="col-lg-4">
                 <label>Order No. <span style="color:red">*</span></label>
                 <input
-                  v-model="incoming.order_no"
+                  v-model="external.order_no"
                   type="text"
                   class="form-control"
                   name="order_no"
@@ -62,6 +62,21 @@
                     id="company_id"
                     class="form-control kt-select2"
                     name="company_id"
+                  >
+                    <option />
+                  </select>
+                  <span class="form-text text-muted" />
+                </div>
+              </div>
+              <div class="col-lg-4">
+                <div class="kt-form__label">
+                  <label>From Warehouse <span style="color:red">*</span></label>
+                </div>
+                <div class="kt-form__control">
+                  <select
+                    id="from_warehouse_id"
+                    class="form-control kt-select2"
+                    name="from_warehouse_id"
                   >
                     <option />
                   </select>
@@ -129,28 +144,6 @@
               </div>
               <div class="col-lg-4">
                 <div class="kt-form__label">
-                  <label>Shipment Date</label>
-                </div>
-                <div class="kt-form__control">
-                  <div class="input-group date">
-                    <input
-                      id="shipment_date"
-                      name="shipment_date"
-                      type="text"
-                      class="form-control"
-                      readonly
-                      placeholder="Select shipment date"
-                    >
-                    <div class="input-group-append">
-                      <span class="input-group-text">
-                        <i class="la la-calendar" />
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-lg-4">
-                <div class="kt-form__label">
                   <label>Order Date <span style="color:red">*</span></label>
                 </div>
                 <div class="kt-form__control">
@@ -174,94 +167,40 @@
               </div>
               <div class="col-lg-4">
                 <div class="kt-form__label">
-                  <label>From Country</label>
+                  <label>Shipment Date</label>
                 </div>
                 <div class="kt-form__control">
-                  <select
-                    id="from_country_id"
-                    class="form-control kt-select2"
-                    name="from_country_id"
-                  >
-                    <option />
-                  </select>
-                  <span class="form-text text-muted" />
+                  <div class="input-group date">
+                    <input
+                      id="shipment_date"
+                      name="shipment_date"
+                      type="text"
+                      class="form-control"
+                      readonly
+                      placeholder="Select shipment date"
+                    >
+                    <div class="input-group-append">
+                      <span class="input-group-text">
+                        <i class="la la-calendar" />
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div class="col-lg-4">
-                <label>From</label>
-                <textarea
-                  id="from"
-                  v-model="incoming.from"
-                  name="from"
-                  class="form-control"
-                  rows="3"
-                />
-              </div>
-              <div class="col-lg-4">
-                <div class="kt-form__label">
-                  <label>Transport Type <span style="color:red">*</span></label>
-                </div>
-                <div class="kt-form__control">
-                  <select
-                    id="transport_type"
-                    class="form-control kt-select2"
-                    name="transport_type"
-                  >
-                    <option />
-                  </select>
-                  <span class="form-text text-muted" />
-                </div>
-              </div>
-              <div
-                v-if="incoming.transport_type === 'truck'"
-                class="col-lg-4"
-              >
                 <label>Transport Number</label>
                 <input
-                  v-model="incoming.transport_number"
+                  v-model="external.transport_number"
                   type="text"
                   class="form-control"
                   name="transport_number"
                   placeholder="Enter transport number"
                 >
               </div>
-              <div
-                v-if="incoming.transport_type === 'air-freight'"
-                class="col-lg-4"
-              >
-                <label>Flight</label>
-                <input
-                  v-model="incoming.flight"
-                  type="text"
-                  class="form-control"
-                  name="flight"
-                  placeholder="Enter flight"
-                >
-              </div>
-              <div class="col-lg-4">
-                <label>Custom Permit</label>
-                <input
-                  v-model="incoming.custom_permit"
-                  type="text"
-                  class="form-control"
-                  name="custom_permit"
-                  placeholder="Enter custom permit"
-                >
-              </div>
-              <div class="col-lg-4">
-                <label>Cargo Insurance</label>
-                <input
-                  v-model="incoming.cargo_insurance"
-                  type="text"
-                  class="form-control"
-                  name="cargo_insurance"
-                  placeholder="Enter cargo insurance"
-                >
-              </div>
               <div class="col-lg-4">
                 <label for="description">Description</label>
                 <textarea
-                  v-model="incoming.description"
+                  v-model="external.description"
                   class="form-control"
                   rows="3"
                 />
@@ -481,26 +420,24 @@ export default {
     return {
       rowIndex : null,
       countries: [],
-      incoming : {
-        company_id      : 0,
-        order_no        : '',
-        type            : 1,
-        etd             : '',
-        eta             : '',
-        order_date      : '',
-        shipment_date   : '',
-        transport_type  : '',
-        transport_number: '',
-        flight          : '',
-        from            : '',
-        to              : 'n/a',
-        from_country_id : 0,
-        to_country_id   : 0,
-        to_warehouse_id : 0,
-        custom_permit   : '',
-        cargo_insurance : '',
-        description     : '',
-        products        : [],
+      external : {
+        company_id       : 0,
+        order_no         : '',
+        type             : 4,
+        etd              : '',
+        eta              : '',
+        order_date       : '',
+        shipment_date    : '',
+        transport_type   : 'truck',
+        transport_number : '',
+        from             : '',
+        to               : 'n/a',
+        from_country_id  : 0,
+        to_country_id    : 0,
+        from_warehouse_id: 0,
+        to_warehouse_id  : 0,
+        description      : '',
+        products         : [],
       },
       datatable           : [],
       productPackingSelect: [],
@@ -518,7 +455,7 @@ export default {
   async mounted () {
     const app           = this
     // prevent refresh page
-    document.querySelector('#incoming_form').addEventListener('change', function () { app.formChanged = true })
+    document.querySelector('#external_form').addEventListener('change', function () { app.formChanged = true })
     window.addEventListener('beforeunload', (event) => {
       if (app.formChanged)
         event.returnValue = 'You have unfinished changes!'
@@ -636,6 +573,65 @@ export default {
       }
     })
 
+    $('#from_warehouse_id').select2({
+      placeholder       : 'Select warehouse',
+      minimumInputLength: 1,
+      width             : '100%',
+      allowClear        : true,
+      ajax              : {
+        type          : 'GET',
+        url           : '/api/warehouse/select',
+        cache         : true,
+        processResults: function (data) {
+          return {
+            results: $.map(data.result, function (object) {
+              return {
+                id        : object.id,
+                text      : object.name,
+                country_id: object.country_id,
+              }
+            }),
+          }
+        },
+      },
+      templateSelection: function (data, container) {
+        $(data.element).attr('data-country-id', data.country_id)
+        return data.text
+      },
+    })
+    $('#from_warehouse_id').on('select2:select', function () {
+      const data = app.datatable.rows().data().toArray()
+      if (data.length === 0)
+        app.toWarehouseIdBefore = $(this).val()
+    })
+    $('#from_warehouse_id').on('change', function () {
+      validator.element($(this))
+      const data = app.datatable.rows().data().toArray()
+      if (data.length !== 0 && app.isRestore === false) {
+        // eslint-disable-next-line no-undef
+        swal.fire({
+          title             : 'Are you sure?',
+          text              : 'If you change warehouse, all product will be deleted',
+          type              : 'question',
+          showCancelButton  : true,
+          buttonsStyling    : false,
+          confirmButtonClass: 'btn btn-success',
+          cancelButtonClass : 'btn btn-default',
+        }).then(function (result) {
+          if (result.value) {
+            app.remainingLocation   = []
+            app.datatable.clear().draw()
+            app.toWarehouseIdBefore = $('#from_warehouse_id').val()
+          } else {
+            app.isRestore = true
+            $('#from_warehouse_id').select2('val', app.toWarehouseIdBefore)
+            setTimeout(function () { app.isRestore = false }, 500)
+          }
+        })
+        return false
+      }
+    })
+
     $('#etd, #eta').datetimepicker({
       todayHighlight: true,
       autoclose     : true,
@@ -670,19 +666,19 @@ export default {
       data       : TRANSPORT_TYPE,
     })
     $('#transport_type').on('change', function () {
-      app.incoming.transport_type = $(this).val()
+      app.external.transport_type = $(this).val()
     })
 
-    const validator = $('#incoming_form').validate({
+    const validator = $('#external_form').validate({
       // define validation rules
       rules: {
-        order_no       : { required: true },
-        company_id     : { required: true },
-        to_warehouse_id: { required: true },
-        eta            : { required: true },
-        etd            : { required: true },
-        order_date     : { required: true },
-        transport_type : { required: true },
+        order_no         : { required: true },
+        company_id       : { required: true },
+        from_warehouse_id: { required: true },
+        to_warehouse_id  : { required: true },
+        eta              : { required: true },
+        etd              : { required: true },
+        order_date       : { required: true },
       },
       invalidHandler: function (event, validator) {
         // eslint-disable-next-line no-undef
@@ -695,7 +691,7 @@ export default {
           // eslint-disable-next-line no-undef
           swal.fire({
             title             : 'Error!',
-            text              : 'Please add incoming product type',
+            text              : 'Please add external product type',
             type              : 'error',
             buttonsStyling    : false,
             confirmButtonClass: 'btn btn-danger',
@@ -735,7 +731,7 @@ export default {
           cancelButtonClass : 'btn btn-default',
         }).then(function (result) {
           if (result.value) {
-            app.addIncoming(data)
+            app.addExternal(data)
             app.formChanged = false
           }
         })
@@ -994,11 +990,11 @@ export default {
   },
   methods: {
     openModal () {
-      if ($('#company_id').val() === '' || $('#to_warehouse_id').val() === '') {
+      if ($('#company_id').val() === '' || $('#from_warehouse_id').val() === '' || $('#to_warehouse_id').val() === '') {
         // eslint-disable-next-line no-undef
         swal.fire({
           title             : 'Warning!',
-          text              : 'Please select company and warehouse',
+          text              : 'Please select company, from warehouse and to warehouse',
           type              : 'warning',
           buttonsStyling    : false,
           confirmButtonClass: 'btn btn-warning',
@@ -1138,38 +1134,38 @@ export default {
       this.locationIdBefore = ''
     },
     setDataPost (data) {
-      this.incoming.company_id = parseInt($('#company_id').val())
+      this.external.company_id = parseInt($('#company_id').val())
       if ($('#etd').val() !== '')
-        this.incoming.etd = moment($('#etd').val(), 'DD/MM/YYYY HH:mm').format('Y-MM-DD HH:mm:ss')
+        this.external.etd = moment($('#etd').val(), 'DD/MM/YYYY HH:mm').format('Y-MM-DD HH:mm:ss')
       if ($('#eta').val() !== '')
-        this.incoming.eta = moment($('#eta').val(), 'DD/MM/YYYY HH:mm').format('Y-MM-DD HH:mm:ss')
+        this.external.eta = moment($('#eta').val(), 'DD/MM/YYYY HH:mm').format('Y-MM-DD HH:mm:ss')
       if ($('#order_date').val() !== '')
-        this.incoming.order_date = moment($('#order_date').val(), 'DD/MM/YYYY HH:mm').format('Y-MM-DD HH:mm:ss')
+        this.external.order_date = moment($('#order_date').val(), 'DD/MM/YYYY HH:mm').format('Y-MM-DD HH:mm:ss')
       if ($('#shipment_date').val() !== '')
-        this.incoming.shipment_date = moment($('#shipment_date').val(), 'DD/MM/YYYY HH:mm').format('Y-MM-DD HH:mm:ss')
-      this.incoming.transport_type = $('#transport_type').val()
+        this.external.shipment_date = moment($('#shipment_date').val(), 'DD/MM/YYYY HH:mm').format('Y-MM-DD HH:mm:ss')
+      this.external.transport_type = $('#transport_type').val()
       if ($('#from_country_id').val() !== '')
-        this.incoming.from_country_id = parseInt($('#from_country_id').val())
-      this.incoming.to_country_id   = parseInt($('#to_warehouse_id').find(':selected').data('country-id'))
-      this.incoming.to_warehouse_id = parseInt($('#to_warehouse_id').val())
-      this.incoming.products        = data
+        this.external.from_country_id = parseInt($('#from_country_id').val())
+      this.external.to_country_id   = parseInt($('#to_warehouse_id').find(':selected').data('country-id'))
+      this.external.to_warehouse_id = parseInt($('#to_warehouse_id').val())
+      this.external.products        = data
     },
-    async addIncoming (data) {
-      if ($('#incoming_form').valid()) {
+    async addExternal (data) {
+      if ($('#external_form').valid()) {
         await this.setDataPost(data)
         try {
           this.$nuxt.$loading.start()
-          await this.$store.dispatch('incoming/addIncoming', { data: this.incoming })
-          const data      = this.$store.getters['incoming/getAddSuccess']
+          await this.$store.dispatch('external/addExternal', { data: this.external })
+          const data      = this.$store.getters['external/getAddSuccess']
           const parameter = {
             alertClass: 'alert-success',
-            message   : `Job incoming ${data.result.job_no} has been added`,
+            message   : `Job external ${data.result.job_no} has been added`,
           }
           this.$nuxt.$emit('alertShow', parameter)
           this.$nuxt.$loading.finish()
           // eslint-disable-next-line no-undef
           KTUtil.scrollTop()
-          setTimeout(function () { window.location.href = '/incoming' }, 3000)
+          setTimeout(function () { window.location.href = '/external' }, 3000)
         } catch (error) {
           const parameter = {
             alertClass: 'alert-danger',
