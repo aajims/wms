@@ -236,13 +236,14 @@
                 <!--begin: Datatable -->
                 <table
                 id="product_table"
-                class="table table-hover table-checkable"
+                class="table table-hover table-checkable nowrap"
             >
                 <thead>
                 <tr>
                     <th>SKU Product </th>
                     <th>Packing </th>
                     <th>Location</th>
+                    <th>Unique Code</th>
                     <th>Batch</th>
                     <th>Qty</th>
                     <th>Expired</th>
@@ -330,17 +331,17 @@
                 </div>
               </div>
               <div class="form-group row">
-                <div class="col-lg-3">
+                <div class="col-lg-4">
                   <label>Product Location <span style="color:red">*</span></label>
                       <select
-                          id="product-location"
+                          id="product_location"
                           class="form-control kt-select2"
-                          name="product-location"
+                          name="product_location"
                           >
                           <option />
                       </select>
                 </div>
-                <div class="col-lg-3">
+                <div class="col-lg-4">
                   <label>Batch  <span style="color:red">*</span></label>
                     <input
                       type="text"
@@ -350,16 +351,7 @@
                       placeholder="Enter Batch"
                     >
                 </div>
-                <div class="col-lg-3">
-                  <label>Qty Max</label>
-                  <input
-                    id="qty_max"
-                    type="text"
-                    class="form-control"
-                    disabled="disabled"
-                  >
-                </div>
-                <div class="col-lg-3">
+                <div class="col-lg-4">
                   <label>Qty  <span style="color:red">*</span></label>
                       <input
                       type="text"
@@ -371,8 +363,17 @@
                 </div>
               </div>
               <div class="form-group row">
-                <div class="col-lg-6">
-                  <label>Expired Date<span style="color:red">*</span></label>
+                 <div class="col-lg-3">
+                  <label>Qty Max</label>
+                  <input
+                    id="qty_max"
+                    type="text"
+                    class="form-control"
+                    disabled="disabled"
+                  >
+                </div>
+                <div class="col-lg-4">
+                  <label>Expired Date </label>
                     <div class="input-group date">
                       <input type="text" name="date_exp" class="form-control" readonly placeholder="Select date" id="date_exp" />
                       <div class="input-group-append">
@@ -382,8 +383,8 @@
                       </div>
                     </div>
                 </div>
-                <div class="col-lg-6">
-                  <label>Description<span style="color:red">*</span></label>
+                <div class="col-lg-5">
+                  <label>Description </label>
                     <textarea
                       type="text"
                       rows="3"
@@ -649,7 +650,7 @@ export default {
             validatorModal.element($(this))
             })
 
-            $('#product-location').select2({
+            $('#product_location').select2({
             placeholder       : 'Select Product Location',
             minimumInputLength: 1,
             width             : '100%',
@@ -677,7 +678,7 @@ export default {
               return data.text
             },
             })
-            $('#product-location').on('change', function () {
+            $('#product_location').on('change', function () {
             validatorModal.element($(this))
             })
 
@@ -774,6 +775,7 @@ export default {
         { data: 'product_name' },
         { data: 'packing_name' },
         { data: 'location_name' },
+        { data: 'unique_code' },
         { data: 'batch' },
         { data: 'qty' },
         { data: 'expired' },
@@ -829,7 +831,8 @@ export default {
       rules: {
         product_id              : { required: true },
         product_packing_id      : { required: true },
-        warehouse               : { required: true },
+        location                : { required: true },
+        product_location        : { required: true },
         batch                   : { required: true },
         qty                     : { required: true, number: true },
       },

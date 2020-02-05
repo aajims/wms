@@ -264,7 +264,7 @@
 
 <script>
 import moment from 'moment'
-import { JOB_STATUS, STATUS_OPEN, STATUS_CANCEL } from '@/utils/constants'
+import { JOB_STATUS, STATUS_OPEN, STATUS_CANCEL, STATUS_CLOSE } from '@/utils/constants'
 
 export default {
   data () {
@@ -413,25 +413,25 @@ export default {
           orderable: false,
           render   : function (data, type, full, meta) {
             let actionButtonCancel = ''
-            if (full.status === STATUS_OPEN && full.tracking === '')
-              actionButtonCancel = `<a class="dropdown-item action-button-cancel"  data-index="${meta.row}" href="javascript:void(0)"><i class="la la-times-circle"></i> Cancel Job</a>`
-            return `<a href="/outgoing/detail/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
-                      <i class="la la-eye"></i>
-                    </a>
-                    <a href="/outgoing/edit/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
-                      <i class="la la-edit"></i>
-                    </a>
-                    <span class="dropdown">
-                        <a href="javascript:void(0)" class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="dropdown" aria-expanded="true">
-                          <i class="la la-ellipsis-h"></i>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item" href="javascript:void(0)"><i class="la la-print"></i> Print</a>
-                            <a class="dropdown-item" href="javascript:void(0)"><i class="la la-qrcode"></i> Print QR Code</a>
-                            ${actionButtonCancel}
-                        </div>
-                    </span>`
-
+            let actionButtonEdit = ''
+              if (full.status === STATUS_OPEN && full.tracking === '') {
+                actionButtonCancel = `<a class="dropdown-item action-button-cancel"  data-index="${meta.row}" href="javascript:void(0)"><i class="la la-times-circle"></i> Cancel Job</a>`
+                actionButtonEdit = `<a href="/outgoing/edit/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details"><i class="la la-edit"></i></a>`
+              }
+                return `<a href="/outgoing/detail/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
+                    <i class="la la-eye"></i>
+                  </a>
+                  ${actionButtonEdit}
+                  <span class="dropdown">
+                      <a href="javascript:void(0)" class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="dropdown" aria-expanded="true">
+                        <i class="la la-ellipsis-h"></i>
+                      </a>
+                      <div class="dropdown-menu dropdown-menu-right">
+                          <a class="dropdown-item" href="javascript:void(0)"><i class="la la-print"></i> Print</a>
+                          <a class="dropdown-item" href="javascript:void(0)"><i class="la la-qrcode"></i> Print QR Code</a>
+                          ${actionButtonCancel}
+                      </div>
+                  </span>`
           },
         },
         {

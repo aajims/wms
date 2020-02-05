@@ -370,7 +370,7 @@
                 </div>
               </div>
               <div class="form-group row">
-                <div class="col-lg-3">
+                <div class="col-lg-4">
                   <label>Product Location <span style="color:red">*</span></label>
                       <select
                           id="product-location"
@@ -380,7 +380,7 @@
                           <option />
                       </select>
                 </div>
-                <div class="col-lg-3">
+                <div class="col-lg-4">
                   <label>Batch  <span style="color:red">*</span></label>
                     <input
                       type="text"
@@ -390,17 +390,7 @@
                       placeholder="Enter Batch"
                     >
                 </div>
-                <div class="col-lg-3">
-                  <label>Qty Max</label>
-                  <input
-                    id="qty_max"
-                    type="text"
-                    class="form-control"
-                    disabled="disabled"
-                  >
-                </div>
-
-                <div class="col-lg-3">
+                <div class="col-lg-4">
                   <label>Qty  <span style="color:red">*</span></label>
                       <input
                       type="text"
@@ -412,8 +402,17 @@
                 </div>
               </div>
               <div class="form-group row">
-                <div class="col-lg-6">
-                  <label>Expired Date<span style="color:red">*</span></label>
+                <div class="col-lg-3">
+                  <label>Qty Max</label>
+                  <input
+                    id="qty_max"
+                    type="text"
+                    class="form-control"
+                    disabled="disabled"
+                  >
+                </div>
+                <div class="col-lg-4">
+                  <label>Expired Date</label>
                     <div class="input-group date">
                       <input type="text" name="expired_date" class="form-control" readonly placeholder="Select date" id="expired_date" />
                       <div class="input-group-append">
@@ -423,8 +422,8 @@
                       </div>
                     </div>
                 </div>
-                <div class="col-lg-6">
-                  <label>Description<span style="color:red">*</span></label>
+                <div class="col-lg-5">
+                  <label>Description</label>
                     <textarea
                       type="text"
                       rows="3"
