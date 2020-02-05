@@ -276,6 +276,7 @@
                     <th>Location</th>
                     <th>Unique Code</th>
                     <th>Qty</th>
+                    <th class="status">Status</th>
                     <th>Description</th>
                     <th>Action</th>
                 </tr>
@@ -427,7 +428,7 @@
 </template>
 <script>
 import moment from 'moment'
-import { TRANSPORT_TYPE } from '@/utils/constants'
+import { TRANSPORT_TYPE, OUTGOING_STATUS, STATUS_OPEN, STATUS_BLOCK, STATUS_PICK, STATUS_PACK, STATUS_READY_SHIPING } from '@/utils/constants'
 
 export default {
   data () {
@@ -848,18 +849,26 @@ export default {
         { data: 'from_warehouse_location_name' },
         { data: 'unique_code' },
         { data: 'qty' },
+        { data: 'status' },
         { data: 'description' },
         { data: 'actions', responsivePriority: -1 },
       ],
       drawCallback: function () {
-        $('.popoverButton').popover({
-          title    : 'Insufficient Capacity',
-          html     : true,
-          trigger  : 'manual',
-          placement: 'left',
-          content  : function () {
-            return 'The location is <span class="kt-badge kt-badge--danger kt-badge--inline">FULL</span> Please select another location.'
-          },
+        $('.status-block').click(function () {
+          const rowData = app.datatable.row($(this).data('index')).data()
+          app.updateStatus(STATUS_BLOCK, $(this).data('index'), rowData)
+        })
+        $('.status-pick').click(function () {
+          const rowData = app.datatable.row($(this).data('index')).data()
+          app.updateStatus(STATUS_PICK, $(this).data('index'), rowData)
+        })
+        $('.status-pack').click(function () {
+          const rowData = app.datatable.row($(this).data('index')).data()
+          app.updateStatus(STATUS_PACK, $(this).data('index'), rowData)
+        })
+        $('.status-ship').click(function () {
+          const rowData = app.datatable.row($(this).data('index')).data()
+          app.updateStatus(STATUS_READY_SHIPING, $(this).data('index'), rowData)
         })
       },
       columnDefs: [
@@ -876,7 +885,7 @@ export default {
           },
         },
         {
-          targets  : -3,
+          targets  : 'expired',
           className: 'dt-center',
           render   : function (data, type, full, meta) {
             if (data !== '')
@@ -886,16 +895,50 @@ export default {
           },
         },
         {
+          targets  : 'status',
+          className: 'dt-center',
+          render   : function (data, type, full, meta) {
+            for (const statusIndex in OUTGOING_STATUS) {
+              if (data === OUTGOING_STATUS[statusIndex].id)
+                return `<span class="kt-badge kt-badge--${OUTGOING_STATUS[statusIndex].class} kt-badge--inline">${OUTGOING_STATUS[statusIndex].text}</span>`
+            }
+            return data
+          },
+        },
+        {
           targets: -1,
           render : function (data, type, full, meta) {
-            const iconAdditional  = full.id === '' ? 'la la-trash' : 'la la-power-off'
-            const titleAdditional = full.id === '' ? 'Delete' : 'Update Status'
+            let actionButtonOpen = ''
+            let actionButtonPick = ''
+            let actionButtonPack = ''
+            let actionButtonShipp = ''
+            let actionButtonClose = ''
+            if (full.status !== STATUS_OPEN) {
+                 actionButtonOpen = `<a class="dropdown-item status-open" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-folder-open"></i> Open</a>`
+            }if(full.status !== STATUS_BLOCK){
+                actionButtonClose = `<a class="dropdown-item status-block"  data-index="${meta.row}" href="javascript:void(0)"><i class="la la-list"></i> Block</a>`
+            }if(full.status !== STATUS_PICK){
+                actionButtonPick = `<a class="dropdown-item status-pick"  data-index="${meta.row}" href="javascript:void(0)"><i class="la la-list-ul"></i> Pick</a>`
+            }if(full.status !== STATUS_PACK){
+                actionButtonPack = `<a class="dropdown-item status-pack"  data-index="${meta.row}" href="javascript:void(0)"><i class="la la-list-ul"></i> Pack</a>`
+            }if(full.status !== STATUS_READY_SHIPING){
+                actionButtonShipp = `<a class="dropdown-item status-ship"  data-index="${meta.row}" href="javascript:void(0)"><i class="la la-check-square"></i> Ready For Ship</a>`
+            }
             return `<a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit">
                       <i class="la la-edit"></i>
                     </a>
-                    <a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="${titleAdditional}">
-                      <i class="${iconAdditional}"></i>
-                    </a>`
+                    <span class="dropdown">
+                      <a href="javascript:void(0)" class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="dropdown" aria-expanded="true">
+                        <i class="la la-ellipsis-h"></i>
+                      </a>
+                      <div class="dropdown-menu dropdown-menu-right">
+                          ${actionButtonOpen}
+                          ${actionButtonClose}
+                          ${actionButtonPick}
+                          ${actionButtonPack}
+                          ${actionButtonShipp}
+                      </div>
+                  </span>`
           },
         },
       ],
@@ -1196,6 +1239,11 @@ export default {
           KTUtil.scrollTop()
         }
       }
+    },
+    async updateStatus (statusId, rowIndex, data) {
+      this.formChanged = true
+      data.status      = statusId
+      setTimeout(() => this.datatable.row(rowIndex).data(data).draw(), 100)
     },
   },
 }

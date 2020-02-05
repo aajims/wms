@@ -84,10 +84,16 @@ export const INCOMING_STATUS = [
 ]
   export const OUTGOING_STATUS = [
     {
+      id: 3, text: 'Open', class: 'success',
+    },
+    {
+      id: 4, text: 'Block', class: 'warning',
+    },
+    {
     id: 6, text: 'Pick', class: 'warning',
   },
   {
-    id: 7, text: 'Pack', class: 'default',
+    id: 7, text: 'Pack', class: 'warning',
   },
   {
     id: 8, text: 'Ready Shipping', class: 'primary',
@@ -122,6 +128,7 @@ export const STATUS_BLOCK_NAME          = 'BLOCKED'
 export const STATUS_STORED_NAME         = 'STORED'
 export const STATUS_PICK_NAME           = 'PICKED'
 export const STATUS_PACK_NAME           = 'PACKED'
-export const STATUS_READY_SHIPPING_NAME = 'READY FOR SHIP'
 export const STATUS_CANCEL_NAME         = 'CANCEL'
 export const STATUS_CLOSE_NAME          = 'CLOSE'
+export const READY_SHIPING_NAME = 'READY FOR SHIP'
+

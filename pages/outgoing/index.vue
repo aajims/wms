@@ -264,7 +264,7 @@
 
 <script>
 import moment from 'moment'
-import { JOB_STATUS, STATUS_OPEN, STATUS_CANCEL, STATUS_CLOSE } from '@/utils/constants'
+import { READY_SHIPING_NAME, JOB_STATUS, STATUS_OPEN, STATUS_CANCEL, STATUS_CLOSE } from '@/utils/constants'
 
 export default {
   data () {
@@ -415,13 +415,18 @@ export default {
             let actionButtonCancel = ''
             let actionButtonEdit = ''
             let actionButtonClose = ''
-              if (full.status === STATUS_OPEN && full.tracking === '') {
+              if (full.status === STATUS_OPEN) {
+              actionButtonEdit = `<a href="/outgoing/edit/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
+                                    <i class="la la-edit"></i>
+                                  </a>`
+              if (full.tracking === '')
                 actionButtonCancel = `<a class="dropdown-item action-button-cancel"  data-index="${meta.row}" href="javascript:void(0)"><i class="la la-times-circle"></i> Cancel Job</a>`
-                actionButtonEdit = `<a href="/outgoing/edit/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details"><i class="la la-edit"></i></a>`
+              // else if (full.tracking === STATUS_STORED_NAME)
+              //   actionButtonClose = `<a class="dropdown-item action-button-close"  data-index="${meta.row}" href="javascript:void(0)"><i class="la la-folder"></i> Close Job</a>`
+            }
+              if (full.status === READY_SHIPING_NAME) {
+                actionButtonClose = `<a class="dropdown-item action-button-close"  data-index="${meta.row}" href="javascript:void(0)"><i class="la la-folder"></i> Close Job</a>`
               }
-              // if (full.status === STATUS_READY_SHIPING_NAME) {
-              //   actionButtonCLOSE = `<a class="dropdown-item action-button-close"  data-index="${meta.row}" href="javascript:void(0)"><i class="la la-folder"></i> Close Job</a>`
-              // }
                 return `<a href="/outgoing/detail/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
                     <i class="la la-eye"></i>
                   </a>
