@@ -8,38 +8,12 @@ app.use(bodyParser.urlencoded({ extended: true }))
 
 const library = require('./library.js')
 
-app.get('/warehouse/select', (request, response) => {
-  const params = {
-    'page'          : 1,
-    'per_page'      : 100,
-    'sort_by'       : 'name',
-    'sort'          : 'asc',
-    'search_by'     : 'name',
-    'keyword'       : request.query.term,
-    'filter[status]': 1,
-  }
-  const token  = request.cookies[`${process.env.APP_ENV}_token`]
-  axios({
-    method : 'get',
-    url    : `${process.env.API_URL}/v1/warehouse`,
-    headers: {
-      'Content-Type' : 'application/x-www-form-urlencoded',
-      'Authorization': `Bearer ${token}`,
-    },
-    params: params,
-  }).then(function (responseApi) {
-    response.send(responseApi.data)
-  }).catch(function (error) {
-    response.status(error.response.status).send(error.response.data)
-  })
-})
-
-app.post('/warehouse/list', (request, response) => {
+app.post('/order/list', (request, response) => {
   const params = library.generateDatatableParameter(request.body)
   const token  = request.cookies[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
-    url    : `${process.env.API_URL}/v1/warehouse/`,
+    url    : `${process.env.API_URL}/v1/order`,
     headers: {
       'Content-Type' : 'application/x-www-form-urlencoded',
       'Authorization': `Bearer ${token}`,
@@ -54,11 +28,11 @@ app.post('/warehouse/list', (request, response) => {
   })
 })
 
-app.post('/warehouse/add', (request, response) => {
+app.post('/order/add', (request, response) => {
   const token = request.cookies[`${process.env.APP_ENV}_token`]
   axios({
     method : 'post',
-    url    : `${process.env.API_URL}/v1/warehouse`,
+    url    : `${process.env.API_URL}/v1/order`,
     headers: {
       'Content-Type' : 'application/x-www-form-urlencoded',
       'Authorization': `Bearer ${token}`,
@@ -71,16 +45,15 @@ app.post('/warehouse/add', (request, response) => {
   })
 })
 
-app.put('/warehouse/edit', (request, response) => {
+app.get('/order/detail', (request, response) => {
   const token = request.cookies[`${process.env.APP_ENV}_token`]
   axios({
-    method : 'put',
-    url    : `${process.env.API_URL}/v1/warehouse/${request.body.id_warehouse}`,
+    method : 'get',
+    url    : `${process.env.API_URL}/v1/order/${request.query.id_order}`,
     headers: {
       'Content-Type' : 'application/x-www-form-urlencoded',
       'Authorization': `Bearer ${token}`,
     },
-    data: request.body.data,
   }).then(function (responseApi) {
     response.send(responseApi.data)
   }).catch(function (error) {
@@ -88,15 +61,16 @@ app.put('/warehouse/edit', (request, response) => {
   })
 })
 
-app.get('/warehouse/detail', (request, response) => {
+app.put('/order/edit', (request, response) => {
   const token = request.cookies[`${process.env.APP_ENV}_token`]
   axios({
-    method : 'get',
-    url    : `${process.env.API_URL}/v1/warehouse/${request.query.id_warehouse}`,
+    method : 'put',
+    url    : `${process.env.API_URL}/v1/order/${request.body.id_order}`,
     headers: {
       'Content-Type' : 'application/x-www-form-urlencoded',
       'Authorization': `Bearer ${token}`,
     },
+    data: request.body.data,
   }).then(function (responseApi) {
     response.send(responseApi.data)
   }).catch(function (error) {

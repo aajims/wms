@@ -31,6 +31,14 @@ export default [
     ],
   },
   {
+    name        : 'Incoming Stock',
+    icon        : 'la la-sign-in',
+    url         : '/incoming',
+    folder      : false,
+    childDisplay: false,
+    children    : [],
+  },
+  {
     name        : 'Master',
     icon        : 'fa flaticon-layer',
     url         : '/master',
@@ -59,5 +67,17 @@ export default [
         children: [],
       },
     ],
+  },
+  {
+    name    : 'Order List',
+    icon    : 'fa flaticon2-shopping-cart-1',
+    url     : '/order',
+    children: [],
+    name        : 'Outgoing Stock',
+    icon        : 'fa flaticon-layer',
+    url         : '/outgoing',
+    folder      : false,
+    childDisplay: false,
+    children    : [],
   },
 ]

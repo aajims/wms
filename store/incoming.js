@@ -1,36 +1,32 @@
 import axios from 'axios'
 
 export const state = () => ({
-  addPacking   : null,
-  packingDetail: null,
-  editPacking  : null,
-  packing      : null,
+  addIncoming   : null,
+  incomingDetail: null,
+  editIncoming  : null,
 })
 
 export const mutations = {
-  SET_PACKING_DETAIL (state, packingDetail) {
-    state.packingDetail = packingDetail
+  SET_INCOMING_DETAIL (state, incomingDetail) {
+    state.incomingDetail = incomingDetail
   },
-  ADD_PACKING (state, addPacking) {
-    state.addPacking = addPacking
+  ADD_INCOMING (state, addIncoming) {
+    state.addIncoming = addIncoming
   },
-  EDIT_PACKING (state, editPacking) {
-    state.editPacking = editPacking
-  },
-  SET_PACKING (state, packing) {
-    state.packing = packing
+  EDIT_INCOMING (state, editIncoming) {
+    state.editIncoming = editIncoming
   },
 }
 
 export const actions = {
-  async addPacking ({ commit, dispatch }, { data }) {
+  async addIncoming ({ commit, dispatch }, { data }) {
     await axios({
       method: 'post',
-      url   : '/api/packing/add',
+      url   : '/api/incoming/add',
       data  : data,
     }).then(function (response) {
       if (response.status === 200 && response.data.general_response.response_status === true)
-        commit('ADD_PACKING', response.data)
+        commit('ADD_INCOMING', response.data)
       else if (response.data.general_response.response_code === 4003)
         dispatch('removeToken', null, { root: true })
       else
@@ -44,15 +40,15 @@ export const actions = {
         throw new Error('Network Communication Error')
     })
   },
-  async editPacking ({ commit, dispatch }, { idPacking, data }) {
-    const dataPut = { id_packing: idPacking, data: data }
+  async editIncoming ({ commit, dispatch }, { idIncoming, data }) {
+    const dataPut = { id_incoming: idIncoming, data: data }
     await axios({
       method: 'put',
-      url   : '/api/packing/edit',
+      url   : '/api/incoming/edit',
       data  : dataPut,
     }).then(function (response) {
       if (response.status === 200 && response.data.general_response.response_status === true)
-        commit('EDIT_PACKING', response.data)
+        commit('EDIT_INCOMING', response.data)
       else if (response.data.general_response.response_code === 4003)
         dispatch('removeToken', null, { root: true })
       else
@@ -66,14 +62,14 @@ export const actions = {
         throw new Error('Network Communication Error')
     })
   },
-  async getPackingDetail ({ commit, dispatch }, { idPacking }) {
+  async getIncomingDetail ({ commit, dispatch }, { idIncoming }) {
     await axios({
       method: 'get',
-      url   : '/api/packing/detail',
-      params: { id_packing: idPacking },
+      url   : '/api/incoming/detail',
+      params: { id_incoming: idIncoming },
     }).then(function (response) {
       if (response.status === 200 && response.data.general_response.response_status === true)
-        commit('SET_PACKING_DETAIL', response.data)
+        commit('SET_INCOMING_DETAIL', response.data)
       else if (response.data.general_response.response_code === 4003)
         dispatch('removeToken', null, { root: true })
       else
@@ -85,37 +81,18 @@ export const actions = {
         dispatch('removeToken', null, { root: true })
       else
         throw new Error('Network Communication Error')
-    })
-  },
-  async getPacking ({ commit }, { idCompany }) {
-    await axios({
-      method: 'get',
-      url   : '/api/packing/select',
-      params: { id_company: idCompany },
-    }).then(function (response) {
-      if (response.status === 200 && response.data.general_response.response_status === true) {
-        const packing = [{ id: '', text: '' }]
-        for (const pack in response.data.result)
-          packing.push({ id: response.data.result[pack].id, text: response.data.result[pack].name })
-        commit('SET_PACKING', packing)
-      }
-    }).catch(function () {
-      throw new Error('Network Communication Error')
     })
   },
 }
 
 export const getters = {
   getAddSuccess: (state) => {
-    return state.addPacking
+    return state.addIncoming
   },
-  getPackingDetail: (state) => {
-    return state.packingDetail
+  getIncomingDetail: (state) => {
+    return state.incomingDetail
   },
-  getEditPacking: (state) => {
-    return state.editPacking
-  },
-  getPacking: (state) => {
-    return state.packing
+  getEditIncoming: (state) => {
+    return state.editIncoming
   },
 }

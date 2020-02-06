@@ -85,13 +85,13 @@
             </div>
             <div class="form-group row">
               <div class="col-lg-6">
-                <label>Product Quantity <span style="color:red">*</span></label>
+                <label>Minimum Stock Alert (Item Quantity) <span style="color:red">*</span></label>
                 <input
                   v-model="product.minimum_stock_alert"
                   type="text"
                   class="form-control"
                   name="minimum_stock_alert"
-                  placeholder="Enter product quantity (minimum stock alert)"
+                  placeholder="Enter minimum stock alert (item quantity)"
                 >
               </div>
               <div class="col-lg-6">
@@ -288,7 +288,7 @@
                   <input
                     id="row_id"
                     type="hidden"
-                    value=""
+                    value="0"
                   >
                   <input
                     id="packing_status"
@@ -351,9 +351,6 @@ export default {
   },
   async mounted () {
     try {
-      await this.$store.dispatch('packing/getPacking')
-      this.packingSelect    = this.$store.getters['packing/getPacking']
-
       await this.$store.dispatch('product/getProductDetail', { idProduct: atob(this.$route.params.id) })
       const productDetail   = this.$store.getters['product/getProductDetail'].result
 
@@ -368,6 +365,9 @@ export default {
       this.product.company_id          = productDetail.company_id
       this.product.description         = productDetail.description
       this.product.status              = productDetail.status
+
+      await this.$store.dispatch('packing/getPacking', { idCompany: productDetail.company_id })
+      this.packingSelect    = this.$store.getters['packing/getPacking']
       // set product packing
       productDetail.products_packing.forEach((value) => {
         const productsPacking     = {
@@ -442,8 +442,9 @@ export default {
         type               : { required: true },
         condition          : { required: true },
         minimum_stock_alert: {
-          required: true,
-          digits  : true,
+          required      : true,
+          number        : true,
+          positiveNumber: true,
         },
       },
       invalidHandler: function (event, validator) {
@@ -467,6 +468,10 @@ export default {
         app.editProduct(data)
       },
     })
+    $.validator.addMethod('positiveNumber',
+      function (value) {
+        return Number(value) >= 0
+      }, 'Enter a positive number.')
 
     // form modal
     $('#gross_weight_type').select2({ data: WEIGHT_TYPE })
@@ -497,23 +502,6 @@ export default {
     })
     $('#packing_modal').on('hidden.bs.modal', function () {
       app.clearForm()
-    })
-
-    // touchspin
-    $('#qty_max, #nett_weight, #gross_weight').TouchSpin({
-      buttondown_class: 'btn btn-secondary',
-      buttonup_class  : 'btn btn-secondary',
-      verticalbuttons : true,
-      verticalup      : '<i class="la la-plus"></i>',
-      verticaldown    : '<i class="la la-minus"></i>',
-    })
-    $('#qty_max, #nett_weight, #gross_weight').on('change', function () {
-      if ($('#qty_max').val().trim() === '')
-        $('#qty_max').val(0)
-      if ($('#nett_weight').val().trim() === '')
-        $('#nett_weight').val(0)
-      if ($('#gross_weight').val().trim() === '')
-        $('#gross_weight').val(0)
     })
 
     // datatable
@@ -615,6 +603,21 @@ export default {
         packing_type     : { required: true },
         nett_weight_type : { required: true },
         gross_weight_type: { required: true },
+        qty_max          : {
+          required      : true,
+          number        : true,
+          positiveNumber: true,
+        },
+        nett_weight: {
+          required      : true,
+          number        : true,
+          positiveNumber: true,
+        },
+        gross_weight: {
+          required      : true,
+          number        : true,
+          positiveNumber: true,
+        },
       },
       invalidHandler: function (event, validator) {
         event.preventDefault()
@@ -628,7 +631,7 @@ export default {
   methods: {
     savePacking () {
       const packingSave = {
-        id               : $('#row_id').val().trim(),
+        id               : parseInt($('#row_id').val().trim()),
         packing_type_id  : parseInt($('#packing_type').val()),
         packing_type_name: $('#packing_type option:selected').text(),
         qty_max          : parseInt($('#qty_max').val()),
@@ -637,7 +640,7 @@ export default {
         gross_weight_type: $('#gross_weight_type').val(),
         gross_weight     : parseInt($('#gross_weight').val()),
         description      : $('#description').val(),
-        status           : $('#packing_status').val() === '' ? 1 : $('#packing_status').val(),
+        status           : $('#packing_status').val() === '' ? 1 : parseInt($('#packing_status').val()),
       }
       if ($('#row_index').val().trim() === '')
         this.datatable.row.add(packingSave).draw()
@@ -658,7 +661,7 @@ export default {
       $('#gross_weight').val(0)
       $('#description').val(null)
       $('#row_index').val('')
-      $('#row_id').val('')
+      $('#row_id').val(0)
       $('#packing_status').val('')
     },
     async editProduct (data) {
