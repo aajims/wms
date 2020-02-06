@@ -32,7 +32,7 @@
             <div class="kt-portlet__body">
             <div class="form-group row">
                 <div class="col-lg-4">
-                <label>Job No <span style="color:red">*</span></label>
+                <label>Job No </label>
                     <input
                         v-model="outgoing.job_no"
                         type="text"
@@ -42,7 +42,7 @@
                     >
                 </div>
                 <div class="col-lg-4">
-                <label>Unique Code <span style="color:red">*</span></label>
+                <label>Unique Code </label>
                     <input
                         v-model="outgoing.unique_code"
                         type="text"
@@ -54,7 +54,7 @@
             </div>
             <div class="form-group row">
                 <div class="col-lg-4">
-                <label>Order No <span style="color:red">*</span></label>
+                <label>Order No </label>
                     <input
                         id="order"
                         v-model="outgoing.order_no"
@@ -64,7 +64,7 @@
                     />
                 </div>
                 <div class="col-lg-4">
-                <label>Company Name <span style="color:red">*</span></label>
+                <label>Company Name </label>
                     <input
                         v-model="outgoing.company_name"
                         type="text"
@@ -74,7 +74,7 @@
                     >
                 </div>
                 <div class="col-lg-4">
-                <label>From Warehouse <span style="color:red">*</span></label>
+                <label>From Warehouse </label>
                     <input
                         v-model="outgoing.from_warehouse_name"
                         type="text"
@@ -86,7 +86,7 @@
             </div>
             <div class="form-group row">
                 <div class="col-lg-4">
-                <label>ETD <span style="color:red">*</span></label>
+                <label>ETD </label>
                     <input
                         id="etd"
                         v-model="etd"
@@ -96,7 +96,7 @@
                     />
                 </div>
                 <div class="col-lg-4">
-                <label>ETA <span style="color:red">*</span></label>
+                <label>ETA </label>
                     <input
                         id="eta"
                         v-model="eta"
@@ -106,7 +106,7 @@
                     />
                 </div>
                 <div class="col-lg-4">
-                <label for="state">Shipment Date <span style="color:red">*</span></label>
+                <label for="state">Shipment Date </label>
                     <input
                         v-model="shipment_date"
                         type="text"
@@ -118,7 +118,7 @@
             </div>
             <div class="form-group row">
                 <div class="col-lg-4">
-                <label>Order Date <span style="color:red">*</span></label>
+                <label>Order Date </label>
                     <input
                         id="order_date"
                         v-model="order_date"
@@ -127,28 +127,6 @@
                         readonly
                     />
                 </div>
-                <div class="col-lg-4">
-                <label>Created Date <span style="color:red">*</span></label>
-                    <input
-                        id="created_date"
-                        v-model="created_date"
-                        class="form-control"
-                        name="created_date"
-                        readonly
-                    />
-                </div>
-                <div class="col-lg-4">
-                <label>Created By <span style="color:red">*</span></label>
-                    <input
-                        id="order_date"
-                        v-model="outgoing.created_by_name"
-                        class="form-control"
-                        name="order_date"
-                        readonly
-                    />
-                </div>
-            </div>
-            <div class="form-group row">
                 <div class="col-lg-4">
                 <label for="description">Description</label>
                 <textarea
@@ -162,29 +140,20 @@
                 />
                 </div>
                 <div class="col-lg-4">
-                <label>Updated Date <span style="color:red">*</span></label>
-                    <input
-                        id="updated_date"
-                        v-model="updatedDate"
+                <label>From </label>
+                    <textarea
+                        id="from"
+                        rows="3"
+                        v-model="outgoing.from"
                         class="form-control"
-                        name="updated_date"
-                        readonly
-                    />
-                </div>
-                <div class="col-lg-4">
-                <label>Update By <span style="color:red">*</span></label>
-                    <input
-                        id="order_date"
-                        v-model="outgoing.updated_by_name"
-                        class="form-control"
-                        name="update"
+                        name="from"
                         readonly
                     />
                 </div>
             </div>
             <div class="form-group row">
                 <div class="col-lg-4">
-                <label for="country">From Country <span style="color:red">*</span></label>
+                <label for="country">From Country </label>
                    <input
                         v-model="outgoing.from_country_name"
                         type="text"
@@ -217,8 +186,8 @@
                 </div>
             </div>
             <div class="form-group row">
-                <div class="col-lg-6">
-                <label for="country">To Country <span style="color:red">*</span></label>
+                <div class="col-lg-4">
+                <label for="country">To Country </label>
                     <input
                         v-model="outgoing.to_country_name"
                         type="text"
@@ -228,19 +197,18 @@
                     >
                 </div>
                 <div class="col-lg-4">
-                <label>To  <span style="color:red">*</span></label>
-                    <input
+                <label>To  </label>
+                    <textarea
                         v-model="outgoing.to"
                         type="text"
+                        rows="3"
                         class="form-control"
                         name="number"
                         readonly
-                    >
+                    />
                 </div>
-            </div>
-            <div class="form-group row">
-                <div class="col-lg-6">
-                <label>Tranport Type <span style="color:red">*</span></label>
+                 <div class="col-lg-4">
+                <label>Transport Type </label>
                     <input
                         v-model="outgoing.transport_type"
                         type="text"
@@ -249,8 +217,10 @@
                         readonly
                     >
                 </div>
-                <div class="col-lg-6">
-                <label>Transport Number <span style="color:red">*</span></label>
+            </div>
+            <div class="form-group row">
+                <div class="col-lg-4">
+                <label>Transport Number </label>
                     <input
                         v-model="outgoing.transport_number"
                         type="text"
@@ -258,6 +228,48 @@
                         name="number"
                         readonly
                     >
+                </div>
+                <div class="col-lg-4">
+                <label>Created Date </label>
+                    <input
+                        id="created_date"
+                        v-model="created_date"
+                        class="form-control"
+                        name="created_date"
+                        readonly
+                    />
+                </div>
+                <div class="col-lg-4">
+                <label>Created By </label>
+                    <input
+                        id="order_date"
+                        v-model="outgoing.created_by_name"
+                        class="form-control"
+                        name="order_date"
+                        readonly
+                    />
+                </div>
+            </div>
+             <div class="form-group row">
+                <div class="col-lg-4">
+                <label>Updated Date </label>
+                    <input
+                        id="updated_date"
+                        v-model="updatedDate"
+                        class="form-control"
+                        name="updated_date"
+                        readonly
+                    />
+                </div>
+                <div class="col-lg-4">
+                <label>Update By </label>
+                    <input
+                        id="order_date"
+                        v-model="outgoing.updated_by_name"
+                        class="form-control"
+                        name="update"
+                        readonly
+                    />
                 </div>
             </div>
             <div class="kt-separator kt-separator--border-dashed kt-separator--space-lg" />
@@ -279,9 +291,7 @@
                     <th>Product </th>
                     <th>Packing </th>
                     <th>Location</th>
-                    <th>Batch</th>
                     <th>Qty</th>
-                    <th class="expired_date">Expired</th>
                     <th>Description</th>
                     <th class="created_at">
                       Created
@@ -337,6 +347,8 @@ export default {
     this.eta = moment(this.outgoing.eta).format('DD/MM/Y HH:mm')
     this.shipment_date = moment(this.outgoing.shipment_date).format('DD/MM/Y HH:mm')
     this.order_date = moment(this.outgoing.order_date).format('DD/MM/Y HH:mm')
+    this.created_date = moment(this.outgoing.created_at).format('DD/MM/Y HH:mm')
+    this.updatedDate = moment(this.outgoing.updated_at).format('DD/MM/Y HH:mm')
 
     // datatable
     this.datatable = $('#product_table').DataTable({
@@ -350,10 +362,8 @@ export default {
         { data: 'product_sku' },
         { data: 'product_name' },
         { data: 'product_packing_name' },
-        { data: 'qty' },
         { data: 'from_warehouse_location_name' },
-        { data: 'batch' },
-        { data: 'expired_date' },
+        { data: 'qty' },
         { data: 'description' },
         { data: 'created_at' },
         { data: 'updated_at' },
@@ -377,16 +387,6 @@ export default {
               return data
           },
         },
-        {
-          targets: 'expired_date',
-          render : function (data, type, full, meta) {
-            if (data !== '0000-00-00 00:00:00')
-              return moment(data).format('DD/MM/Y')
-            else
-              return ''
-          },
-        },
-
       ]
     })
   },

@@ -54,7 +54,7 @@ export const actions = {
     }).then(function (response) {
       if (response.status === 200 && response.data.general_response.response_status === true) {
         commit('ADD_OUTGOING', response.data)
-        // setTimeout(() => app.$router.go({ path: '/outgoing' }), 3000)
+        setTimeout(() => app.$router.go({ path: '/outgoing' }), 3000)
       } else if (response.data.general_response.response_code === 4003)
         dispatch('removeToken', null, { root: true })
       else
@@ -79,7 +79,7 @@ export const actions = {
     }).then(function (response) {
       if (response.status === 200 && response.data.general_response.response_status === true)
         commit('EDIT_OUTGOING', response.data)
-      else if (response.data.general_response.response_code === 4003)
+       else if  (response.data.general_response.response_code === 4003)
         dispatch('removeToken', null, { root: true })
       else
         throw new Error(response.data.general_response.response_message)
