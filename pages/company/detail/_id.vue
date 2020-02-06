@@ -32,6 +32,17 @@
           <div class="kt-portlet__body">
             <div class="form-group row">
               <div class="col-lg-6">
+                <label><code></code> </label>
+                <input
+                  v-model="company.code"
+                  type="text"
+                  class="form-control"
+                  name="code"
+                  placeholder="Enter company Code"
+                  readonly
+                >
+              </div>
+              <div class="col-lg-6">
                 <label>Name </label>
                 <input
                   v-model="company.name"
@@ -39,17 +50,6 @@
                   class="form-control"
                   name="name"
                   placeholder="Enter company name"
-                  readonly
-                >
-              </div>
-              <div class="col-lg-6">
-                <label>Website </label>
-                <input
-                  v-model="company.website"
-                  type="text"
-                  class="form-control"
-                  name="code"
-                  placeholder="Enter company Web"
                   readonly
                 >
               </div>
@@ -90,15 +90,15 @@
                 />
               </div>
               <div class="col-lg-6">
-                <label for="description">Description</label>
-                <textarea
-                  id="description"
-                  v-model="company.description"
+                <label>Website </label>
+                <input
+                  v-model="company.website"
+                  type="text"
                   class="form-control"
-                  rows="3"
-                  name="description"
+                  name="code"
+                  placeholder="Enter company Web"
                   readonly
-                />
+                >
               </div>
             </div>
             <div class="form-group row">
@@ -138,6 +138,19 @@
                 >
               </div>
               <div class="col-lg-6">
+                <label for="description">Description</label>
+                <textarea
+                  id="description"
+                  v-model="company.description"
+                  class="form-control"
+                  rows="3"
+                  name="description"
+                  readonly
+                />
+              </div>
+            </div>
+            <div class="form-group row">
+              <div class="col-lg-6">
                 <label>Created By</label>
                 <input
                   v-model="company.created_by_name"
@@ -148,8 +161,6 @@
                   readonly
                 >
               </div>
-            </div>
-            <div class="form-group row">
               <div class="col-lg-6">
                 <label>Created </label>
                 <input
@@ -161,11 +172,13 @@
                   readonly
                 >
               </div>
-              <div class="col-lg-6">
-              <label>Status</label><br>
-              <span v-if="company.status===1" class="btn btn-success">Active</span>
-              <span v-else class="btn btn-danger">Inactive</span>
             </div>
+            <div class="form-group row">
+              <div class="col-lg-6">
+                <label>Status</label><br>
+                <span v-if="company.status===1" class="btn btn-success">Active</span>
+                <span v-else class="btn btn-danger">Inactive</span>
+              </div>
             </div>
           </div>
         </div>
