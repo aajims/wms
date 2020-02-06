@@ -389,6 +389,9 @@ export default {
 
     $('#from, #to').datetimepicker({
       todayHighlight: true,
+      autoclose     : true,
+      startView     : 2,
+      minView       : 2,
       orientation   : 'bottom left',
       todayBtn      : 'linked',
       format        : 'dd/mm/yyyy',
@@ -448,15 +451,13 @@ export default {
             let actionButtonEdit   = ''
             let actionButtonClose  = ''
             if (full.status === STATUS_OPEN) {
-              actionButtonEdit = `<a href="/external/edit/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
-                                    <i class="la la-edit"></i>
-                                  </a>`
+              actionButtonEdit = `<a href="/transfer/external/edit/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details"><i class="la la-edit"></i></a>`
               if (full.tracking === '')
-                actionButtonCancel = `<a class="dropdown-item action-button-cancel"  data-index="${meta.row}" href="javascript:void(0)"><i class="la la-times-circle"></i> Cancel Job</a>`
+                actionButtonCancel = `<a class="dropdown-item action-button-cancel" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-times-circle"></i> Cancel Job</a>`
               else if (full.tracking === STATUS_STORED_NAME)
-                actionButtonClose = `<a class="dropdown-item action-button-close"  data-index="${meta.row}" href="javascript:void(0)"><i class="la la-folder"></i> Close Job</a>`
+                actionButtonClose = `<a class="dropdown-item action-button-close" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-folder"></i> Close Job</a>`
             }
-            return `<a href="/external/detail/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
+            return `<a href="/transfer/external/detail/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
                       <i class="la la-eye"></i>
                     </a>
                     ${actionButtonEdit}
@@ -465,8 +466,7 @@ export default {
                           <i class="la la-ellipsis-h"></i>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item" href="javascript:void(0)"><i class="la la-print"></i> Print</a>
-                            <a class="dropdown-item" href="/external/qrcode/${btoa(full.id)}" target="_blank"><i class="la la-qrcode"></i> Print QR Code</a>
+                            <a class="dropdown-item" href="javascript:void(0)"><i class="la la-print"></i> Print D.O.</a>
                             ${actionButtonCancel}${actionButtonClose}
                         </div>
                     </span>`
@@ -562,7 +562,7 @@ export default {
         const data      = this.$store.getters['external/getEditExternal']
         const parameter = {
           alertClass: 'alert-success',
-          message   : `Job external ${data.result.job_no} has been edited`,
+          message   : `Job external transfer ${data.result.job_no} has been edited`,
         }
         this.$nuxt.$emit('alertShow', parameter)
         this.$nuxt.$loading.finish()

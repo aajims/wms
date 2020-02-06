@@ -32,7 +32,7 @@ app.post('/external/add', (request, response) => {
   const token = request.cookies[`${process.env.APP_ENV}_token`]
   axios({
     method : 'post',
-    url    : `${process.env.API_URL}/v1/job-external`,
+    url    : `${process.env.API_URL}/v1/job-external-transfer`,
     headers: {
       'Content-Type' : 'application/x-www-form-urlencoded',
       'Authorization': `Bearer ${token}`,
@@ -49,7 +49,7 @@ app.put('/external/edit', (request, response) => {
   const token = request.cookies[`${process.env.APP_ENV}_token`]
   axios({
     method : 'put',
-    url    : `${process.env.API_URL}/v1/job-external/${request.body.id_external}`,
+    url    : `${process.env.API_URL}/v1/job-external-transfer/${request.body.id_external}`,
     headers: {
       'Content-Type' : 'application/x-www-form-urlencoded',
       'Authorization': `Bearer ${token}`,
@@ -66,7 +66,7 @@ app.get('/external/detail', (request, response) => {
   const token = request.cookies[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
-    url    : `${process.env.API_URL}/v1/job-external/${request.query.id_external}`,
+    url    : `${process.env.API_URL}/v1/job-external-transfer/${request.query.id_external}`,
     headers: {
       'Content-Type' : 'application/x-www-form-urlencoded',
       'Authorization': `Bearer ${token}`,

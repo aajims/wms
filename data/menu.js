@@ -69,6 +69,14 @@ export default [
     ],
   },
   {
+    name        : 'Outgoing Stock',
+    icon        : 'la la-sign-out',
+    url         : '/outgoing',
+    folder      : false,
+    childDisplay: false,
+    children    : [],
+  },
+  {
     name        : 'Transfer Stock',
     icon        : 'la la-refresh',
     url         : '/transfer',
@@ -83,13 +91,5 @@ export default [
         children: [],
       },
     ],
-  },
-  {
-    name        : 'Outgoing Stock',
-    icon        : 'fa flaticon-layer',
-    url         : '/outgoing',
-    folder      : false,
-    childDisplay: false,
-    children    : [],
   },
 ]
