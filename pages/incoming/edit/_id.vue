@@ -295,7 +295,7 @@
                 <!--begin: Datatable -->
                 <table
                   id="product_table"
-                  class="table table-hover table-checkable nowrap"
+                  class="table table-hover table-checkable"
                 >
                   <thead>
                     <tr>
