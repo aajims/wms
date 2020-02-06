@@ -40,6 +40,16 @@
           <div class="kt-portlet__body">
             <div class="form-group row">
               <div class="col-lg-6">
+                <label>Code <span style="color:red">*</span></label>
+                <input
+                  v-model="company.code"
+                  type="text"
+                  class="form-control"
+                  name="code"
+                  placeholder="Enter company Code"
+                >
+              </div>
+              <div class="col-lg-6">
                 <label>Name <span style="color:red">*</span></label>
                 <input
                   v-model="company.name"
@@ -47,16 +57,6 @@
                   class="form-control"
                   name="name"
                   placeholder="Enter company name"
-                >
-              </div>
-              <div class="col-lg-6">
-                <label>Website <span style="color:red">*</span></label>
-                <input
-                  v-model="company.website"
-                  type="text"
-                  class="form-control"
-                  name="code"
-                  placeholder="Enter company web"
                 >
               </div>
             </div>
@@ -93,14 +93,14 @@
                 />
               </div>
               <div class="col-lg-6">
-                <label for="description">Description</label>
-                <textarea
-                  id="description"
-                  v-model="company.description"
+                <label>Website <span style="color:red">*</span></label>
+                <input
+                  v-model="company.website"
+                  type="text"
                   class="form-control"
-                  rows="3"
-                  name="description"
-                />
+                  name="code"
+                  placeholder="Enter company web"
+                >
               </div>
             </div>
             <div class="form-group row">
@@ -162,6 +162,16 @@
                   placeholder="Enter postcode"
                 >
               </div>
+              <div class="col-lg-6">
+                <label for="description">Description</label>
+                <textarea
+                  id="description"
+                  v-model="company.description"
+                  class="form-control"
+                  rows="3"
+                  name="description"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -186,6 +196,7 @@
                 cities   : [],
                 districts: [],
                 company  : {
+                    code       : null,
                     name       : null,
                     website    : null,
                     phone      : null,
@@ -203,6 +214,7 @@
         async mounted() {
           await this.$store.dispatch('company/getCompanyDetail', { idCompany: this.$route.params.id })
           const companyDetail                   = this.$store.getters['company/getCompanyDetail'].result
+          this.company.code                     = companyDetail.code
           this.company.name                     = companyDetail.name
           this.company.website                  = companyDetail.website
           this.company.phone                    = companyDetail.phone
@@ -297,6 +309,7 @@
             const validator = $('#company_form').validate({
             // define validation rules
             rules: {
+                code : { required: true },
                 name : { required: true },
                 email: {
                 required : true,
