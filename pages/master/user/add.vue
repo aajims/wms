@@ -172,14 +172,52 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(row, index) in privilage" :key="index">
-                    <td>{{ No + index }}</td>
-                    <td>{{ row.module_name }}</td>
-                    <td><input type="checkbox" v-model="row.view"></td>
-                    <td><input type="checkbox" v-model="row.add"></td>
-                    <td><input type="checkbox" v-model="row.edit"></td>
-                    <td><input type="checkbox" v-model="row.delete"></td>
-                    <td><input type="checkbox" v-model="row.cancel"></td>
+                <tr
+                  v-for="(row, index) in privilage"
+                  :key="index"
+                >
+                  <td>{{ No + index }}</td>
+                  <td>{{ row.module_name }}</td>
+                  <td>
+                    <input
+                      v-model="row.view"
+                      type="checkbox"
+                      :true-value="1"
+                      :false-value="0"
+                    >
+                  </td>
+                  <td>
+                    <input
+                      v-model="row.add"
+                      type="checkbox"
+                      :true-value="1"
+                      :false-value="0"
+                    >
+                  </td>
+                  <td>
+                    <input
+                      v-model="row.edit"
+                      type="checkbox"
+                      :true-value="1"
+                      :false-value="0"
+                    >
+                  </td>
+                  <td>
+                    <input
+                      v-model="row.delete"
+                      type="checkbox"
+                      :true-value="1"
+                      :false-value="0"
+                    >
+                  </td>
+                  <td>
+                    <input
+                      v-model="row.cancel"
+                      type="checkbox"
+                      :true-value="1"
+                      :false-value="0"
+                    >
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -203,148 +241,148 @@
 export default {
   data () {
     return {
-      No : 1,
+      No  : 1,
       user: {
-        username        : null,
-        password        : null,
-        full_name       : null,
-        phone           : null,
-        email           : null,
-        user_type       : 3,
-        address         : null,
-        country_id      : null,
-        state_id        : null,
-        city_id         : null,
-        district_id     : null,
-        company_id       : null,
-        warehouse_id     : null,
-        description     : null,
+        username    : null,
+        password    : null,
+        full_name   : null,
+        phone       : null,
+        email       : null,
+        user_type   : 3,
+        address     : null,
+        country_id  : null,
+        state_id    : null,
+        city_id     : null,
+        district_id : null,
+        company_id  : null,
+        warehouse_id: null,
+        description : null,
       },
-      privilage : [
+      privilage: [
         {
-        module_name : 'Dashboard',
-        module_code : 'DBD',
-        view : false,
-        add : false,
-        edit : false,
-        cancel: false
-      },
-       {
-        module_name : 'Warehouse',
-        module_code : 'WHE',
-        view : false,
-        add : false,
-        edit : false,
-        cancel: false
-      },
-      {
-        module_name : 'location',
-        module_code : 'LOC',
-        view : false,
-        add : false,
-        edit : false,
-        cancel: false
-      },
-      {
-        module_name : 'user',
-        module_code : 'USR',
-        view : false,
-        add : false,
-        edit : false,
-        cancel: false
-      },
-      {
-        module_name : 'product-category',
-        module_code : 'PCG',
-        view : false,
-        add : false,
-        edit : false,
-        cancel: false
-      },
-      {
-        module_name : 'company',
-        module_code : 'CMP',
-        view : false,
-        add : false,
-        edit : false,
-        cancel: false
-      },
-      {
-        module_name : 'packing',
-        module_code : 'PCK',
-        view : false,
-        add : false,
-        edit : false,
-        cancel: false
-      },
-      {
-        module_name : 'product',
-        module_code : 'PDC',
-        view : false,
-        add : false,
-        edit : false,
-        cancel: false
-      },
-      {
-        module_name : 'kitting',
-        module_code : 'KT',
-        view : false,
-        add : false,
-        edit : false,
-        cancel: false
-      },
-      {
-        module_name : 'order',
-        module_code : 'ODR',
-        view : false,
-        add : false,
-        edit : false,
-        cancel: false
-      },
-      {
-        module_name : 'job-incoming',
-        module_code : 'JIN',
-        view : false,
-        add : false,
-        edit : false,
-        cancel: false
-      },
-      {
-        module_name : 'job-outgoing',
-        module_code : 'JOG',
-        view : false,
-        add : false,
-        edit : false,
-        cancel: false
-      },
-      {
-        module_name : 'job-damage',
-        module_code : 'JDM',
-        view : false,
-        add : false,
-        edit : false,
-        cancel: false
-      },
-      {
-        module_name : 'job-transfer',
-        module_code : 'JTF',
-        view : false,
-        add : false,
-        edit : false,
-        cancel: false
-      },
-      {
-        module_name : 'report',
-        module_code : 'RPT',
-        view : false,
-        add : false,
-        edit : false,
-        cancel: false
-      }
+          module_name: 'Dashboard',
+          module_code: 'DBD',
+          view       : 0,
+          add        : 0,
+          edit       : 0,
+          cancel     : 0,
+        },
+        {
+          module_name: 'Warehouse',
+          module_code: 'WHE',
+          view       : 0,
+          add        : 0,
+          edit       : 0,
+          cancel     : 0,
+        },
+        {
+          module_name: 'location',
+          module_code: 'LOC',
+          view       : 0,
+          add        : 0,
+          edit       : 0,
+          cancel     : 0,
+        },
+        {
+          module_name: 'user',
+          module_code: 'USR',
+          view       : 0,
+          add        : 0,
+          edit       : 0,
+          cancel     : 0,
+        },
+        {
+          module_name: 'product-category',
+          module_code: 'PCG',
+          view       : 0,
+          add        : 0,
+          edit       : 0,
+          cancel     : 0,
+        },
+        {
+          module_name: 'company',
+          module_code: 'CMP',
+          view       : 0,
+          add        : 0,
+          edit       : 0,
+          cancel     : 0,
+        },
+        {
+          module_name: 'packing',
+          module_code: 'PCK',
+          view       : 0,
+          add        : 0,
+          edit       : 0,
+          cancel     : 0,
+        },
+        {
+          module_name: 'product',
+          module_code: 'PDC',
+          view       : 0,
+          add        : 0,
+          edit       : 0,
+          cancel     : 0,
+        },
+        {
+          module_name: 'kitting',
+          module_code: 'KT',
+          view       : 0,
+          add        : 0,
+          edit       : 0,
+          cancel     : 0,
+        },
+        {
+          module_name: 'order',
+          module_code: 'ODR',
+          view       : 0,
+          add        : 0,
+          edit       : 0,
+          cancel     : 0,
+        },
+        {
+          module_name: 'job-incoming',
+          module_code: 'JIN',
+          view       : 0,
+          add        : 0,
+          edit       : 0,
+          cancel     : 0,
+        },
+        {
+          module_name: 'job-outgoing',
+          module_code: 'JOG',
+          view       : 0,
+          add        : 0,
+          edit       : 0,
+          cancel     : 0,
+        },
+        {
+          module_name: 'job-damage',
+          module_code: 'JDM',
+          view       : 0,
+          add        : 0,
+          edit       : 0,
+          cancel     : 0,
+        },
+        {
+          module_name: 'job-transfer',
+          module_code: 'JTF',
+          view       : 0,
+          add        : 0,
+          edit       : 0,
+          cancel     : 0,
+        },
+        {
+          module_name: 'report',
+          module_code: 'RPT',
+          view       : 0,
+          add        : 0,
+          edit       : 0,
+          cancel     : 0,
+        },
       ],
-      states   : [],
-      cities   : [],
-      districts: [],
+      states        : [],
+      cities        : [],
+      districts     : [],
       stateOption   : null,
       cityOption    : null,
       districtOption: null,
@@ -353,14 +391,15 @@ export default {
   async mounted () {
     const customAdapter = $.fn.select2.amd.require('select2/data/customAdapter')
     await this.$store.dispatch('region/getCountries')
-    this.countries = this.$store.getters['region/getCountries']
-    const app      = this
+    this.countries      = this.$store.getters['region/getCountries']
+    const app           = this
     $('#country').select2({
       placeholder: 'Select a country',
       allowClear : true,
       data       : this.countries,
     })
     $('#country').on('change', function () {
+      // eslint-disable-next-line no-undef
       validator.element($(this))
       if ($('#country').val()) {
         $('#state').val(null).trigger('change')
@@ -384,6 +423,7 @@ export default {
       data       : this.states,
     })
     $('#state').on('change', function () {
+      // eslint-disable-next-line no-undef
       validator.element($(this))
       if ($('#state').val()) {
         $('#city').val(null).trigger('change')
@@ -405,6 +445,7 @@ export default {
       data       : this.cities,
     })
     $('#city').on('change', function () {
+      // eslint-disable-next-line no-undef
       validator.element($(this))
       if ($('#city').val()) {
         $('#district').val(null).trigger('change')
@@ -424,11 +465,13 @@ export default {
       data       : this.states,
     })
     $('#district').on('change', function () {
+      // eslint-disable-next-line no-undef
       validator.element($(this))
     })
 
     $('#user_form').validate({
       // define validation rules
+      // eslint-disable-next-line object-curly-newline
       rules: {
         // username    : { required: true },
         // password    : { required: true },
@@ -449,6 +492,7 @@ export default {
         // district_id: { required: true },
         // company_id:  { required: true },
         // warehouse_id: { required: true },
+      // eslint-disable-next-line object-curly-newline
       },
       invalidHandler: function (event, validator) {
         // eslint-disable-next-line no-undef
@@ -461,36 +505,38 @@ export default {
     })
   },
   methods: {
-    setPostPrivilage(){
-      for (let i = 0; i < this.privilage; i++) {
-        this.privilage[i].forEach((value, key) => { 
-          if (this.privilage[i].view === true)
-            this.privilage[i].view = 1
-          else
-            this.privilage[i].view = 0
+    setPostPrivilage () {
+      // eslint-disable-next-line no-console
+      console.log(this.privilage)
+      // for (let i = 0; i < this.privilage; i++) {
+      //   this.privilage[i].forEach((value, key) => {
+      //     if (this.privilage[i].view === true)
+      //       this.privilage[i].view = 1
+      //     else
+      //       this.privilage[i].view = 0
 
-          if (this.privilage[i].add === true)
-            this.privilage[i].add = 1
-          else
-            this.privilage[i].add = 0
+      //     if (this.privilage[i].add === true)
+      //       this.privilage[i].add = 1
+      //     else
+      //       this.privilage[i].add = 0
 
-          if (this.privilage[i].edit === true)
-            this.privilage[i].edit = 1
-          else
-            this.privilage[i].edit = 0
+      //     if (this.privilage[i].edit === true)
+      //       this.privilage[i].edit = 1
+      //     else
+      //       this.privilage[i].edit = 0
 
-          if (this.privilage[i].cancel === true)
-            this.privilage[i].cancel = 1
-          else
-            this.privilage[i].cancel = 0  
-        });
-      } 
+      //     if (this.privilage[i].cancel === true)
+      //       this.privilage[i].cancel = 1
+      //     else
+      //       this.privilage[i].cancel = 0
+      //   })
+      // }
     },
     async addUser () {
       if ($('#user_form').valid()) {
         // await this.setPostPrivilage()
         // console.log(this.setPostPrivilage)
-          try {
+        try {
           // this.$nuxt.$loading.start()
           // await this.$store.dispatch('user/addUser', { data: this.user })
           // const data      = this.$store.getters['user/getAddSuccess']
@@ -503,8 +549,7 @@ export default {
           // // eslint-disable-next-line no-undef
           // KTUtil.scrollTop()
           // setTimeout(function () { window.location.href = '/user' }, 3000)
-        } 
-        catch (error) {
+        } catch (error) {
           const parameter = {
             alertClass: 'alert-danger',
             message   : error.message,
