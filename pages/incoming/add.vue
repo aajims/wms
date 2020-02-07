@@ -508,7 +508,6 @@ export default {
       productPackingId    : null,
       remainingLocation   : [],
       locationIdBefore    : '',
-      modalOpen           : false,
       toWarehouseIdBefore : '',
       toCompanyIdBefore   : '',
       isRestore           : false,
@@ -861,7 +860,6 @@ export default {
       })
     })
     $('#product_modal').on('hidden.bs.modal', function () {
-      app.modalOpen = false
       app.clearForm()
     })
 

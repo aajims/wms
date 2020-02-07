@@ -114,7 +114,10 @@ export const EXTERNAL_STATUS = [
     id: 7, text: 'Pack', class: 'warning',
   },
   {
-    id: 8, text: 'Ready Shipping', class: 'primary',
+    id: 8, text: 'Ready', class: 'primary',
+  },
+  {
+    id: 9, text: 'Cancel', class: 'danger',
   },
 ]
 

@@ -314,10 +314,10 @@
                       <th class="status">
                         Status
                       </th>
-                      <th class="created">
+                      <th class="created_at">
                         Created
                       </th>
-                      <th class="updated">
+                      <th class="updated_at">
                         Updated
                       </th>
                       <th class="actions">
@@ -927,10 +927,10 @@ export default {
           targets  : 'expired_date',
           className: 'dt-center',
           render   : function (data, type, full, meta) {
-            if (data !== '')
+            if (data !== '' && data !== '0000-00-00 00:00:00')
               return moment(data).format('DD/MM/Y')
             else
-              return data
+              return ''
           },
         },
         {

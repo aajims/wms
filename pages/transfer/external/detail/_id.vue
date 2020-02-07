@@ -359,7 +359,7 @@ export default {
         {
           targets: 'from_warehouse_location_name',
           render : function (data, type, full, meta) {
-            return `${data} - Level ${full.to_warehouse_location_level}`
+            return `${data} - Level ${full.from_warehouse_location_level}`
           },
         },
         {
