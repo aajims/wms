@@ -92,9 +92,10 @@ export const actions = {
     })
   },
   async getUserDetail ({ commit, dispatch }, { idUser }) {
+    const app   = this
     await axios({
       method : 'get',
-      url    : '/api/user/detail',
+      url    : `/api/user/detail`,
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       params : { id_user: idUser},
     }).then(function (response) {
@@ -123,7 +124,7 @@ export const getters = {
       return state.addUser
     },
     getUserDetail: (state) => {
-      return state.UserDetail
+      return state.userDetail
     },
     getEditUser: (state) => {
       return state.editUser

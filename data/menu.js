@@ -31,14 +31,6 @@ export default [
     ],
   },
   {
-    name        : 'User',
-    icon        : 'la la-user',
-    url         : '/user',
-    folder      : false,
-    childDisplay: false,
-    children    : [],
-  },
-  {
     name        : 'Incoming Stock',
     icon        : 'la la-sign-in',
     url         : '/incoming',
@@ -53,6 +45,13 @@ export default [
     folder      : true,
     childDisplay: true,
     children    : [
+      {
+        name        : 'User',
+        icon        : 'kt-menu__link-bullet kt-menu__link-bullet--dot',
+        url         : '/user',
+        param   : false,
+        children: [],
+      },
       {
         name    : 'Category',
         icon    : 'kt-menu__link-bullet kt-menu__link-bullet--dot',

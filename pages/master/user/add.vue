@@ -5,7 +5,7 @@
         id="user_form"
         ref="form"
         class="kt-form kt-form--label-right"
-        @submit.prevent="addUser()"
+        @submit.prevent="setPostPrivilage()"
       >
         <div
           id="kt_page_portlet"
@@ -22,7 +22,7 @@
             </div>
             <div class="kt-portlet__head-toolbar">
               <a
-                href="/user"
+                href="/master/user"
                 class="btn btn-clean kt-margin-r-10"
               >
                 <i class="la la-arrow-left" />
@@ -154,6 +154,37 @@
               </div>
             </div>
           </div>
+          <div class="kt-portlet__body">
+            <!--begin: Datatable -->
+            <table
+              id="user_table"
+              class="table table-hover table-checkable nowrap"
+            >
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Title</th>
+                  <th>View</th>
+                  <th>Add</th>
+                  <th>Edit</th>
+                  <th>Delete</th>
+                  <th>Cancel</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(row, index) in privilage" :key="index">
+                    <td>{{ No + index }}</td>
+                    <td>{{ row.module_name }}</td>
+                    <td><input type="checkbox" v-model="row.view"></td>
+                    <td><input type="checkbox" v-model="row.add"></td>
+                    <td><input type="checkbox" v-model="row.edit"></td>
+                    <td><input type="checkbox" v-model="row.delete"></td>
+                    <td><input type="checkbox" v-model="row.cancel"></td>
+                </tr>
+              </tbody>
+            </table>
+          <!--end: Datatable -->
+          </div>
         </div>
       </form>
     </div>
@@ -172,6 +203,7 @@
 export default {
   data () {
     return {
+      No : 1,
       user: {
         username        : null,
         password        : null,
@@ -188,6 +220,128 @@ export default {
         warehouse_id     : null,
         description     : null,
       },
+      privilage : [
+        {
+        module_name : 'Dashboard',
+        module_code : 'DBD',
+        view : false,
+        add : false,
+        edit : false,
+        cancel: false
+      },
+       {
+        module_name : 'Warehouse',
+        module_code : 'WHE',
+        view : false,
+        add : false,
+        edit : false,
+        cancel: false
+      },
+      {
+        module_name : 'location',
+        module_code : 'LOC',
+        view : false,
+        add : false,
+        edit : false,
+        cancel: false
+      },
+      {
+        module_name : 'user',
+        module_code : 'USR',
+        view : false,
+        add : false,
+        edit : false,
+        cancel: false
+      },
+      {
+        module_name : 'product-category',
+        module_code : 'PCG',
+        view : false,
+        add : false,
+        edit : false,
+        cancel: false
+      },
+      {
+        module_name : 'company',
+        module_code : 'CMP',
+        view : false,
+        add : false,
+        edit : false,
+        cancel: false
+      },
+      {
+        module_name : 'packing',
+        module_code : 'PCK',
+        view : false,
+        add : false,
+        edit : false,
+        cancel: false
+      },
+      {
+        module_name : 'product',
+        module_code : 'PDC',
+        view : false,
+        add : false,
+        edit : false,
+        cancel: false
+      },
+      {
+        module_name : 'kitting',
+        module_code : 'KT',
+        view : false,
+        add : false,
+        edit : false,
+        cancel: false
+      },
+      {
+        module_name : 'order',
+        module_code : 'ODR',
+        view : false,
+        add : false,
+        edit : false,
+        cancel: false
+      },
+      {
+        module_name : 'job-incoming',
+        module_code : 'JIN',
+        view : false,
+        add : false,
+        edit : false,
+        cancel: false
+      },
+      {
+        module_name : 'job-outgoing',
+        module_code : 'JOG',
+        view : false,
+        add : false,
+        edit : false,
+        cancel: false
+      },
+      {
+        module_name : 'job-damage',
+        module_code : 'JDM',
+        view : false,
+        add : false,
+        edit : false,
+        cancel: false
+      },
+      {
+        module_name : 'job-transfer',
+        module_code : 'JTF',
+        view : false,
+        add : false,
+        edit : false,
+        cancel: false
+      },
+      {
+        module_name : 'report',
+        module_code : 'RPT',
+        view : false,
+        add : false,
+        edit : false,
+        cancel: false
+      }
+      ],
       states   : [],
       cities   : [],
       districts: [],
@@ -276,25 +430,25 @@ export default {
     $('#user_form').validate({
       // define validation rules
       rules: {
-        username    : { required: true },
-        password    : { required: true },
-        full_name   : { required: true },
-        phone: {
-          required: true,
-          digits  : true,
-        },
-        email: {
-        required : true,
-        email    : true,
-        minlength: 10,
-        },
-        address    : { required: true },
-        country_id : { required: true },
-        state_id   : { required: true },
-        city_id    : { required: true },
-        district_id: { required: true },
-        company_id:  { required: true },
-        warehouse_id: { required: true },
+        // username    : { required: true },
+        // password    : { required: true },
+        // full_name   : { required: true },
+        // phone: {
+        //   required: true,
+        //   digits  : true,
+        // },
+        // email: {
+        // required : true,
+        // email    : true,
+        // minlength: 10,
+        // },
+        // address    : { required: true },
+        // country_id : { required: true },
+        // state_id   : { required: true },
+        // city_id    : { required: true },
+        // district_id: { required: true },
+        // company_id:  { required: true },
+        // warehouse_id: { required: true },
       },
       invalidHandler: function (event, validator) {
         // eslint-disable-next-line no-undef
@@ -307,27 +461,57 @@ export default {
     })
   },
   methods: {
+    setPostPrivilage(){
+      for (let i = 0; i < this.privilage; i++) {
+        this.privilage[i].forEach((value, key) => { 
+          if (this.privilage[i].view === true)
+            this.privilage[i].view = 1
+          else
+            this.privilage[i].view = 0
+
+          if (this.privilage[i].add === true)
+            this.privilage[i].add = 1
+          else
+            this.privilage[i].add = 0
+
+          if (this.privilage[i].edit === true)
+            this.privilage[i].edit = 1
+          else
+            this.privilage[i].edit = 0
+
+          if (this.privilage[i].cancel === true)
+            this.privilage[i].cancel = 1
+          else
+            this.privilage[i].cancel = 0  
+        });
+      } 
+    },
     async addUser () {
-      try {
-        this.$nuxt.$loading.start()
-        await this.$store.dispatch('user/addUser', { data: this.user })
-        const data      = this.$store.getters['user/getAddSuccess']
-        const parameter = {
-          alertClass: 'alert-success',
-          message   : `User ${data.result.name} has been added`,
+      if ($('#user_form').valid()) {
+        // await this.setPostPrivilage()
+        // console.log(this.setPostPrivilage)
+          try {
+          // this.$nuxt.$loading.start()
+          // await this.$store.dispatch('user/addUser', { data: this.user })
+          // const data      = this.$store.getters['user/getAddSuccess']
+          // const parameter = {
+          //   alertClass: 'alert-success',
+          //   message   : `User ${data.result.name} has been added`,
+          // }
+          // this.$nuxt.$emit('alertShow', parameter)
+          // this.$nuxt.$loading.finish()
+          // // eslint-disable-next-line no-undef
+          // KTUtil.scrollTop()
+          // setTimeout(function () { window.location.href = '/user' }, 3000)
+        } 
+        catch (error) {
+          const parameter = {
+            alertClass: 'alert-danger',
+            message   : error.message,
+          }
+          this.$nuxt.$emit('alertShow', parameter)
+          this.$nuxt.$loading.finish()
         }
-        this.$nuxt.$emit('alertShow', parameter)
-        this.$nuxt.$loading.finish()
-        // eslint-disable-next-line no-undef
-        KTUtil.scrollTop()
-        setTimeout(function () { window.location.href = '/user' }, 3000)
-      } catch (error) {
-        const parameter = {
-          alertClass: 'alert-danger',
-          message   : error.message,
-        }
-        this.$nuxt.$emit('alertShow', parameter)
-        this.$nuxt.$loading.finish()
       }
     },
   },

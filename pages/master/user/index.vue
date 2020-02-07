@@ -16,7 +16,7 @@
         <div class="kt-portlet__head-wrapper">
           <div class="kt-portlet__head-actions">
             <a
-              href="/user/add"
+              href="/master/user/add"
               class="btn btn-brand btn-elevate btn-icon-sm"
             >
               <i class="la la-plus" />
@@ -213,10 +213,10 @@ export default {
           orderable: false,
           render   : function (data, type, full, meta) {
             return `
-                  <a href="/user/detail/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
+                  <a href="/master/user/detail/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
                     <i class="la la-eye"></i>
                   </a>
-                  <a href="/user/edit/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
+                  <a href="/master/user/edit/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
                     <i class="la la-edit"></i>
                   </a>
                   <a class="btn btn-sm btn-clean btn-icon action-button-status" data-index="${meta.row}" href="javascript:void(0)">
