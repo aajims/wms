@@ -244,6 +244,7 @@
             <th class="date">ETD</th>
             <th class="date">ETA</th>
             <th class="update_date">Updated</th>
+            <th class="update_date">Close Date</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -387,7 +388,7 @@ export default {
           d.params = app.params
         },
       },
-      order  : [[8, 'desc']],
+      order  : [[9, 'desc']],
       columns: [
         { data: 'row_number' },
         { data: 'order_no', responsivePriority: -1 },
@@ -402,6 +403,7 @@ export default {
         { data: 'eta' },
         { data: 'created_at' },
         { data: 'updated_at' },
+        { data: 'job_close_date'},
         { data: 'actions', responsivePriority: -2 },
       ],
       columnDefs: [
@@ -421,12 +423,9 @@ export default {
                                   </a>`
               if (full.tracking === '')
                 actionButtonCancel = `<a class="dropdown-item action-button-cancel"  data-index="${meta.row}" href="javascript:void(0)"><i class="la la-times-circle"></i> Cancel Job</a>`
-              // else if (full.tracking === STATUS_STORED_NAME)
-              //   actionButtonClose = `<a class="dropdown-item action-button-close"  data-index="${meta.row}" href="javascript:void(0)"><i class="la la-folder"></i> Close Job</a>`
-            }
-              if (full.status === READY_SHIPING_NAME) {
+              else if (full.tracking === READY_SHIPING_NAME)
                 actionButtonClose = `<a class="dropdown-item action-button-close"  data-index="${meta.row}" href="javascript:void(0)"><i class="la la-folder"></i> Close Job</a>`
-              }
+            } 
                 return `<a href="/outgoing/detail/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
                     <i class="la la-eye"></i>
                   </a>
@@ -487,11 +486,15 @@ export default {
       ],
     })
 
+    // update datatable row
     this.datatable.on('draw.dt', function () {
-      $('.action-button-status').click(function () {
+      $('.action-button-cancel').click(function () {
         const rowData = app.datatable.row($(this).data('index')).data()
-        // app.$delete(rowData, 'unique_code')
-        app.setStatus(rowData)
+        app.setStatus(STATUS_CANCEL, rowData)
+      })
+      $('.action-button-close').click(function () {
+        const rowData = app.datatable.row($(this).data('index')).data()
+        app.setStatus(STATUS_CLOSE, rowData)
       })
     })
   },
@@ -500,29 +503,34 @@ export default {
       this.params.search_by = $('#kt_form_filter').val()
       this.datatable.ajax.reload()
     },
-    async setStatus (row) {
+     async setStatus (statusId, row) {
       const app         = this
-      const statusText  = row.status === 1 ? 'Deactivated' : 'Activated'
-      const buttonClass = row.status === 1 ? 'btn btn-danger' : 'btn btn-success'
-      // eslint-disable-next-line no-undef
-      swal.fire({
-        title             : 'Are you sure?',
-        text              : `outgoing "${row.job_no}" in outgoing "${row.order_no}" ${statusText}`,
-        type              : 'question',
-        showCancelButton  : true,
-        confirmButtonText : statusText,
-        buttonsStyling    : false,
-        confirmButtonClass: buttonClass,
-        cancelButtonClass : 'btn btn-default',
-      }).then(function (result) {
-        if (result.value)
-          app.updateStatus(row.id, row)
-      })
+      for (const statusIndex in JOB_STATUS) {
+        if (statusId === JOB_STATUS[statusIndex].id) {
+          const statusText = `${JOB_STATUS[statusIndex].text.charAt(0).toLowerCase()}${JOB_STATUS[statusIndex].text.slice(1)}`
+          // eslint-disable-next-line no-undef
+          swal.fire({
+            title             : 'Are you sure?',
+            text              : `Job Outgoing "${row.order_no}" will be ${statusText}`,
+            type              : 'question',
+            showCancelButton  : true,
+            confirmButtonText : `${JOB_STATUS[statusIndex].text} Job`,
+            buttonsStyling    : false,
+            confirmButtonClass: `btn btn-${JOB_STATUS[statusIndex].class}`,
+            cancelButtonClass : 'btn btn-default',
+          }).then(function (result) {
+            if (result.value)
+              app.updateStatus(row.id, statusId, row)
+          })
+          break
+        }
+      }
     },
-    async updateStatus (idOutgoing, param) {
+    async updateStatus (idOutgoing, statusId, param) {
       try {
         this.$nuxt.$loading.start()
-        param.status    = param.status === 1 ? 0 : 1
+        param.status    = statusId
+        this.$delete(param, 'job_close_date')
         await this.$store.dispatch('outgoing/editOutgoing', { idOutgoing: idOutgoing, data: param })
         const data      = this.$store.getters['outgoing/getEditOutgoing']
         const parameter = {
@@ -535,7 +543,7 @@ export default {
         KTUtil.scrollTop()
         this.datatable.ajax.reload()
       } catch (error) {
-        param.status    = param.status === 1 ? 0 : 1
+        param.status    = STATUS_OPEN
         const parameter = {
           alertClass: 'alert-danger',
           message   : error.message,
