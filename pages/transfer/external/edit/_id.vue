@@ -534,7 +534,8 @@ export default {
 
         this.external.products.push(products)
 
-        this.existingUniqueCode[value.unique_code] = value.unique_code
+        if (value.status !== STATUS_CANCEL)
+          this.existingUniqueCode[value.unique_code] = value.unique_code
       })
 
       if (externalDetail.etd !== '' && externalDetail.etd !== '0000-00-00 00:00:00')
@@ -942,8 +943,6 @@ export default {
       newOptionLocation.setAttribute('data-location-level', rowData.from_warehouse_location_level)
       $('#from_warehouse_location_id').append(newOptionLocation).trigger('change')
 
-      setTimeout(() => $('#unique_code').val(rowData.unique_code).trigger('change'), 1000)
-
       if (app.rowId !== 0)
         app.isEditExisting = true
 
@@ -989,25 +988,25 @@ export default {
   },
   methods: {
     openModal () {
-      if ($('#company_id').val() === '' || $('#from_warehouse_id').val() === '') {
-        // eslint-disable-next-line no-undef
-        swal.fire({
-          title             : 'Warning!',
-          text              : 'Please select company and from warehouse',
-          type              : 'warning',
-          buttonsStyling    : false,
-          confirmButtonClass: 'btn btn-warning',
-        })
-        return false
-      }
+      $('#product_id').attr('disabled', false)
       $('#product_modal').modal('show')
     },
     async setPackingValue (productId) {
       if (productId) {
         await this.getProductPacking(productId)
         $('#product_packing_id').prop('disabled', false)
-        if (this.productPackingId !== null)
+        if (this.productPackingId !== null) {
           $('#product_packing_id').val(this.productPackingId).trigger('change')
+          if (this.isEditExisting === true) {
+            setTimeout(function () {
+              $('#product_id').attr('disabled', true)
+              $('#product_packing_id').attr('disabled', true)
+              $('#from_warehouse_location_id').attr('disabled', true)
+              $('#unique_code').attr('disabled', true)
+            }, 100)
+          } else
+            $('#product_id').attr('disabled', false)
+        }
       } else {
         $('#product_packing_id').val(null).trigger('change')
         $('#product_packing_id').prop('disabled', true)
@@ -1044,8 +1043,27 @@ export default {
       if (productId && packingId && locationId) {
         await this.getUniqueCode(productId, packingId, locationId)
         $('#unique_code').prop('disabled', false)
-        if (this.uniqueCode !== null)
+        if (this.uniqueCode !== null) {
           $('#unique_code').val(this.uniqueCode).trigger('change')
+          if (this.isEditExisting === true) {
+            setTimeout(function () {
+              $('#product_id').attr('disabled', true)
+              $('#product_packing_id').attr('disabled', true)
+              $('#from_warehouse_location_id').attr('disabled', true)
+              $('#unique_code').attr('disabled', true)
+            }, 100)
+          } else
+            $('#product_id').attr('disabled', false)
+
+          if (this.rowIndex !== null) {
+            const rowData         = this.datatable.row(this.rowIndex).data()
+            const newOptionUnique = new Option(rowData.unique_code, rowData.unique_code, true, true)
+            newOptionUnique.setAttribute('data-qty', rowData.qty)
+            newOptionUnique.setAttribute('data-batch', rowData.batch)
+            newOptionUnique.setAttribute('data-expired-date', rowData.expired_date)
+            $('#unique_code').append(newOptionUnique).trigger('change')
+          }
+        }
       } else {
         $('#unique_code').val(null).trigger('change')
         $('#unique_code').prop('disabled', true)
@@ -1080,7 +1098,7 @@ export default {
           placeholder: 'Select a unique code',
           allowClear : true,
           dataAdapter: customAdapter,
-          data       : this.productPackingSelect,
+          data       : this.uniqueCodeSelect,
         })
       }
       this.uniqueCodeOption.data('select2').dataAdapter.updateOptions(this.uniqueCodeSelect)
@@ -1119,7 +1137,7 @@ export default {
         product_sku                 : $('#product_id').find(':selected').data('product-sku'),
         product_packing_name        : $('#product_packing_id option:selected').text(),
         from_warehouse_location_name: $('#from_warehouse_location_id option:selected').text(),
-        expired_date                : $('#unique_code').find(':selected').data('expired_date'),
+        expired_date                : $('#unique_code').find(':selected').data('expired-date'),
         qty                         : parseInt($('#qty').val()),
         batch                       : $('#unique_code').find(':selected').data('batch'),
         description                 : $('#description_modal').val(),

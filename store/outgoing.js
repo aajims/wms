@@ -19,38 +19,16 @@ export const mutations = {
   },
   EDIT_OUTGOING (state, editOutgoing) {
     state.editOutgoing = editOutgoing
-  }
+  },
 }
 
 export const actions = {
-  async list ({ commit, dispatch }, { params }) {
-    const app   = this
-    await axios({
-      method : 'get',
-      url    : '/api/outgoing/list',
-      params: params,
-    }).then(function (response) {
-      if (response.status === 200 && response.data.general_response.response_status === true)
-        commit('SET_OUTGOING', response.data)
-      else if (response.data.general_response.response_code === 4003)
-        dispatch('removeToken', null, { root: true })
-      else
-        throw new Error(response.data.general_response.response_message)
-    }).catch(function (error) {
-      if (error.response === undefined)
-        throw error
-      else if (error.response.status === 403)
-        dispatch('removeToken', null, { root: true })
-      else
-        throw new Error('Network Communication Error')
-    })
-  },
   async addOutgoing ({ commit, dispatch }, { data }) {
     const app   = this
     await axios({
-      method : 'post',
-      url    : '/api/outgoing/add',
-      data: data,
+      method: 'post',
+      url   : '/api/outgoing/add',
+      data  : data,
     }).then(function (response) {
       if (response.status === 200 && response.data.general_response.response_status === true) {
         commit('ADD_OUTGOING', response.data)
@@ -69,17 +47,15 @@ export const actions = {
     })
   },
   async editOutgoing ({ commit, dispatch }, { idOutgoing, data }) {
-    const app   = this
     const dataPut = { id_outgoing: idOutgoing, data: data }
     await axios({
-      method : 'put',
-      url    : `/api/outgoing/edit`,
-      // params: { id_outgoing: idOutgoing },
-      data: dataPut,
+      method: 'put',
+      url   : `/api/outgoing/edit`,
+      data  : dataPut,
     }).then(function (response) {
       if (response.status === 200 && response.data.general_response.response_status === true)
         commit('EDIT_OUTGOING', response.data)
-       else if  (response.data.general_response.response_code === 4003)
+      else if (response.data.general_response.response_code === 4003)
         dispatch('removeToken', null, { root: true })
       else
         throw new Error(response.data.general_response.response_message)
@@ -92,8 +68,7 @@ export const actions = {
         throw new Error('Network Communication Error')
     })
   },
-  async getOutgoingDetail ({ commit, dispatch }, { idOutgoing}) {
-    const app   = this
+  async getOutgoingDetail ({ commit, dispatch }, { idOutgoing }) {
     await axios({
       method : 'get',
       url    : `/api/outgoing/detail`,
@@ -127,7 +102,7 @@ export const getters = {
   getOutgoingDetail: (state) => {
     return state.outgoingDetail
   },
-  getEditoutgoing: (state) => {
+  getEditOutgoing: (state) => {
     return state.editOutgoing
   },
 }
