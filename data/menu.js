@@ -76,15 +76,27 @@ export default [
     ],
   },
   {
-    name    : 'Order List',
-    icon    : 'fa flaticon2-shopping-cart-1',
-    url     : '/order',
-    children: [],
     name        : 'Outgoing Stock',
-    icon        : 'fa flaticon-layer',
+    icon        : 'la la-sign-out',
     url         : '/outgoing',
     folder      : false,
     childDisplay: false,
     children    : [],
+  },
+  {
+    name        : 'Transfer Stock',
+    icon        : 'la la-refresh',
+    url         : '/transfer',
+    folder      : true,
+    childDisplay: true,
+    children    : [
+      {
+        name    : 'External',
+        icon    : 'kt-menu__link-bullet kt-menu__link-bullet--dot',
+        url     : '/external',
+        param   : false,
+        children: [],
+      },
+    ],
   },
 ]

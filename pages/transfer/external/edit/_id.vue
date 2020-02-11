@@ -1,5 +1,5 @@
 <style scoped>
-.col-lg-4 {
+.margin-top-20 {
   margin-top: 20px;
 }
 </style>
@@ -7,7 +7,7 @@
   <div class="row">
     <div class="col-lg-12">
       <form
-        id="outgoing_form"
+        id="external_form"
         ref="form"
         class="kt-form kt-form--label-right"
       >
@@ -18,15 +18,15 @@
           <div class="kt-portlet__head kt-portlet__head--lg">
             <div class="kt-portlet__head-label">
               <span class="kt-portlet__head-icon">
-                <i class="kt-font-brand flaticon-add" />
+                <i class="kt-font-brand flaticon-edit-1" />
               </span>
               <h3 class="kt-portlet__head-title">
-                Add Outgoing Stock
+                Edit External Transfer
               </h3>
             </div>
             <div class="kt-portlet__head-toolbar">
               <a
-                href="/outgoing"
+                href="/transfer/external/"
                 class="btn btn-clean kt-margin-r-10"
               >
                 <i class="la la-arrow-left" />
@@ -44,46 +44,70 @@
           <div class="kt-portlet__body">
             <div class="form-group row">
               <div class="col-lg-4">
+                <label>Job No.</label>
+                <input
+                  v-model="external.job_no"
+                  type="text"
+                  class="form-control"
+                  disabled
+                >
+              </div>
+              <div class="col-lg-4">
+                <label>Unique Code</label>
+                <input
+                  v-model="external.unique_code"
+                  type="text"
+                  class="form-control"
+                  disabled
+                >
+              </div>
+            </div>
+            <div class="kt-separator kt-separator--border-dashed kt-separator--space-xs" />
+            <div class="form-group row">
+              <div class="col-lg-4 margin-top-20">
                 <label>Order No. <span style="color:red">*</span></label>
                 <input
-                  v-model="outgoing.order_no"
+                  v-model="external.order_no"
                   type="text"
                   class="form-control"
                   name="order_no"
                   placeholder="Enter order number"
                 >
               </div>
-              <div class="col-lg-4">
+              <div class="col-lg-4 margin-top-20">
+                <label>Company</label>
+                <input
+                  :value="companyName"
+                  type="text"
+                  class="form-control"
+                  disabled
+                >
+              </div>
+              <div class="col-lg-4 margin-top-20">
+                <label>From Warehouse</label>
+                <input
+                  :value="warehouseName"
+                  type="text"
+                  class="form-control"
+                  disabled
+                >
+              </div>
+              <div class="col-lg-4 margin-top-20">
                 <div class="kt-form__label">
-                  <label>Company <span style="color:red">*</span></label>
+                  <label>To Warehouse <span style="color:red">*</span></label>
                 </div>
                 <div class="kt-form__control">
                   <select
-                    id="company_id"
+                    id="to_warehouse_id"
                     class="form-control kt-select2"
-                    name="company_id"
+                    name="to_warehouse_id"
                   >
                     <option />
                   </select>
                   <span class="form-text text-muted" />
                 </div>
               </div>
-              <div class="col-lg-4">
-                <div class="kt-form__label">
-                  <label>From Warehouse <span style="color:red">*</span></label>
-                </div>
-                <div class="kt-form__control">
-                  <select
-                    id="from_warehouse_id"
-                    class="form-control kt-select2"
-                    name="from_warehouse_id"
-                  >
-                    <option />
-                  </select>
-                  <span class="form-text text-muted" />
-                </div>
-              </div>
-              <div class="col-lg-4">
+              <div class="col-lg-4 margin-top-20">
                 <div class="kt-form__label">
                   <label>ETD <span style="color:red">*</span></label>
                 </div>
@@ -105,7 +129,7 @@
                   <span class="form-text text-muted" />
                 </div>
               </div>
-              <div class="col-lg-4">
+              <div class="col-lg-4 margin-top-20">
                 <div class="kt-form__label">
                   <label>ETA <span style="color:red">*</span></label>
                 </div>
@@ -127,29 +151,7 @@
                   <span class="form-text text-muted" />
                 </div>
               </div>
-              <div class="col-lg-4">
-                <div class="kt-form__label">
-                  <label>Shipment Date</label>
-                </div>
-                <div class="kt-form__control">
-                  <div class="input-group date">
-                    <input
-                      id="shipment_date"
-                      name="shipment_date"
-                      type="text"
-                      class="form-control"
-                      readonly
-                      placeholder="Select shipment date"
-                    >
-                    <div class="input-group-append">
-                      <span class="input-group-text">
-                        <i class="la la-calendar" />
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-lg-4">
+              <div class="col-lg-4 margin-top-20">
                 <div class="kt-form__label">
                   <label>Order Date <span style="color:red">*</span></label>
                 </div>
@@ -172,98 +174,44 @@
                   <span class="form-text text-muted" />
                 </div>
               </div>
-              <div class="col-lg-4">
+              <div class="col-lg-4 margin-top-20">
                 <div class="kt-form__label">
-                  <label>To Country</label>
+                  <label>Shipment Date</label>
                 </div>
                 <div class="kt-form__control">
-                  <select
-                    id="to_country_id"
-                    class="form-control kt-select2"
-                    name="to_country_id"
-                  >
-                    <option />
-                  </select>
-                  <span class="form-text text-muted" />
+                  <div class="input-group date">
+                    <input
+                      id="shipment_date"
+                      name="shipment_date"
+                      type="text"
+                      class="form-control"
+                      readonly
+                      placeholder="Select shipment date"
+                    >
+                    <div class="input-group-append">
+                      <span class="input-group-text">
+                        <i class="la la-calendar" />
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div class="col-lg-4">
-                <label>To</label>
-                <textarea
-                  id="to"
-                  v-model="outgoing.to"
-                  name="to"
-                  class="form-control"
-                  rows="3"
-                />
-              </div>
-              <div class="col-lg-4">
-                <div class="kt-form__label">
-                  <label>Transport Type <span style="color:red">*</span></label>
-                </div>
-                <div class="kt-form__control">
-                  <select
-                    id="transport_type"
-                    class="form-control kt-select2"
-                    name="transport_type"
-                  >
-                    <option />
-                  </select>
-                  <span class="form-text text-muted" />
-                </div>
-              </div>
-              <div
-                v-if="outgoing.transport_type === 'truck'"
-                class="col-lg-4"
-              >
+              <div class="col-lg-4 margin-top-20">
                 <label>Transport Number</label>
                 <input
-                  v-model="outgoing.transport_number"
+                  v-model="external.transport_number"
                   type="text"
                   class="form-control"
                   name="transport_number"
                   placeholder="Enter transport number"
                 >
               </div>
-              <div
-                v-if="outgoing.transport_type === 'air-freight'"
-                class="col-lg-4"
-              >
-                <label>Flight</label>
-                <input
-                  v-model="outgoing.flight"
-                  type="text"
-                  class="form-control"
-                  name="flight"
-                  placeholder="Enter flight"
-                >
-              </div>
-              <div class="col-lg-4">
-                <label>Custom Permit</label>
-                <input
-                  v-model="outgoing.custom_permit"
-                  type="text"
-                  class="form-control"
-                  name="custom_permit"
-                  placeholder="Enter custom permit"
-                >
-              </div>
-              <div class="col-lg-4">
-                <label>Cargo Insurance</label>
-                <input
-                  v-model="outgoing.cargo_insurance"
-                  type="text"
-                  class="form-control"
-                  name="cargo_insurance"
-                  placeholder="Enter cargo insurance"
-                >
-              </div>
-              <div class="col-lg-4">
+              <div class="col-lg-4 margin-top-20">
                 <label for="description">Description</label>
                 <textarea
-                  v-model="outgoing.description"
+                  v-model="external.description"
                   class="form-control"
-                  rows="4"
+                  rows="3"
                 />
               </div>
             </div>
@@ -295,12 +243,23 @@
                       <th>Product</th>
                       <th>Packing</th>
                       <th>Quantity</th>
-                      <th>Location</th>
+                      <th class="location_name">
+                        Location
+                      </th>
                       <th>Batch</th>
                       <th class="expired_date">
                         Expired
                       </th>
                       <th>Description</th>
+                      <th class="status">
+                        Status
+                      </th>
+                      <th class="created_at">
+                        Created
+                      </th>
+                      <th class="updated_at">
+                        Updated
+                      </th>
                       <th class="actions">
                         Actions
                       </th>
@@ -460,25 +419,24 @@
 
 <script>
 import moment from 'moment'
-import { TRANSPORT_TYPE } from '@/utils/constants'
+import { EXTERNAL_STATUS, STATUS_CANCEL, STATUS_OPEN, STATUS_BLOCK, STATUS_PICK, STATUS_PACK, STATUS_READY_SHIPING } from '@/utils/constants'
 
 export default {
   data () {
     return {
-      countries: null,
-      rowIndex : null,
-      outgoing : {
+      rowIndex: null,
+      external: {
         company_id       : 0,
         order_no         : '',
-        type             : 2,
+        type             : 4,
         etd              : '',
         eta              : '',
         order_date       : '',
         shipment_date    : '',
-        transport_type   : '',
+        transport_type   : 'truck',
         transport_number : '',
         from             : 'n/a',
-        to               : '',
+        to               : 'n/a',
         from_country_id  : 0,
         to_country_id    : 0,
         from_warehouse_id: 0,
@@ -486,6 +444,9 @@ export default {
         description      : '',
         products         : [],
       },
+      rowId                : 0,
+      companyName          : '',
+      warehouseName        : '',
       datatable            : [],
       productPackingSelect : [],
       uniqueCodeSelect     : [],
@@ -497,76 +458,102 @@ export default {
       uniqCodeBefore       : null,
       existingUniqueCode   : [],
       fromWarehouseIdBefore: '',
-      toCompanyIdBefore    : '',
       isRestore            : false,
       formChanged          : false,
-      qtyPacking           : false,
+      qtyPacking           : 0,
+      isEditExisting       : false,
+      statusProduct        : STATUS_OPEN,
+      createdAt            : '',
+      updateAt             : '',
+      createdByName        : '',
+      updatedByName        : '',
+      productId            : '',
+      modalHasOpen         : false,
     }
   },
   async mounted () {
     const app           = this
     // prevent refresh page
-    document.querySelector('#outgoing_form').addEventListener('change', function () { app.formChanged = true })
+    document.querySelector('#external_form').addEventListener('change', function () { app.formChanged = true })
     window.addEventListener('beforeunload', (event) => {
       if (app.formChanged)
         event.returnValue = 'You have unfinished changes!'
     })
     const customAdapter = $.fn.select2.amd.require('select2/data/customAdapter')
+    try {
+      await this.$store.dispatch('external/getExternalDetail', { idExternal: atob(this.$route.params.id) })
+      const externalDetail           = this.$store.getters['external/getExternalDetail'].result
 
-    $('#company_id').select2({
-      placeholder       : 'Select company',
-      minimumInputLength: 1,
-      width             : '100%',
-      allowClear        : true,
-      ajax              : {
-        type          : 'GET',
-        url           : '/api/company/select',
-        cache         : true,
-        processResults: function (data) {
-          return {
-            results: $.map(data.result, function (object) {
-              return {
-                id  : object.id,
-                text: object.name,
-              }
-            }),
-          }
-        },
-      },
-    })
-    $('#company_id').on('select2:select', function () {
-      const data = app.datatable.rows().data().toArray()
-      if (data.length === 0)
-        app.toCompanyIdBefore = $(this).val()
-    })
-    $('#company_id').on('change', function () {
-      validator.element($(this))
-      const data = app.datatable.rows().data().toArray()
-      if (data.length !== 0 && app.isRestore === false) {
-        // eslint-disable-next-line no-undef
-        swal.fire({
-          title             : 'Are you sure?',
-          text              : 'If you change warehouse, all product will be deleted',
-          type              : 'question',
-          showCancelButton  : true,
-          buttonsStyling    : false,
-          confirmButtonClass: 'btn btn-success',
-          cancelButtonClass : 'btn btn-default',
-        }).then(function (result) {
-          if (result.value) {
-            app.existingUniqueCode = []
-            app.datatable.clear().draw()
-          } else {
-            app.isRestore = true
-            $('#company_id').select2('val', app.toCompanyIdBefore)
-            setTimeout(function () { app.isRestore = false }, 500)
-          }
-        })
-        return false
-      }
-    })
+      this.external.id                = externalDetail.id
+      this.external.order_no          = externalDetail.order_no
+      this.external.job_no            = externalDetail.job_no
+      this.external.unique_code       = externalDetail.unique_code
+      this.external.transport_number  = externalDetail.transport_number
+      this.external.flight            = externalDetail.flight
+      this.external.from              = externalDetail.from
+      this.external.custom_permit     = externalDetail.custom_permit
+      this.external.cargo_insurance   = externalDetail.cargo_insurance
+      this.external.description       = externalDetail.description
+      this.external.transport_type    = externalDetail.transport_type
+      this.external.from_country_id   = externalDetail.from_country_id
+      this.external.company_id        = externalDetail.company_id
+      this.external.to_warehouse_id   = externalDetail.to_warehouse_id
+      this.external.to_country_id     = externalDetail.to_country_id
+      this.external.from_warehouse_id = externalDetail.from_warehouse_id
+      this.external.from_country_id   = externalDetail.from_country_id
+      this.external.to_warehouse_name = externalDetail.to_warehouse_name
+      this.external.status            = externalDetail.status
 
-    $('#from_warehouse_id').select2({
+      this.companyName   = externalDetail.company_name
+      this.warehouseName = externalDetail.from_warehouse_name
+
+      // set products
+      externalDetail.products.forEach((value) => {
+        const products     = {
+          id                           : value.id,
+          product_id                   : value.product_id,
+          unique_code                  : value.unique_code,
+          product_packing_id           : value.product_packing_id,
+          from_warehouse_location_id   : value.from_warehouse_location_id,
+          product_name                 : value.product_name,
+          product_sku                  : value.product_sku,
+          product_packing_name         : value.product_packing_name,
+          from_warehouse_location_name : value.from_warehouse_location_name,
+          from_warehouse_location_level: value.from_warehouse_location_level,
+          expired_date                 : value.expired_date,
+          qty                          : value.qty,
+          last_stock                   : value.last_stock,
+          batch                        : value.batch,
+          description                  : value.description,
+          status                       : value.status,
+          created_at                   : value.created_at,
+          updated_at                   : value.updated_at,
+          created_by_name              : value.created_by_name,
+          updated_by_name              : value.updated_by_name,
+        }
+
+        if (value.status === STATUS_CANCEL)
+          products.is_cancel = true
+
+        this.external.products.push(products)
+
+        if (value.status !== STATUS_CANCEL)
+          this.existingUniqueCode[value.unique_code] = value.unique_code
+      })
+
+      if (externalDetail.etd !== '' && externalDetail.etd !== '0000-00-00 00:00:00')
+        $('#etd').val(moment(externalDetail.etd).format('DD/MM/YYYY HH:mm'))
+      if (externalDetail.eta !== '' && externalDetail.eta !== '0000-00-00 00:00:00')
+        $('#eta').val(moment(externalDetail.eta).format('DD/MM/YYYY HH:mm'))
+      if (externalDetail.order_date !== '' && externalDetail.order_date !== '0000-00-00 00:00:00')
+        $('#order_date').val(moment(externalDetail.order_date).format('DD/MM/YYYY HH:mm'))
+      if (externalDetail.shipment_date !== '' && externalDetail.shipment_date !== '0000-00-00 00:00:00')
+        $('#shipment_date').val(moment(externalDetail.shipment_date).format('DD/MM/YYYY HH:mm'))
+    } catch (error) {
+
+    }
+
+    $('#to_warehouse_id').select2({
       placeholder       : 'Select warehouse',
       minimumInputLength: 1,
       width             : '100%',
@@ -592,47 +579,12 @@ export default {
         return data.text
       },
     })
-    $('#from_warehouse_id').on('select2:select', function () {
-      const data = app.datatable.rows().data().toArray()
-      if (data.length === 0)
-        app.fromWarehouseIdBefore = $(this).val()
-    })
-    $('#from_warehouse_id').on('change', function () {
+    const newOptionToWarehouse = new Option(this.external.to_warehouse_name, this.external.to_warehouse_id, true, true)
+    newOptionToWarehouse.setAttribute('data-country-id', this.external.from_country_id)
+    $('#to_warehouse_id').append(newOptionToWarehouse).trigger('change')
+    $('#to_warehouse_id').on('change', function () {
       validator.element($(this))
-      const data = app.datatable.rows().data().toArray()
-      if (data.length !== 0 && app.isRestore === false) {
-        // eslint-disable-next-line no-undef
-        swal.fire({
-          title             : 'Are you sure?',
-          text              : 'If you change warehouse, all product will be deleted',
-          type              : 'question',
-          showCancelButton  : true,
-          buttonsStyling    : false,
-          confirmButtonClass: 'btn btn-success',
-          cancelButtonClass : 'btn btn-default',
-        }).then(function (result) {
-          if (result.value) {
-            app.existingUniqueCode    = []
-            app.datatable.clear().draw()
-            app.fromWarehouseIdBefore = $('#from_warehouse_id').val()
-          } else {
-            app.isRestore = true
-            $('#from_warehouse_id').select2('val', app.fromWarehouseIdBefore)
-            setTimeout(function () { app.isRestore = false }, 500)
-          }
-        })
-        return false
-      }
     })
-
-    await this.$store.dispatch('region/getCountries')
-    this.countries = this.$store.getters['region/getCountries']
-    $('#to_country_id').select2({
-      placeholder: 'Select a country',
-      allowClear : true,
-      data       : this.countries,
-    })
-    $('#to_country_id').val(this.outgoing.to_country_id).trigger('change')
 
     $('#etd, #eta').datetimepicker({
       todayHighlight: true,
@@ -654,26 +606,16 @@ export default {
       minuteStep    : 1,
     })
 
-    $('#transport_type').select2({
-      placeholder: 'Select a transport type',
-      allowClear : true,
-      data       : TRANSPORT_TYPE,
-    })
-    $('#transport_type').val(this.outgoing.transport_type).trigger('change')
-    $('#transport_type').on('change', function () {
-      app.outgoing.transport_type = $(this).val()
-    })
-
-    const validator = $('#outgoing_form').validate({
+    const validator = $('#external_form').validate({
       // define validation rules
       rules: {
         order_no         : { required: true },
         company_id       : { required: true },
         from_warehouse_id: { required: true },
+        to_warehouse_id  : { required: true },
         eta              : { required: true },
         etd              : { required: true },
         order_date       : { required: true },
-        transport_type   : { required: true },
       },
       invalidHandler: function (event, validator) {
         // eslint-disable-next-line no-undef
@@ -686,7 +628,7 @@ export default {
           // eslint-disable-next-line no-undef
           swal.fire({
             title             : 'Error!',
-            text              : 'Please add outgoing product type',
+            text              : 'Please add external product type',
             type              : 'error',
             buttonsStyling    : false,
             confirmButtonClass: 'btn btn-danger',
@@ -706,7 +648,7 @@ export default {
           cancelButtonClass : 'btn btn-default',
         }).then(function (result) {
           if (result.value) {
-            app.addOutgoing(data)
+            app.editExternal(data)
             app.formChanged = false
           }
         })
@@ -738,6 +680,7 @@ export default {
       app.setUniqueValue($('#product_id').val(), $('#product_packing_id').val(), $('#from_warehouse_location_id').val())
     })
     $('#product_modal').on('shown.bs.modal', function () {
+      app.modalHasOpen = true
       $('#product_id').select2({
         placeholder       : 'Select product',
         minimumInputLength: 1,
@@ -746,7 +689,7 @@ export default {
         ajax              : {
           type: 'GET',
           url : function () {
-            return `/api/product/select?id_company=${$('#company_id').val()}`
+            return `/api/product/select?id_company=${app.external.company_id}`
           },
           cache         : true,
           processResults: function (data) {
@@ -802,7 +745,7 @@ export default {
         ajax              : {
           type: 'GET',
           url : function () {
-            return `/api/location/select-by-product?id_warehouse=${$('#from_warehouse_id').val()}&product_id=${$('#product_id').val()}&product_packing_id=${$('#product_packing_id').val()}`
+            return `/api/location/select-by-product?id_warehouse=${app.external.from_warehouse_id}&product_id=${$('#product_id').val()}&product_packing_id=${$('#product_packing_id').val()}`
           },
           cache         : true,
           processResults: function (data) {
@@ -817,6 +760,14 @@ export default {
           },
         },
       })
+
+      if (app.isEditExisting === true) {
+        $('#product_id').attr('disabled', true)
+        $('#product_packing_id').attr('disabled', true)
+        $('#from_warehouse_location_id').attr('disabled', true)
+        $('#unique_code').attr('disabled', true)
+      } else
+        $('#product_id').attr('disabled', false)
     })
     $('#product_modal').on('hidden.bs.modal', function () {
       app.clearForm()
@@ -829,20 +780,59 @@ export default {
       paging    : false,
       info      : false,
       searching : false,
-      data      : app.outgoing.products,
+      data      : this.external.products,
       columns   : [
         { data: 'product_sku' },
         { data: 'unique_code' },
         { data: 'product_name' },
-        { data: 'packing_name' },
+        { data: 'product_packing_name' },
         { data: 'qty' },
-        { data: 'location_name' },
+        { data: 'from_warehouse_location_name' },
         { data: 'batch' },
         { data: 'expired_date' },
         { data: 'description' },
+        { data: 'status' },
+        { data: 'created_at' },
+        { data: 'updated_at' },
         { data: 'actions', responsivePriority: -1 },
       ],
+      drawCallback: function () {
+        $('.status-open').click(function () {
+          const rowData = app.datatable.row($(this).data('index')).data()
+          app.updateStatus(STATUS_OPEN, $(this).data('index'), rowData)
+        })
+        $('.status-block').click(function () {
+          const rowData = app.datatable.row($(this).data('index')).data()
+          app.updateStatus(STATUS_BLOCK, $(this).data('index'), rowData)
+        })
+        $('.status-pick').click(function () {
+          const rowData = app.datatable.row($(this).data('index')).data()
+          app.updateStatus(STATUS_PICK, $(this).data('index'), rowData)
+        })
+        $('.status-pack').click(function () {
+          const rowData = app.datatable.row($(this).data('index')).data()
+          app.updateStatus(STATUS_PACK, $(this).data('index'), rowData)
+        })
+        $('.status-ship').click(function () {
+          const rowData = app.datatable.row($(this).data('index')).data()
+          app.updateStatus(STATUS_READY_SHIPING, $(this).data('index'), rowData)
+        })
+        $('.status-cancel').click(function () {
+          const rowData = app.datatable.row($(this).data('index')).data()
+          app.updateStatus(STATUS_CANCEL, $(this).data('index'), rowData)
+        })
+      },
       columnDefs: [
+        {
+          targets  : 'location_name',
+          className: 'dt-center',
+          render   : function (data, type, full, meta) {
+            if (full.id === 0 || full.from_warehouse_location_level === undefined)
+              return data
+            else
+              return `${data} - Level ${full.from_warehouse_location_level}`
+          },
+        },
         {
           targets  : 'expired_date',
           className: 'dt-center',
@@ -854,14 +844,73 @@ export default {
           },
         },
         {
+          targets: 'created_at',
+          render : function (data, type, full, meta) {
+            if (data !== '')
+              return `${moment(data).format('DD/MM/Y HH:mm:ss')}<br>${full.created_by_name}`
+            else
+              return data
+          },
+        },
+        {
+          targets: 'updated_at',
+          render : function (data, type, full, meta) {
+            if (data !== '')
+              return `${moment(data).format('DD/MM/Y HH:mm:ss')}<br>${full.updated_by_name}`
+            else
+              return data
+          },
+        },
+        {
           targets: 'actions',
           render : function (data, type, full, meta) {
-            return `<a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit">
-                      <i class="la la-edit"></i>
-                    </a>
-                    <a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Delete">
-                      <i class="la la-trash"></i>
-                    </a>`
+            if (full.is_cancel !== undefined)
+              return ''
+
+            let additionalButton
+            if (full.id === 0)
+              additionalButton = `<a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Delete"><i class="la la-trash"></i></a>`
+            else {
+              let openButton   = ''
+              let blockButton  = ''
+              let pickButton   = ''
+              let packButton   = ''
+              let shipButton   = ''
+              let cancelButton = ''
+              if (full.status !== STATUS_OPEN)
+                openButton = `<a class="dropdown-item status-open" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-folder-open"></i> Open</a>`
+              if (full.status !== STATUS_BLOCK)
+                blockButton = `<a class="dropdown-item status-block" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-list"></i> Block</a>`
+              if (full.status !== STATUS_PICK)
+                pickButton = `<a class="dropdown-item status-pick" data-index="${meta.row}" href="javascript:void(0)"><i class="fa flaticon-cart"></i> Pick</a>`
+              if (full.status !== STATUS_PACK)
+                packButton = `<a class="dropdown-item status-pack" data-index="${meta.row}" href="javascript:void(0)"><i class="fa flaticon2-delivery-package"></i> Pack</a>`
+              if (full.status !== STATUS_READY_SHIPING)
+                shipButton = `<a class="dropdown-item status-ship" data-index="${meta.row}" href="javascript:void(0)"><i class="fa flaticon2-box"></i> Ready For Ship</a>`
+              if (full.status !== STATUS_CANCEL)
+                cancelButton     = `<a class="dropdown-item status-cancel" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-times-circle"></i> Cancel Job</a>`
+              additionalButton = `<span class="dropdown">
+                                      <a href="javascript:void(0)" class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="dropdown" aria-expanded="true">
+                                        <i class="la la-ellipsis-h"></i>
+                                      </a>
+                                      <div class="dropdown-menu dropdown-menu-right" rolw="menu">
+                                          ${openButton}${blockButton}${pickButton}${packButton}${shipButton}${cancelButton}
+                                      </div>
+                                  </span>`
+            }
+            return `<a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit"><i class="la la-edit"></i></a>
+                    ${additionalButton}`
+          },
+        },
+        {
+          targets  : 'status',
+          className: 'dt-center',
+          render   : function (data, type, full, meta) {
+            for (const statusIndex in EXTERNAL_STATUS) {
+              if (data === EXTERNAL_STATUS[statusIndex].id)
+                return `<span class="kt-badge kt-badge--${EXTERNAL_STATUS[statusIndex].class} kt-badge--inline">${EXTERNAL_STATUS[statusIndex].text}</span>`
+            }
+            return data
           },
         },
       ],
@@ -878,12 +927,38 @@ export default {
     $('#product_table').on('click', '.la-edit', function () {
       const rowData           = app.datatable.row($(this).parents('tr')).data()
       app.productPackingId    = rowData.product_packing_id
+      app.rowId               = rowData.id
+      app.statusProduct       = rowData.status
+      app.createdAt           = rowData.created_at
+      app.updateAt            = rowData.updated_at
+      app.createdByName       = rowData.created_by_name
+      app.updatedByName       = rowData.updated_by_name
       app.warehouseLocationId = rowData.from_warehouse_location_id
       app.uniqueCode          = rowData.unique_code
       app.uniqCodeBefore      = rowData.unique_code
-      $('#product_id').val(rowData.product_id).trigger('change')
+      app.productId           = rowData.product_id
+
+      const newOptionProduct  = new Option(rowData.product_name, rowData.product_id, true, true)
+      newOptionProduct.setAttribute('data-product-sku', rowData.product_sku)
+      $('#product_id').append(newOptionProduct).trigger('change')
+
+      const locationName      = `${rowData.from_warehouse_location_name} - Level ${rowData.from_warehouse_location_level}`
+      const newOptionLocation = new Option(locationName, rowData.from_warehouse_location_id, true, true)
+      newOptionLocation.setAttribute('data-location-name', rowData.from_warehouse_location_name)
+      newOptionLocation.setAttribute('data-location-level', rowData.from_warehouse_location_level)
+      $('#from_warehouse_location_id').append(newOptionLocation).trigger('change')
+
+      if (app.rowId !== 0)
+        app.isEditExisting = true
+
+      if (app.modalHasOpen === false) {
+        app.qtyPacking = rowData.qty + rowData.last_stock
+        $('#qty_packing').val(app.qtyPacking)
+      }
+
       $('#description_modal').val(rowData.description)
       $('#qty').val(rowData.qty)
+
       $('#product_modal').modal('show')
       app.rowIndex            = app.datatable.row($(this).parents('tr')).index()
     })
@@ -893,6 +968,7 @@ export default {
       rules: {
         product_id                : { required: true },
         product_packing_id        : { required: true },
+        to_warehouse_location_id  : { required: true },
         from_warehouse_location_id: { required: true },
         unique_code               : { required: true },
         qty                       : {
@@ -922,25 +998,25 @@ export default {
   },
   methods: {
     openModal () {
-      if ($('#company_id').val() === '' || $('#from_warehouse_id').val() === '') {
-        // eslint-disable-next-line no-undef
-        swal.fire({
-          title             : 'Warning!',
-          text              : 'Please select company and warehouse',
-          type              : 'warning',
-          buttonsStyling    : false,
-          confirmButtonClass: 'btn btn-warning',
-        })
-        return false
-      }
+      $('#product_id').attr('disabled', false)
       $('#product_modal').modal('show')
     },
     async setPackingValue (productId) {
       if (productId) {
         await this.getProductPacking(productId)
         $('#product_packing_id').prop('disabled', false)
-        if (this.productPackingId !== null)
+        if (this.productPackingId !== null) {
           $('#product_packing_id').val(this.productPackingId).trigger('change')
+          if (this.isEditExisting === true) {
+            setTimeout(function () {
+              $('#product_id').attr('disabled', true)
+              $('#product_packing_id').attr('disabled', true)
+              $('#from_warehouse_location_id').attr('disabled', true)
+              $('#unique_code').attr('disabled', true)
+            }, 100)
+          } else
+            $('#product_id').attr('disabled', false)
+        }
       } else {
         $('#product_packing_id').val(null).trigger('change')
         $('#product_packing_id').prop('disabled', true)
@@ -961,18 +1037,46 @@ export default {
           this.productPackingSelect.push(dataTemporary)
         })
       }
+
+      if (this.productPackingOption === null) {
+        const customAdapter       = $.fn.select2.amd.require('select2/data/customAdapter')
+        this.productPackingOption = $('#product_packing_id').select2({
+          placeholder: 'Select a product packing',
+          allowClear : true,
+          dataAdapter: customAdapter,
+          data       : this.productPackingSelect,
+        })
+      }
       this.productPackingOption.data('select2').dataAdapter.updateOptions(this.productPackingSelect)
     },
     async setUniqueValue (productId, packingId, locationId) {
       if (productId && packingId && locationId) {
         await this.getUniqueCode(productId, packingId, locationId)
         $('#unique_code').prop('disabled', false)
-        if (this.uniqueCode !== null)
+        if (this.uniqueCode !== null) {
           $('#unique_code').val(this.uniqueCode).trigger('change')
+          if (this.isEditExisting === true) {
+            setTimeout(function () {
+              $('#product_id').attr('disabled', true)
+              $('#product_packing_id').attr('disabled', true)
+              $('#from_warehouse_location_id').attr('disabled', true)
+              $('#unique_code').attr('disabled', true)
+            }, 100)
+          } else
+            $('#product_id').attr('disabled', false)
+
+          if (this.rowIndex !== null) {
+            const rowData         = this.datatable.row(this.rowIndex).data()
+            const newOptionUnique = new Option(rowData.unique_code, rowData.unique_code, true, true)
+            newOptionUnique.setAttribute('data-qty', (rowData.qty + rowData.last_stock))
+            newOptionUnique.setAttribute('data-batch', rowData.batch)
+            newOptionUnique.setAttribute('data-expired-date', rowData.expired_date)
+            $('#unique_code').append(newOptionUnique).trigger('change')
+          }
+        }
       } else {
         $('#unique_code').val(null).trigger('change')
         $('#unique_code').prop('disabled', true)
-        this.uniqueCode = null
       }
     },
     async getUniqueCode (productId, packingId, locationId) {
@@ -985,7 +1089,7 @@ export default {
       this.uniqueCodeSelect = [{ id: '', text: '' }]
       if (data !== null) {
         data.forEach((value) => {
-          if (app.existingUniqueCode[value.unique_code] === undefined || (app.rowIndex !== null && app.existingUniqueCode[value.unique_code] !== undefined)) {
+          if (app.existingUniqueCode[value.unique_code] === undefined) {
             dataTemporary = {
               id          : value.unique_code,
               text        : value.unique_code,
@@ -995,6 +1099,16 @@ export default {
             }
             this.uniqueCodeSelect.push(dataTemporary)
           }
+        })
+      }
+
+      if (this.uniqueCodeOption === null) {
+        const customAdapter   = $.fn.select2.amd.require('select2/data/customAdapter')
+        this.uniqueCodeOption = $('#unique_code').select2({
+          placeholder: 'Select a unique code',
+          allowClear : true,
+          dataAdapter: customAdapter,
+          data       : this.uniqueCodeSelect,
         })
       }
       this.uniqueCodeOption.data('select2').dataAdapter.updateOptions(this.uniqueCodeSelect)
@@ -1011,22 +1125,38 @@ export default {
       }
     },
     saveProduct () {
-      const uniqueCode = $('#unique_code').val()
+      let uniqueCode          = $('#unique_code').val()
+      let productId           = parseInt($('#product_id').val())
+      let productPackingId    = parseInt($('#product_packing_id').val())
+      let warehouseLocationId = parseInt($('#from_warehouse_location_id').val())
+      if (this.isEditExisting === true) {
+        uniqueCode          = this.uniqueCode
+        productId           = this.productId
+        productPackingId    = this.productPackingId
+        warehouseLocationId = this.warehouseLocationId
+      }
 
       const product = {
-        product_id                : parseInt($('#product_id').val()),
-        product_packing_id        : parseInt($('#product_packing_id').val()),
-        from_warehouse_location_id: parseInt($('#from_warehouse_location_id').val()),
-        to_warehouse_location_id  : 0,
-        unique_code               : $('#unique_code').val(),
-        product_name              : $('#product_id option:selected').text(),
-        product_sku               : $('#product_id').find(':selected').data('product-sku'),
-        packing_name              : $('#product_packing_id option:selected').text(),
-        location_name             : $('#from_warehouse_location_id option:selected').text(),
-        expired_date              : $('#unique_code').find(':selected').data('expired_date'),
-        qty                       : parseInt($('#qty').val()),
-        batch                     : $('#unique_code').find(':selected').data('batch'),
-        description               : $('#description_modal').val(),
+        id                          : this.rowId,
+        product_id                  : productId,
+        product_packing_id          : productPackingId,
+        from_warehouse_location_id  : warehouseLocationId,
+        to_warehouse_location_id    : 0,
+        unique_code                 : uniqueCode,
+        product_name                : $('#product_id option:selected').text(),
+        product_sku                 : $('#product_id').find(':selected').data('product-sku'),
+        product_packing_name        : $('#product_packing_id option:selected').text(),
+        from_warehouse_location_name: $('#from_warehouse_location_id option:selected').text(),
+        expired_date                : $('#unique_code').find(':selected').data('expired-date'),
+        qty                         : parseInt($('#qty').val()),
+        last_stock                  : this.qtyPacking - parseInt($('#qty').val()),
+        batch                       : $('#unique_code').find(':selected').data('batch'),
+        description                 : $('#description_modal').val(),
+        status                      : this.statusProduct,
+        created_at                  : this.createdAt,
+        updated_at                  : this.updateAt,
+        created_by_name             : this.createdByName,
+        updated_by_name             : this.updatedByName,
       }
       if (this.rowIndex === null)
         this.datatable.row.add(product).draw().node()
@@ -1046,38 +1176,49 @@ export default {
       this.warehouseLocationId = null
       this.uniqueCode          = null
       this.uniqCodeBefore      = null
+      this.rowId               = 0
+      this.isEditExisting      = false
+      this.statusProduct       = STATUS_OPEN
+      this.createdAt           = ''
+      this.updateAt            = ''
+      this.createdByName       = ''
+      this.updatedByName       = ''
     },
     setDataPost (data) {
-      this.outgoing.company_id = parseInt($('#company_id').val())
       if ($('#etd').val() !== '')
-        this.outgoing.etd = moment($('#etd').val(), 'DD/MM/YYYY HH:mm').format('Y-MM-DD HH:mm:ss')
+        this.external.etd = moment($('#etd').val(), 'DD/MM/YYYY HH:mm').format('Y-MM-DD HH:mm:ss')
       if ($('#eta').val() !== '')
-        this.outgoing.eta = moment($('#eta').val(), 'DD/MM/YYYY HH:mm').format('Y-MM-DD HH:mm:ss')
+        this.external.eta = moment($('#eta').val(), 'DD/MM/YYYY HH:mm').format('Y-MM-DD HH:mm:ss')
       if ($('#order_date').val() !== '')
-        this.outgoing.order_date = moment($('#order_date').val(), 'DD/MM/YYYY HH:mm').format('Y-MM-DD HH:mm:ss')
+        this.external.order_date = moment($('#order_date').val(), 'DD/MM/YYYY HH:mm').format('Y-MM-DD HH:mm:ss')
       if ($('#shipment_date').val() !== '')
-        this.outgoing.shipment_date = moment($('#shipment_date').val(), 'DD/MM/YYYY HH:mm').format('Y-MM-DD HH:mm:ss')
-      this.outgoing.to_country_id     = parseInt($('#to_country_id').val())
-      this.outgoing.from_country_id   = parseInt($('#from_warehouse_id').find(':selected').data('country-id'))
-      this.outgoing.from_warehouse_id = parseInt($('#from_warehouse_id').val())
-      this.outgoing.products          = data
+        this.external.shipment_date = moment($('#shipment_date').val(), 'DD/MM/YYYY HH:mm').format('Y-MM-DD HH:mm:ss')
+      this.external.to_country_id   = parseInt($('#to_warehouse_id').find(':selected').data('country-id'))
+      this.external.to_warehouse_id = parseInt($('#to_warehouse_id').val())
+
+      const dataToPost       = []
+      data.forEach((value) => {
+        if (value.is_cancel === undefined)
+          dataToPost.push(value)
+      })
+      this.external.products = data
     },
-    async addOutgoing (data) {
-      if ($('#outgoing_form').valid()) {
+    async editExternal (data) {
+      if ($('#external_form').valid()) {
         await this.setDataPost(data)
         try {
           this.$nuxt.$loading.start()
-          await this.$store.dispatch('outgoing/addOutgoing', { data: this.outgoing })
-          const data      = this.$store.getters['outgoing/getAddSuccess']
+          await this.$store.dispatch('external/editExternal', { idExternal: atob(this.$route.params.id), data: this.external })
+          const data      = this.$store.getters['external/getEditExternal']
           const parameter = {
             alertClass: 'alert-success',
-            message   : `Job outgoing ${data.result.job_no} has been added`,
+            message   : `Job external transfer ${data.result.job_no} has been edited`,
           }
           this.$nuxt.$emit('alertShow', parameter)
           this.$nuxt.$loading.finish()
           // eslint-disable-next-line no-undef
           KTUtil.scrollTop()
-          setTimeout(function () { window.location.href = '/outgoing' }, 3000)
+          setTimeout(function () { window.location.href = '/transfer/external' }, 3000)
         } catch (error) {
           const parameter = {
             alertClass: 'alert-danger',
@@ -1089,6 +1230,11 @@ export default {
           KTUtil.scrollTop()
         }
       }
+    },
+    async updateStatus (statusId, rowIndex, data) {
+      this.formChanged = true
+      data.status      = statusId
+      setTimeout(() => this.datatable.row(rowIndex).data(data).draw(), 100)
     },
   },
 }

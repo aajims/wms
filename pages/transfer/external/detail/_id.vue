@@ -13,15 +13,15 @@
         <div class="kt-portlet__head kt-portlet__head--lg">
           <div class="kt-portlet__head-label">
             <span class="kt-portlet__head-icon">
-              <i class="kt-font-brand flaticon-edit-1" />
+              <i class="kt-font-brand flaticon-clipboard" />
             </span>
             <h3 class="kt-portlet__head-title">
-              Outgoing Stock Detail
+              External Transfer Detail
             </h3>
           </div>
           <div class="kt-portlet__head-toolbar">
             <a
-              href="/outgoing"
+              href="/transfer/external/"
               class="btn btn-clean kt-margin-r-10"
             >
               <i class="la la-arrow-left" />
@@ -34,7 +34,7 @@
             <div class="col-lg-4">
               <label>Job No.</label>
               <input
-                :value="outgoing.job_no"
+                :value="external.job_no"
                 type="text"
                 class="form-control"
                 readonly
@@ -43,7 +43,7 @@
             <div class="col-lg-4">
               <label>Unique Code</label>
               <input
-                :value="outgoing.unique_code"
+                :value="external.unique_code"
                 type="text"
                 class="form-control"
                 readonly
@@ -55,7 +55,7 @@
             <div class="col-lg-4 margin-top-20">
               <label>Order No.</label>
               <input
-                :value="outgoing.order_no"
+                :value="external.order_no"
                 type="text"
                 class="form-control"
                 readonly
@@ -64,7 +64,7 @@
             <div class="col-lg-4 margin-top-20">
               <label>Company</label>
               <input
-                :value="outgoing.company_name"
+                :value="external.company_name"
                 type="text"
                 class="form-control"
                 readonly
@@ -73,7 +73,16 @@
             <div class="col-lg-4 margin-top-20">
               <label>From Warehouse</label>
               <input
-                :value="outgoing.from_warehouse_name"
+                :value="external.from_warehouse_name"
+                type="text"
+                class="form-control"
+                readonly
+              >
+            </div>
+            <div class="col-lg-4 margin-top-20">
+              <label>To Warehouse</label>
+              <input
+                :value="external.to_warehouse_name"
                 type="text"
                 class="form-control"
                 readonly
@@ -87,7 +96,6 @@
                 <div class="input-group date">
                   <input
                     :value="etd"
-                    type="text"
                     class="form-control"
                     readonly
                   >
@@ -97,7 +105,6 @@
                     </span>
                   </div>
                 </div>
-                <span class="form-text text-muted" />
               </div>
             </div>
             <div class="col-lg-4 margin-top-20">
@@ -108,28 +115,6 @@
                 <div class="input-group date">
                   <input
                     :value="eta"
-                    type="text"
-                    class="form-control"
-                    readonly
-                  >
-                  <div class="input-group-append">
-                    <span class="input-group-text">
-                      <i class="la la-calendar" />
-                    </span>
-                  </div>
-                </div>
-                <span class="form-text text-muted" />
-              </div>
-            </div>
-            <div class="col-lg-4 margin-top-20">
-              <div class="kt-form__label">
-                <label>Shipment Date</label>
-              </div>
-              <div class="kt-form__control">
-                <div class="input-group date">
-                  <input
-                    :value="shipmentDate"
-                    type="text"
                     class="form-control"
                     readonly
                   >
@@ -149,7 +134,6 @@
                 <div class="input-group date">
                   <input
                     :value="orderDate"
-                    type="text"
                     class="form-control"
                     readonly
                   >
@@ -159,93 +143,86 @@
                     </span>
                   </div>
                 </div>
-                <span class="form-text text-muted" />
               </div>
             </div>
             <div class="col-lg-4 margin-top-20">
               <div class="kt-form__label">
-                <label>To Country</label>
+                <label>Shipment Date</label>
               </div>
+              <div class="kt-form__control">
+                <div class="input-group date">
+                  <input
+                    :value="shipmentDate"
+                    class="form-control"
+                    readonly
+                  >
+                  <div class="input-group-append">
+                    <span class="input-group-text">
+                      <i class="la la-calendar" />
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4 margin-top-20">
+              <label>Transport Number</label>
               <input
-                :value="outgoing.to_country_name"
+                :value="external.transport_number"
                 type="text"
                 class="form-control"
                 readonly
               >
             </div>
             <div class="col-lg-4 margin-top-20">
-              <label>To</label>
+              <label for="description">Description</label>
               <textarea
-                :value="outgoing.from"
+                :value="external.description"
                 class="form-control"
                 rows="3"
                 readonly
               />
             </div>
             <div class="col-lg-4 margin-top-20">
-              <div class="kt-form__label">
-                <label>Transport Type</label>
-              </div>
+              <label>Created Date</label>
               <input
-                :value="transportType"
+                :value="createdDate"
                 type="text"
                 class="form-control"
                 readonly
               >
             </div>
-            <div
-              v-if="outgoing.transport_type === 'truck'"
-              class="col-lg-4 margin-top-20"
-            >
-              <label>Transport Number</label>
+            <div class="col-lg-4 margin-top-20">
+              <label>Created By</label>
               <input
-                :value="outgoing.transport_number"
+                :value="external.created_by_name"
                 type="text"
                 class="form-control"
-                name="transport_number"
-                placeholder="Enter transport number"
-              >
-            </div>
-            <div
-              v-if="outgoing.transport_type === 'air-freight'"
-              class="col-lg-4 margin-top-20"
-            >
-              <label>Flight</label>
-              <input
-                :value="outgoing.flight"
-                type="text"
-                class="form-control"
-                name="flight"
-                placeholder="Enter flight"
+                readonly
               >
             </div>
             <div class="col-lg-4 margin-top-20">
-              <label>Custom Permit</label>
+              <label>Updated Date</label>
               <input
-                :value="outgoing.custom_permit"
+                :value="updatedDate"
                 type="text"
                 class="form-control"
-                name="custom_permit"
-                placeholder="Enter custom permit"
+                readonly
               >
             </div>
             <div class="col-lg-4 margin-top-20">
-              <label>Cargo Insurance</label>
+              <label>Updated By</label>
               <input
-                :value="outgoing.cargo_insurance"
+                :value="external.updated_by_name"
                 type="text"
                 class="form-control"
-                name="cargo_insurance"
-                placeholder="Enter cargo insurance"
+                readonly
               >
             </div>
             <div class="col-lg-4 margin-top-20">
-              <label for="description">Description</label>
-              <textarea
-                :value="outgoing.description"
-                class="form-control"
-                rows="4"
-              />
+              <label>Status</label><br>
+              <span
+                :class="`btn btn-${status.class}`"
+              > {{ status.text }} </span>
             </div>
           </div>
           <div class="kt-separator kt-separator--border-dashed kt-separator--space-xs" />
@@ -263,8 +240,8 @@
                     <th>Product</th>
                     <th>Packing</th>
                     <th>Quantity</th>
-                    <th class="location_name">
-                      Location
+                    <th class="from_warehouse_location_name">
+                      From Location
                     </th>
                     <th>Batch</th>
                     <th class="expired_date">
@@ -302,45 +279,42 @@
 
 <script>
 import moment from 'moment'
-import { OUTGOING_STATUS, JOB_STATUS } from '@/utils/constants'
+import { EXTERNAL_STATUS, JOB_STATUS } from '@/utils/constants'
 
 export default {
   data () {
     return {
-      outgoing     : [],
-      datatable    : [],
-      etd          : '',
-      eta          : '',
-      orderDate    : '',
-      shipmentDate : '',
-      createdDate  : '',
-      updatedDate  : '',
-      status       : [],
-      transportType: [],
+      external    : [],
+      datatable   : [],
+      etd         : '',
+      eta         : '',
+      orderDate   : '',
+      shipmentDate: '',
+      createdDate : '',
+      updatedDate : '',
+      status      : [],
     }
   },
   async mounted () {
     const app = this
     try {
-      await this.$store.dispatch('outgoing/getOutgoingDetail', { idOutgoing: atob(this.$route.params.id) })
-      this.outgoing    = this.$store.getters['outgoing/getOutgoingDetail'].result
-      this.etd         = moment(this.outgoing.etd).format('DD/MM/Y HH:mm')
-      this.eta         = moment(this.outgoing.eta).format('DD/MM/Y HH:mm')
-      this.orderDate   = moment(this.outgoing.order_date).format('DD/MM/Y HH:mm')
-      this.createdDate = moment(this.outgoing.created_at).format('DD/MM/Y HH:mm:ss')
-      if (this.outgoing.shipment_date !== '' && this.outgoing.shipment_date !== '0000-00-00 00:00:00')
-        this.shipmentDate = moment(this.outgoing.shipment_date).format('DD/MM/Y HH:mm')
-      if (this.outgoing.updated_at !== '' && this.outgoing.updated_at !== null)
-        this.updatedDate      = moment(this.outgoing.updated_at).format('DD/MM/Y HH:mm:ss')
+      await this.$store.dispatch('external/getExternalDetail', { idExternal: atob(this.$route.params.id) })
+      this.external    = this.$store.getters['external/getExternalDetail'].result
+      this.etd         = moment(this.external.etd).format('DD/MM/Y HH:mm')
+      this.eta         = moment(this.external.eta).format('DD/MM/Y HH:mm')
+      this.orderDate   = moment(this.external.order_date).format('DD/MM/Y HH:mm')
+      this.createdDate = moment(this.external.created_at).format('DD/MM/Y HH:mm:ss')
+      if (this.external.shipment_date !== '' && this.external.shipment_date !== '0000-00-00 00:00:00')
+        this.shipmentDate = moment(this.external.shipment_date).format('DD/MM/Y HH:mm')
+      if (this.external.updated_at !== '' && this.external.updated_at !== null)
+        this.updatedDate      = moment(this.external.updated_at).format('DD/MM/Y HH:mm:ss')
       for (const statusIndex in JOB_STATUS) {
-        if (this.outgoing.status === JOB_STATUS[statusIndex].id)
+        if (this.external.status === JOB_STATUS[statusIndex].id)
           this.status = JOB_STATUS[statusIndex]
       }
-      this.transportType = `${this.outgoing.transport_type.charAt(0).toUpperCase()}${this.outgoing.transport_type.slice(1)}`
     } catch (error) {
 
     }
-
     // datatable
     this.datatable = $('#product_table').DataTable({
       responsive: true,
@@ -348,7 +322,7 @@ export default {
       paging    : false,
       info      : false,
       searching : false,
-      data      : app.outgoing.products,
+      data      : app.external.products,
       columns   : [
         { data: 'product_sku' },
         { data: 'unique_code' },
@@ -365,23 +339,12 @@ export default {
       ],
       columnDefs: [
         {
-          targets  : 'location_name',
-          className: 'dt-center',
-          render   : function (data, type, full, meta) {
-            if (full.id === 0 || full.from_warehouse_location_level === undefined)
+          targets: 'updated_at',
+          render : function (data, type, full, meta) {
+            if (data !== '')
+              return `${moment(data).format('DD/MM/Y HH:mm:ss')}<br>${full.updated_by_name}`
+            else
               return data
-            else
-              return `${data} - Level ${full.from_warehouse_location_level}`
-          },
-        },
-        {
-          targets  : 'expired_date',
-          className: 'dt-center',
-          render   : function (data, type, full, meta) {
-            if (data !== '' && data !== '0000-00-00 00:00:00')
-              return moment(data).format('DD/MM/Y')
-            else
-              return ''
           },
         },
         {
@@ -394,21 +357,27 @@ export default {
           },
         },
         {
-          targets: 'updated_at',
+          targets: 'from_warehouse_location_name',
           render : function (data, type, full, meta) {
-            if (data !== '')
-              return `${moment(data).format('DD/MM/Y HH:mm:ss')}<br>${full.updated_by_name}`
+            return `${data} - Level ${full.from_warehouse_location_level}`
+          },
+        },
+        {
+          targets: 'expired_date',
+          render : function (data, type, full, meta) {
+            if (data !== '0000-00-00 00:00:00')
+              return moment(data).format('DD/MM/Y')
             else
-              return data
+              return ''
           },
         },
         {
           targets  : 'status',
           className: 'dt-center',
           render   : function (data, type, full, meta) {
-            for (const statusIndex in OUTGOING_STATUS) {
-              if (data === OUTGOING_STATUS[statusIndex].id)
-                return `<span class="kt-badge kt-badge--${OUTGOING_STATUS[statusIndex].class} kt-badge--inline">${OUTGOING_STATUS[statusIndex].text}</span>`
+            for (const statusIndex in EXTERNAL_STATUS) {
+              if (data === EXTERNAL_STATUS[statusIndex].id)
+                return `<span class="kt-badge kt-badge--${EXTERNAL_STATUS[statusIndex].class} kt-badge--inline">${EXTERNAL_STATUS[statusIndex].text}</span>`
             }
             return data
           },

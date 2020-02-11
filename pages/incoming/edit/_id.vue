@@ -178,6 +178,7 @@
                       </span>
                     </div>
                   </div>
+                  <span class="form-text text-muted" />
                 </div>
               </div>
               <div class="col-lg-4 margin-top-20">
@@ -294,7 +295,7 @@
                 <!--begin: Datatable -->
                 <table
                   id="product_table"
-                  class="table table-hover table-checkable nowrap"
+                  class="table table-hover table-checkable"
                 >
                   <thead>
                     <tr>
@@ -313,10 +314,10 @@
                       <th class="status">
                         Status
                       </th>
-                      <th class="created">
+                      <th class="created_at">
                         Created
                       </th>
-                      <th class="updated">
+                      <th class="updated_at">
                         Updated
                       </th>
                       <th class="actions">
@@ -926,10 +927,10 @@ export default {
           targets  : 'expired_date',
           className: 'dt-center',
           render   : function (data, type, full, meta) {
-            if (data !== '')
+            if (data !== '' && data !== '0000-00-00 00:00:00')
               return moment(data).format('DD/MM/Y')
             else
-              return data
+              return ''
           },
         },
         {
