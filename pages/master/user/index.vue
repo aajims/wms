@@ -131,6 +131,7 @@
             <th>Name</th>
             <th>Phone</th>
             <th>Email</th>
+            <th class="status">Status</th>
             <th>Address</th>
             <th>Actions</th>
           </tr>
@@ -186,13 +187,14 @@ export default {
           d.params = app.params
         },
       },
-      order  : [[5, 'desc']],
+      order  : [[6, 'desc']],
       columns: [
         { data: 'row_number' },
         { data: 'username' },
         { data: 'full_name' },
         { data: 'phone' },
         { data: 'email' },
+        { data: 'status' },
         { data: 'address' },
         { data: 'actions', responsivePriority: -1 },
       ],
@@ -213,7 +215,7 @@ export default {
           orderable: false,
           render   : function (data, type, full, meta) {
             return `
-                  <a href="/master/user/detail/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
+                  <a href="/master/user/detail/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
                     <i class="la la-eye"></i>
                   </a>
                   <a href="/master/user/edit/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
@@ -225,7 +227,7 @@ export default {
           },
         },
         {
-          targets  : 4,
+          targets  : 'status',
           className: 'dt-center',
           render   : function (data, type, full, meta) {
             const status = {
@@ -260,7 +262,7 @@ export default {
       // eslint-disable-next-line no-undef
       swal.fire({
         title             : 'Are you sure?',
-        text              : `User "${row.name}" ${statusText}`,
+        text              : `User "${row.username}" ${statusText}`,
         type              : 'question',
         showCancelButton  : true,
         confirmButtonText : statusText,
@@ -280,7 +282,7 @@ export default {
         const data      = this.$store.getters['user/getEditUser']
         const parameter = {
           alertClass: 'alert-success',
-          message   : `User ${data.result.name} has been edited`,
+          message   : `User ${data.result.username} has been edited`,
         }
         this.$nuxt.$emit('alertShow', parameter)
         this.$nuxt.$loading.finish()

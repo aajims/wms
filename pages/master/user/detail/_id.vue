@@ -16,7 +16,7 @@
                 <i class="kt-font-brand flaticon-add" />
               </span>
               <h3 class="kt-portlet__head-title">
-                Add User
+                Detail User
               </h3>
             </div>
             <div class="kt-portlet__head-toolbar">
@@ -32,7 +32,7 @@
           <div class="kt-portlet__body">
             <div class="form-group row">
               <div class="col-lg-6">
-                <label>Username <span style="color:red">*</span></label>
+                <label>Username </label>
                 <input
                   v-model="user.username"
                   type="text"
@@ -41,20 +41,8 @@
                   disabled
                 >
               </div>
-              <div class="col-lg-6">
-                <label>Password <span style="color:red">*</span></label>
-                <input
-                  v-model="user.password"
-                  type="password"
-                  class="form-control"
-                  name="password"
-                  disabled
-                >
-              </div>
-            </div>
-            <div class="form-group row">
-              <div class="col-lg-6">
-                <label>Full Name <span style="color:red">*</span></label>
+               <div class="col-lg-6">
+                <label>Full Name </label>
                 <input
                   v-model="user.full_name"
                   type="text"
@@ -63,8 +51,10 @@
                   disabled
                 >
               </div>
+            </div>
+            <div class="form-group row">
               <div class="col-lg-6">
-                <label>Phone <span style="color:red">*</span></label>
+                <label>Phone </label>
                 <input
                   v-model="user.phone"
                   type="text"
@@ -73,10 +63,8 @@
                   disabled
                 >
               </div>
-            </div>
-            <div class="form-group row">
               <div class="col-lg-6">
-                <label>Email <span style="color:red">*</span></label>
+                <label>Email </label>
                 <input
                   v-model="user.email"
                   type="text"
@@ -85,8 +73,10 @@
                   disabled
                 >
               </div>
+            </div>
+            <div class="form-group row">
               <div class="col-lg-6">
-                <label>Address <span style="color:red">*</span></label>
+                <label>Address </label>
                 <textarea
                   v-model="user.address"
                   type="text"
@@ -99,7 +89,7 @@
             </div>
             <div class="form-group row">
               <div class="col-lg-6">
-                <label for="country">Country <span style="color:red">*</span></label>
+                <label for="country">Country </label>
                 <input
                   v-model="user.country_name"
                   type="text"
@@ -109,7 +99,7 @@
                 >
               </div>
               <div class="col-lg-6">
-                <label for="state">State <span style="color:red">*</span></label>
+                <label for="state">State </label>
                 <input
                   v-model="user.state_name"
                   type="text"
@@ -121,7 +111,7 @@
             </div>
             <div class="form-group row">
               <div class="col-lg-6">
-                <label for="city">City <span style="color:red">*</span></label>
+                <label for="city">City </label>
                 <input
                   v-model="user.city_name"
                   type="text"
@@ -131,9 +121,31 @@
                 >
               </div>
               <div class="col-lg-6">
-                <label for="district">District <span style="color:red">*</span></label>
+                <label for="district">District </label>
                 <input
                   v-model="user.district_name"
+                  type="text"
+                  class="form-control"
+                  name="state"
+                  disabled
+                >
+              </div>
+            </div>
+            <div class="form-group row">
+              <div class="col-lg-6">
+                <label for="country">Created Date </label>
+                <input
+                  v-model="createdDate"
+                  type="text"
+                  class="form-control"
+                  name="email"
+                  disabled
+                >
+              </div>
+              <div class="col-lg-6">
+                <label for="state">Created By Name </label>
+                <input
+                  v-model="user.created_by_name"
                   type="text"
                   class="form-control"
                   name="state"
@@ -159,17 +171,50 @@
                   <th>Cancel</th>
                 </tr>
               </thead>
-              <!-- <tbody>
-                <tr v-for="(row, index) in privilage" :key="index">
-                    <td>{{ No + index }}</td>
-                    <td>{{ row.module_name }}</td>
-                    <td><input type="checkbox" v-model="row.view"></td>
-                    <td><input type="checkbox" v-model="row.add"></td>
-                    <td><input type="checkbox" v-model="row.edit"></td>
-                    <td><input type="checkbox" v-model="row.delete"></td>
-                    <td><input type="checkbox" v-model="row.cancel"></td>
+              <tbody>
+                  <tr
+                  v-for="(row, index) in dataPrivilage"
+                  :key="index"
+                >
+                  <td>{{ No + index }}</td>
+                  <td>{{ row.module_name }}</td>
+                  <td>
+                    <input
+                      v-model="row.view"
+                      type="checkbox"
+                      @click="handleClick"
+                    />
+                  </td>
+                  <td>
+                    <input
+                      v-model="row.add"
+                      type="checkbox"
+                      @click="handleClick"
+                    >
+                  </td>
+                  <td>
+                    <input
+                      v-model="row.edit"
+                      type="checkbox"
+                      @click="handleClick"
+                    >
+                  </td>
+                  <td>
+                    <input
+                      v-model="row.delete"
+                      type="checkbox"
+                      @click="handleClick"
+                    >
+                  </td>
+                  <td>
+                    <input
+                      v-model="row.cancel"
+                      type="checkbox"
+                      @click="handleClick"
+                    >
+                  </td>
                 </tr>
-              </tbody> -->
+              </tbody>
             </table>
           <!--end: Datatable -->
           </div>
@@ -191,35 +236,27 @@
     export default {
         data() {
             return {
-                user   : [],
-                privilage   : [],
+                No : 1,
+                user        : [],
+                dataPrivilage   : [],
                 createdDate: '',
             }
         },
        async mounted () {
-        await this.$store.dispatch('user/getUserDetail', { idUser: this.$route.params.id })
+        await this.$store.dispatch('user/getUserDetail', { idUser: atob(this.$route.params.id) })
         this.user         = this.$store.getters['user/getUserDetail'].result
-        this.privilage    = this.$store.getters['user/getUserDetail'].result.privilage
+        this.dataPrivilage    = this.$store.getters['user/getUserDetail'].result.privilege
         this.createdDate = moment(this.user.created_at).format('DD/MM/Y HH:mm:ss')
-        console.log(this.user.privilage[i])
-        // datatable
-            this.datatable = $('#privilage_table').DataTable({
-            responsive: true,
-            ordering  : false,
-            paging    : false,
-            info      : false,
-            searching : false,
-            data      : this.user.privilage,
-            
-            columns   : [
-                { data: 'module_name' },
-                { data: 'view' },
-                { data: 'add' },
-                { data: 'edit' },
-                { data: 'cancel' },
-                { data: 'batch' },
-            ],
-         })
-       }
+       },
+       methods: {
+          handleClick(e) {
+          e.preventDefault();
+          if (this.isChecked) {    
+            this.$emit('change', false);
+          } else {
+            this.$emit('change', this.value);
+          }
+        },
+       }, 
     }
 </script>

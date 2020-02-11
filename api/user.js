@@ -102,5 +102,38 @@ app.get('/user/select', (request, response) => {
       response.status(error.response.status).send(error.response.data)
     })
   })
+
+  app.get('/user/profile', (request, response) => {
+    const token = request.cookies[`${process.env.APP_ENV}_token`]
+    axios({
+      method : 'get',
+      url    : `${process.env.API_URL}/v1/profile`,
+      headers: {
+        'Content-Type' : 'application/x-www-form-urlencoded',
+        'Authorization': `Bearer ${token}`,
+      },
+    }).then(function (responseApi) {
+      response.send(responseApi.data)
+    }).catch(function (error) {
+      response.status(error.response.status).send(error.response.data)
+    })
+  })
+
+  app.put('/user/edit-profile', (request, response) => {
+    const token = request.cookies[`${process.env.APP_ENV}_token`]
+    axios({
+      method : 'put',
+      url    : `${process.env.API_URL}/v1/profile/`,
+      headers: {
+        'Content-Type' : 'application/x-www-form-urlencoded',
+        'Authorization': `Bearer ${token}`,
+      },
+      data: request.body,
+    }).then(function (responseApi) {
+      response.send(responseApi.data)
+    }).catch(function (error) {
+      response.status(error.response.status).send(error.response.data)
+    })
+  })
   
   module.exports = app

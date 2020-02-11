@@ -1,10 +1,12 @@
 import axios from 'axios'
 
 export const state = () => ({
-  user      : null,
-  addUser   : null,
-  userDetail: null,
-  editUser  : null,
+  user        : null,
+  addUser     : null,
+  userDetail  : null,
+  editUser    : null,
+  userProfile : null,
+  editProfile : null
 })
 
 export const mutations = {
@@ -19,6 +21,12 @@ export const mutations = {
   },
   EDIT_USER (state, editUser) {
     state.editUser = editUser
+  },
+  SET_USER_PROFILE (state, userProfile) {
+    state.userProfile = userProfile
+  },
+  EDIT_PROFILE (state, editProfile) {
+    state.editProfile = editProfile
   },
 }
 
@@ -114,6 +122,49 @@ export const actions = {
         throw new Error('Network Communication Error')
     })
   },
+  async userProfile ({ commit, dispatch }) {
+    const app   = this
+    await axios({
+      method : 'get',
+      url    : '/api/user/profile',
+    }).then(function (response) {
+      if (response.status === 200 && response.data.general_response.response_status === true)
+        commit('SET_USER_PROFILE', response.data)
+      else if (response.data.general_response.response_code === 4003)
+        dispatch('removeToken', null, { root: true })
+      else
+        throw new Error(response.data.general_response.response_message)
+    }).catch(function (error) {
+      if (error.response === undefined)
+        throw error
+      else if (error.response.status === 403)
+        dispatch('removeToken', null, { root: true })
+      else
+        throw new Error('Network Communication Error')
+    })
+  },
+  async editProfile ({ commit, dispatch }, { data }) {
+    const app   = this
+    await axios({
+      method : 'put',
+      url    : `/api/user/edit-profile`,
+      data: data,
+    }).then(function (response) {
+      if (response.status === 200 && response.data.general_response.response_status === true)
+        commit('EDIT_PROFILE', response.data)
+      else if (response.data.general_response.response_code === 4003)
+        dispatch('removeToken', null, { root: true })
+      else
+        throw new Error(response.data.general_response.response_message)
+    }).catch(function (error) {
+      if (error.response === undefined)
+        throw error
+      else if (error.response.status === 403)
+        dispatch('removeToken', null, { root: true })
+      else
+        throw new Error('Network Communication Error')
+    })
+  },
 }
 
 export const getters = {
@@ -128,5 +179,11 @@ export const getters = {
     },
     getEditUser: (state) => {
       return state.editUser
+    },
+    getUserProfile: (state) => {
+      return state.userProfile
+    },
+    getEditProfile: (state) => {
+      return state.editProfile
     },
   }

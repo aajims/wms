@@ -5,7 +5,7 @@
         id="user_form"
         ref="form"
         class="kt-form kt-form--label-right"
-        @submit.prevent="setPostPrivilage()"
+        @submit.prevent="addUser()"
       >
         <div
           id="kt_page_portlet"
@@ -107,6 +107,19 @@
             </div>
             <div class="form-group row">
               <div class="col-lg-6">
+                <label for="country">Warehouse <span style="color:red">*</span></label>
+                <select
+                  id="warehouse"
+                  class="form-control kt-select2"
+                  name="warehouse_id"
+                >
+                  <option />
+                </select>
+                <span class="form-text text-muted">Please select Warehouse </span>
+              </div>
+            </div>
+            <div class="form-group row">
+              <div class="col-lg-6">
                 <label for="country">Country <span style="color:red">*</span></label>
                 <select
                   id="country"
@@ -173,7 +186,7 @@
               </thead>
               <tbody>
                 <tr
-                  v-for="(row, index) in privilage"
+                  v-for="(row, index) in dataPrivilage"
                   :key="index"
                 >
                   <td>{{ No + index }}</td>
@@ -254,17 +267,19 @@ export default {
         state_id    : null,
         city_id     : null,
         district_id : null,
-        company_id  : null,
+        company_id  : 0,
         warehouse_id: null,
         description : null,
+        privilege   : []
       },
-      privilage: [
+      dataPrivilage: [
         {
           module_name: 'Dashboard',
           module_code: 'DBD',
           view       : 0,
           add        : 0,
           edit       : 0,
+          delete     : 0,
           cancel     : 0,
         },
         {
@@ -273,6 +288,7 @@ export default {
           view       : 0,
           add        : 0,
           edit       : 0,
+          delete     : 0,
           cancel     : 0,
         },
         {
@@ -281,6 +297,7 @@ export default {
           view       : 0,
           add        : 0,
           edit       : 0,
+          delete     : 0,
           cancel     : 0,
         },
         {
@@ -289,6 +306,7 @@ export default {
           view       : 0,
           add        : 0,
           edit       : 0,
+          delete     : 0,
           cancel     : 0,
         },
         {
@@ -297,6 +315,7 @@ export default {
           view       : 0,
           add        : 0,
           edit       : 0,
+          delete     : 0,
           cancel     : 0,
         },
         {
@@ -305,6 +324,7 @@ export default {
           view       : 0,
           add        : 0,
           edit       : 0,
+          delete     : 0,
           cancel     : 0,
         },
         {
@@ -313,6 +333,7 @@ export default {
           view       : 0,
           add        : 0,
           edit       : 0,
+          delete     : 0,
           cancel     : 0,
         },
         {
@@ -321,6 +342,7 @@ export default {
           view       : 0,
           add        : 0,
           edit       : 0,
+          delete     : 0,
           cancel     : 0,
         },
         {
@@ -329,6 +351,7 @@ export default {
           view       : 0,
           add        : 0,
           edit       : 0,
+          delete     : 0,
           cancel     : 0,
         },
         {
@@ -337,6 +360,7 @@ export default {
           view       : 0,
           add        : 0,
           edit       : 0,
+          delete     : 0,
           cancel     : 0,
         },
         {
@@ -345,6 +369,7 @@ export default {
           view       : 0,
           add        : 0,
           edit       : 0,
+          delete     : 0,
           cancel     : 0,
         },
         {
@@ -353,6 +378,7 @@ export default {
           view       : 0,
           add        : 0,
           edit       : 0,
+          delete     : 0,
           cancel     : 0,
         },
         {
@@ -361,6 +387,7 @@ export default {
           view       : 0,
           add        : 0,
           edit       : 0,
+          delete     : 0,
           cancel     : 0,
         },
         {
@@ -369,6 +396,7 @@ export default {
           view       : 0,
           add        : 0,
           edit       : 0,
+          delete     : 0,
           cancel     : 0,
         },
         {
@@ -377,6 +405,7 @@ export default {
           view       : 0,
           add        : 0,
           edit       : 0,
+          delete     : 0,
           cancel     : 0,
         },
       ],
@@ -389,17 +418,41 @@ export default {
     }
   },
   async mounted () {
+      $('#warehouse').select2({
+        placeholder       : 'Select warehouse',
+        minimumInputLength: 1,
+        width             : '100%',
+        allowClear        : true,
+        ajax              : {
+            type          : 'GET',
+            url           : '/api/warehouse/select',
+            cache         : true,
+            processResults: function (data) {
+            return {
+                results: $.map(data.result, function (object) {
+                return {
+                    id         : object.id,
+                    text       : object.name,
+                }
+                }),
+            }
+            },
+          },
+        })
+        $('#warehouse').on('change', function () {
+        validator.element($(this))
+        })
     const customAdapter = $.fn.select2.amd.require('select2/data/customAdapter')
+
     await this.$store.dispatch('region/getCountries')
-    this.countries      = this.$store.getters['region/getCountries']
-    const app           = this
+    this.countries = this.$store.getters['region/getCountries']
+    const app      = this
     $('#country').select2({
       placeholder: 'Select a country',
       allowClear : true,
       data       : this.countries,
     })
     $('#country').on('change', function () {
-      // eslint-disable-next-line no-undef
       validator.element($(this))
       if ($('#country').val()) {
         $('#state').val(null).trigger('change')
@@ -423,7 +476,6 @@ export default {
       data       : this.states,
     })
     $('#state').on('change', function () {
-      // eslint-disable-next-line no-undef
       validator.element($(this))
       if ($('#state').val()) {
         $('#city').val(null).trigger('change')
@@ -445,7 +497,6 @@ export default {
       data       : this.cities,
     })
     $('#city').on('change', function () {
-      // eslint-disable-next-line no-undef
       validator.element($(this))
       if ($('#city').val()) {
         $('#district').val(null).trigger('change')
@@ -465,33 +516,38 @@ export default {
       data       : this.states,
     })
     $('#district').on('change', function () {
-      // eslint-disable-next-line no-undef
       validator.element($(this))
     })
 
-    $('#user_form').validate({
+    const validator = $('#user_form').validate({
       // define validation rules
-      // eslint-disable-next-line object-curly-newline
       rules: {
-        // username    : { required: true },
-        // password    : { required: true },
-        // full_name   : { required: true },
-        // phone: {
-        //   required: true,
-        //   digits  : true,
-        // },
-        // email: {
-        // required : true,
-        // email    : true,
-        // minlength: 10,
-        // },
-        // address    : { required: true },
-        // country_id : { required: true },
-        // state_id   : { required: true },
-        // city_id    : { required: true },
-        // district_id: { required: true },
-        // company_id:  { required: true },
-        // warehouse_id: { required: true },
+        username: {
+          required: true,
+          minlength  : 6
+        },
+         password: {
+          required: true,
+          minlength  : 6
+        },
+        full_name   : { required: true },
+        phone: {
+          required: true,
+          digits  : true,
+          minlength : 10
+        },
+        email: {
+        required : true,
+        email    : true,
+        minlength: 10
+        },
+        address    : { required: true },
+        country_id : { required: true },
+        state_id   : { required: true },
+        city_id    : { required: true },
+        district_id: { required: true },
+        company_id:  { required: true },
+        warehouse_id: { required: true },
       // eslint-disable-next-line object-curly-newline
       },
       invalidHandler: function (event, validator) {
@@ -505,50 +561,46 @@ export default {
     })
   },
   methods: {
-    setPostPrivilage () {
-      // eslint-disable-next-line no-console
-      console.log(this.privilage)
-      // for (let i = 0; i < this.privilage; i++) {
-      //   this.privilage[i].forEach((value, key) => {
-      //     if (this.privilage[i].view === true)
-      //       this.privilage[i].view = 1
-      //     else
-      //       this.privilage[i].view = 0
-
-      //     if (this.privilage[i].add === true)
-      //       this.privilage[i].add = 1
-      //     else
-      //       this.privilage[i].add = 0
-
-      //     if (this.privilage[i].edit === true)
-      //       this.privilage[i].edit = 1
-      //     else
-      //       this.privilage[i].edit = 0
-
-      //     if (this.privilage[i].cancel === true)
-      //       this.privilage[i].cancel = 1
-      //     else
-      //       this.privilage[i].cancel = 0
-      //   })
-      // }
+    async getStatesByCountry () {
+      this.states = []
+      await this.$store.dispatch('region/getStatesByCountry', { countryId: $('#country').val() })
+      this.states = this.$store.getters['region/getStatesByCountry']
+      this.stateOption.data('select2').dataAdapter.updateOptions(this.states)
+    },
+    async getCitiesByState () {
+      this.cities = []
+      await this.$store.dispatch('region/getCitiesByState', { stateId: $('#state').val() })
+      this.cities = this.$store.getters['region/getCitiesByState']
+      this.cityOption.data('select2').dataAdapter.updateOptions(this.cities)
+    },
+    async getDistrictsByCity () {
+      this.districts = []
+      await this.$store.dispatch('region/getDistrictsByCity', { cityId: $('#city').val() })
+      this.districts = this.$store.getters['region/getDistrictsByCity']
+      this.districtOption.data('select2').dataAdapter.updateOptions(this.districts)
     },
     async addUser () {
       if ($('#user_form').valid()) {
-        // await this.setPostPrivilage()
-        // console.log(this.setPostPrivilage)
+        // await this.setDataPrivilage(data)
+        this.user.privilege = this.dataPrivilage
+        this.user.country_id  = parseInt($('#country').val())
+        this.user.state_id    = parseInt($('#state').val())
+        this.user.city_id     = parseInt($('#city').val())
+        this.user.district_id = parseInt($('#district').val())
+        this.user.warehouse_id     = parseInt($('#warehouse').val())
         try {
-          // this.$nuxt.$loading.start()
-          // await this.$store.dispatch('user/addUser', { data: this.user })
-          // const data      = this.$store.getters['user/getAddSuccess']
-          // const parameter = {
-          //   alertClass: 'alert-success',
-          //   message   : `User ${data.result.name} has been added`,
-          // }
-          // this.$nuxt.$emit('alertShow', parameter)
-          // this.$nuxt.$loading.finish()
-          // // eslint-disable-next-line no-undef
-          // KTUtil.scrollTop()
-          // setTimeout(function () { window.location.href = '/user' }, 3000)
+          this.$nuxt.$loading.start()
+          await this.$store.dispatch('user/addUser', { data: this.user })
+          const data      = this.$store.getters['user/getAddSuccess']
+          const parameter = {
+            alertClass: 'alert-success',
+            message   : `User ${data.result.full_name} has been added`,
+          }
+          this.$nuxt.$emit('alertShow', parameter)
+          this.$nuxt.$loading.finish()
+          // eslint-disable-next-line no-undef
+          KTUtil.scrollTop()
+          setTimeout(function () { window.location.href = '/master/user' }, 3000)
         } catch (error) {
           const parameter = {
             alertClass: 'alert-danger',
