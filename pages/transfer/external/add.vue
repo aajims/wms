@@ -424,6 +424,7 @@ export default {
       productPackingId     : null,
       warehouseLocationId  : null,
       uniqueCode           : null,
+      uniqCodeBefore       : null,
       existingUniqueCode   : [],
       fromWarehouseIdBefore: '',
       toCompanyIdBefore    : '',
@@ -838,6 +839,7 @@ export default {
       app.productPackingId    = rowData.product_packing_id
       app.warehouseLocationId = rowData.from_warehouse_location_id
       app.uniqueCode          = rowData.unique_code
+      app.uniqCodeBefore      = rowData.unique_code
       $('#product_id').val(rowData.product_id).trigger('change')
       $('#description_modal').val(rowData.description)
       $('#qty').val(rowData.qty)
@@ -991,6 +993,7 @@ export default {
       else
         this.datatable.row(this.rowIndex).data(product).draw()
 
+      this.$delete(this.existingUniqueCode, this.uniqCodeBefore)
       this.existingUniqueCode[uniqueCode] = uniqueCode
       $('#product_modal').modal('hide')
     },
@@ -1002,6 +1005,7 @@ export default {
       this.productPackingId    = null
       this.warehouseLocationId = null
       this.uniqueCode          = null
+      this.uniqCodeBefore      = null
     },
     setDataPost (data) {
       this.external.company_id = parseInt($('#company_id').val())

@@ -98,6 +98,12 @@ export const OUTGOING_STATUS = [
   {
     id: 8, text: 'Ready Shipping', class: 'primary',
   },
+  {
+    id: 9, text: 'Cancel', class: 'danger',
+  },
+  {
+    id: 10, text: 'Close', class: 'dark',
+  },
 ]
 
 export const EXTERNAL_STATUS = [

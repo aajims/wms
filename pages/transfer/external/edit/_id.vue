@@ -455,6 +455,7 @@ export default {
       productPackingId     : null,
       warehouseLocationId  : null,
       uniqueCode           : null,
+      uniqCodeBefore       : null,
       existingUniqueCode   : [],
       fromWarehouseIdBefore: '',
       isRestore            : false,
@@ -467,6 +468,7 @@ export default {
       createdByName        : '',
       updatedByName        : '',
       productId            : '',
+      modalHasOpen         : false,
     }
   },
   async mounted () {
@@ -520,6 +522,7 @@ export default {
           from_warehouse_location_level: value.from_warehouse_location_level,
           expired_date                 : value.expired_date,
           qty                          : value.qty,
+          last_stock                   : value.last_stock,
           batch                        : value.batch,
           description                  : value.description,
           status                       : value.status,
@@ -677,6 +680,7 @@ export default {
       app.setUniqueValue($('#product_id').val(), $('#product_packing_id').val(), $('#from_warehouse_location_id').val())
     })
     $('#product_modal').on('shown.bs.modal', function () {
+      app.modalHasOpen = true
       $('#product_id').select2({
         placeholder       : 'Select product',
         minimumInputLength: 1,
@@ -931,6 +935,7 @@ export default {
       app.updatedByName       = rowData.updated_by_name
       app.warehouseLocationId = rowData.from_warehouse_location_id
       app.uniqueCode          = rowData.unique_code
+      app.uniqCodeBefore      = rowData.unique_code
       app.productId           = rowData.product_id
 
       const newOptionProduct  = new Option(rowData.product_name, rowData.product_id, true, true)
@@ -945,6 +950,11 @@ export default {
 
       if (app.rowId !== 0)
         app.isEditExisting = true
+
+      if (app.modalHasOpen === false) {
+        app.qtyPacking = rowData.qty + rowData.last_stock
+        $('#qty_packing').val(app.qtyPacking)
+      }
 
       $('#description_modal').val(rowData.description)
       $('#qty').val(rowData.qty)
@@ -1058,7 +1068,7 @@ export default {
           if (this.rowIndex !== null) {
             const rowData         = this.datatable.row(this.rowIndex).data()
             const newOptionUnique = new Option(rowData.unique_code, rowData.unique_code, true, true)
-            newOptionUnique.setAttribute('data-qty', rowData.qty)
+            newOptionUnique.setAttribute('data-qty', (rowData.qty + rowData.last_stock))
             newOptionUnique.setAttribute('data-batch', rowData.batch)
             newOptionUnique.setAttribute('data-expired-date', rowData.expired_date)
             $('#unique_code').append(newOptionUnique).trigger('change')
@@ -1079,7 +1089,7 @@ export default {
       this.uniqueCodeSelect = [{ id: '', text: '' }]
       if (data !== null) {
         data.forEach((value) => {
-          if (app.existingUniqueCode[value.unique_code] === undefined || (app.rowIndex !== null && app.existingUniqueCode[value.unique_code] !== undefined)) {
+          if (app.existingUniqueCode[value.unique_code] === undefined) {
             dataTemporary = {
               id          : value.unique_code,
               text        : value.unique_code,
@@ -1139,6 +1149,7 @@ export default {
         from_warehouse_location_name: $('#from_warehouse_location_id option:selected').text(),
         expired_date                : $('#unique_code').find(':selected').data('expired-date'),
         qty                         : parseInt($('#qty').val()),
+        last_stock                  : this.qtyPacking - parseInt($('#qty').val()),
         batch                       : $('#unique_code').find(':selected').data('batch'),
         description                 : $('#description_modal').val(),
         status                      : this.statusProduct,
@@ -1152,6 +1163,7 @@ export default {
       else
         this.datatable.row(this.rowIndex).data(product).draw()
 
+      this.$delete(this.existingUniqueCode, this.uniqCodeBefore)
       this.existingUniqueCode[uniqueCode] = uniqueCode
       $('#product_modal').modal('hide')
     },
@@ -1163,6 +1175,7 @@ export default {
       this.productPackingId    = null
       this.warehouseLocationId = null
       this.uniqueCode          = null
+      this.uniqCodeBefore      = null
       this.rowId               = 0
       this.isEditExisting      = false
       this.statusProduct       = STATUS_OPEN

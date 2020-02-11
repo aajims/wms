@@ -6,10 +6,10 @@
     <div class="kt-portlet__head kt-portlet__head--lg">
       <div class="kt-portlet__head-label">
         <span class="kt-portlet__head-icon">
-          <i class="kt-font-brand la la-building" />
+          <i class="kt-font-brand la la-sign-out" />
         </span>
         <h3 class="kt-portlet__head-title">
-          Outgoing List
+          Outgoing Stock
         </h3>
       </div>
       <div class="kt-portlet__head-toolbar">
@@ -20,7 +20,7 @@
               class="btn btn-brand btn-elevate btn-icon-sm"
             >
               <i class="la la-plus" />
-              <span class="kt-hidden-mobile">Add Outgoing</span>
+              <span class="kt-hidden-mobile">Add Outgoing Stock</span>
             </a>
           </div>
         </div>
@@ -30,7 +30,7 @@
       <!--begin: Search Form -->
       <div class="kt-form kt-form--label-right kt-margin-t-20 kt-margin-b-10">
         <div class="row align-items-center">
-          <div class="col-xl-10 order-2 order-xl-1">
+          <div class="col-xl-12 order-2 order-xl-1">
             <div class="row align-items-center">
               <div class="col-md-2 kt-margin-b-20-tablet-and-mobile">
                 <div class="kt-form__group">
@@ -81,7 +81,7 @@
                       id="kt_form_status"
                       class="form-control bootstrap-select selectpicker"
                     >
-                       <option value="">
+                      <option value="">
                         All
                       </option>
                       <option
@@ -132,7 +132,7 @@
           </div>
         </div>
       </div>
-      <br/>
+      <br>
       <div class="row align-items-center">
         <div class="col-xl-12 order-2 order-xl-1">
           <div class="row align-items-center">
@@ -227,25 +227,51 @@
       <!--begin: Datatable -->
       <table
         id="outgoing_table"
-        class="table table-hover table-checkable"
+        class="table table-hover table-checkable nowrap"
       >
         <thead>
           <tr>
-            <th>#</th>
-            <th>Outgoing No.</th>
+            <th class="noorder">
+              #
+            </th>
+            <th>Incoming No.</th>
             <th>Tracking</th>
-            <th>Company</th>
-            <th>Warehouse</th>
-            <th>Country</th>
-            <th class="Status">Status</th>
-            <th class="created_date">Created</th>
-            <th class="date">Shipment</th> 
-            <th class="date">Order</th>
-            <th class="date">ETD</th>
-            <th class="date">ETA</th>
-            <th class="update_date">Updated</th>
-            <th class="update_date">Close Date</th>
-            <th>Actions</th>
+            <th class="noorder">
+              Company
+            </th>
+            <th class="noorder">
+              Warehouse
+            </th>
+            <th class="noorder">
+              Country
+            </th>
+            <th class="status">
+              Status
+            </th>
+            <th class="created_at">
+              Created
+            </th>
+            <th class="date">
+              Shipment
+            </th>
+            <th class="date">
+              Order
+            </th>
+            <th class="date">
+              ETD
+            </th>
+            <th class="date">
+              ETA
+            </th>
+            <th class="updated_at">
+              Updated
+            </th>
+            <th class="date">
+              Close Date
+            </th>
+            <th class="actions">
+              Actions
+            </th>
           </tr>
         </thead>
       </table>
@@ -286,8 +312,8 @@ export default {
         shipment_date: 'Shipment Date',
       },
       job_status: JOB_STATUS,
-      datatable: [],
-      params   : {
+      datatable : [],
+      params    : {
         keyword  : '',
         search_by: '',
         filter   : {},
@@ -388,14 +414,14 @@ export default {
           d.params = app.params
         },
       },
-      order  : [[9, 'desc']],
+      order  : [[7, 'desc']],
       columns: [
         { data: 'row_number' },
         { data: 'order_no', responsivePriority: -1 },
         { data: 'tracking' },
         { data: 'company_name' },
         { data: 'from_warehouse_name' },
-        { data: 'from_country_name' },
+        { data: 'to_country_name' },
         { data: 'status' },
         { data: 'shipment_date' },
         { data: 'order_date' },
@@ -403,21 +429,25 @@ export default {
         { data: 'eta' },
         { data: 'created_at' },
         { data: 'updated_at' },
-        { data: 'job_close_date'},
+        { data: 'job_close_date' },
         { data: 'actions', responsivePriority: -2 },
       ],
       columnDefs: [
         {
-          targets  : -1,
+          targets  : 'noorder',
+          orderable: false,
+        },
+        {
+          targets  : 'actions',
           title    : 'Actions',
           className: 'dt-center',
           width    : '110px',
           orderable: false,
           render   : function (data, type, full, meta) {
             let actionButtonCancel = ''
-            let actionButtonEdit = ''
-            let actionButtonClose = ''
-              if (full.status === STATUS_OPEN) {
+            let actionButtonEdit   = ''
+            let actionButtonClose  = ''
+            if (full.status === STATUS_OPEN) {
               actionButtonEdit = `<a href="/outgoing/edit/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
                                     <i class="la la-edit"></i>
                                   </a>`
@@ -425,8 +455,8 @@ export default {
                 actionButtonCancel = `<a class="dropdown-item action-button-cancel"  data-index="${meta.row}" href="javascript:void(0)"><i class="la la-times-circle"></i> Cancel Job</a>`
               else if (full.tracking === READY_SHIPING_NAME)
                 actionButtonClose = `<a class="dropdown-item action-button-close"  data-index="${meta.row}" href="javascript:void(0)"><i class="la la-folder"></i> Close Job</a>`
-            } 
-                return `<a href="/outgoing/detail/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
+            }
+            return `<a href="/outgoing/detail/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
                     <i class="la la-eye"></i>
                   </a>
                   ${actionButtonEdit}
@@ -436,7 +466,8 @@ export default {
                       </a>
                       <div class="dropdown-menu dropdown-menu-right">
                           <a class="dropdown-item" href="javascript:void(0)"><i class="la la-print"></i> Print</a>
-                          <a class="dropdown-item" href="javascript:void(0)"><i class="la la-qrcode"></i> Print QR Code</a>
+                          <a class="dropdown-item" href="javascript:void(0)"><i class="la la-print"></i> Print D.O.</a>
+                          <a class="dropdown-item" href="javascript:void(0)"><i class="la la-print"></i> Shipping Note</a>
                           ${actionButtonCancel}
                           ${actionButtonClose}
                       </div>
@@ -444,7 +475,7 @@ export default {
           },
         },
         {
-          targets  : 'Status',
+          targets  : 'status',
           className: 'dt-center',
           render   : function (data, type, full, meta) {
             if (typeof data === 'undefined')
@@ -458,7 +489,7 @@ export default {
         },
         {
           targets: 'date',
-          render: function (data, type, full, meta) {
+          render : function (data, type, full, meta) {
             if (data !== '')
               return moment(data).format('DD/MM/Y HH:mm')
             else
@@ -466,7 +497,7 @@ export default {
           },
         },
         {
-          targets: 'update_date',
+          targets: 'updated_at',
           render : function (data, type, full, meta) {
             if (data !== '')
               return `${moment(data).format('DD/MM/Y HH:mm:ss')}<br>${full.updated_by_name}`
@@ -475,7 +506,7 @@ export default {
           },
         },
         {
-          targets: 'created_date',
+          targets: 'created_at',
           render : function (data, type, full, meta) {
             if (data !== '')
               return `${moment(data).format('DD/MM/Y HH:mm:ss')}<br>${full.created_by_name}`
@@ -503,7 +534,7 @@ export default {
       this.params.search_by = $('#kt_form_filter').val()
       this.datatable.ajax.reload()
     },
-     async setStatus (statusId, row) {
+    async setStatus (statusId, row) {
       const app         = this
       for (const statusIndex in JOB_STATUS) {
         if (statusId === JOB_STATUS[statusIndex].id) {
