@@ -6,21 +6,21 @@
     <div class="kt-portlet__head kt-portlet__head--lg">
       <div class="kt-portlet__head-label">
         <span class="kt-portlet__head-icon">
-          <i class="kt-font-brand la la-sign-out" />
+          <i class="kt-font-brand fa flaticon2-delivery-truck" />
         </span>
         <h3 class="kt-portlet__head-title">
-          Outgoing Stock
+          External Transfer
         </h3>
       </div>
       <div class="kt-portlet__head-toolbar">
         <div class="kt-portlet__head-wrapper">
           <div class="kt-portlet__head-actions">
             <a
-              href="/outgoing/add"
+              href="/transfer/external/add"
               class="btn btn-brand btn-elevate btn-icon-sm"
             >
               <i class="la la-plus" />
-              <span class="kt-hidden-mobile">Add Outgoing Stock</span>
+              <span class="kt-hidden-mobile">Add External Transfer</span>
             </a>
           </div>
         </div>
@@ -59,12 +59,11 @@
                 </div>
                 <div class="kt-input-icon kt-input-icon--left">
                   <input
-                    id="kt_form_search"
                     v-model="params.keyword"
                     type="text"
                     class="form-control"
                     placeholder="Search..."
-                    @keyup="getOutgoing()"
+                    @keyup="getExternal()"
                   >
                   <span class="kt-input-icon__icon kt-input-icon__icon--left">
                     <span><i class="la la-search" /></span>
@@ -124,7 +123,6 @@
                     >
                       <i class="flaticon2-circular-arrow" /> Clear
                     </a>
-                    <div class="kt-separator d-xl-none" />
                   </div>
                 </div>
               </div>
@@ -223,10 +221,11 @@
       </div>
       <!--end: Search Form -->
     </div>
+
     <div class="kt-portlet__body">
       <!--begin: Datatable -->
       <table
-        id="outgoing_table"
+        id="external_table"
         class="table table-hover table-checkable nowrap"
       >
         <thead>
@@ -234,7 +233,7 @@
             <th class="noorder">
               #
             </th>
-            <th>Incoming No.</th>
+            <th>Transfer No.</th>
             <th>Tracking</th>
             <th class="noorder">
               Company
@@ -291,7 +290,7 @@
 
 <script>
 import moment from 'moment'
-import { READY_SHIPING_NAME, JOB_STATUS, STATUS_OPEN, STATUS_CANCEL, STATUS_CLOSE } from '@/utils/constants'
+import { JOB_STATUS, STATUS_OPEN, STATUS_CANCEL, STATUS_STORED_NAME, STATUS_CLOSE } from '@/utils/constants'
 
 export default {
   data () {
@@ -320,7 +319,7 @@ export default {
       },
     }
   },
-  mounted () {
+  async mounted () {
     const app = this
     $('#warehouse').select2({
       placeholder       : 'Select warehouse',
@@ -348,7 +347,7 @@ export default {
         app.params.filter.to_warehouse_id = $('#warehouse').val()
       else
         app.$delete(app.params.filter, 'to_warehouse_id')
-      app.getOutgoing()
+      app.getExternal()
     })
 
     $('#company').select2({
@@ -377,7 +376,7 @@ export default {
         app.params.filter.company_id = $('#company').val()
       else
         app.$delete(app.params.filter, 'company_id')
-      app.getOutgoing()
+      app.getExternal()
     })
 
     $('#kt_form_status').on('change', function () {
@@ -385,10 +384,14 @@ export default {
         app.params.filter.status = $('#kt_form_status').val()
       else
         app.$delete(app.params.filter, 'status')
-      app.getOutgoing()
+      app.getExternal()
     })
+
     $('#from, #to').datetimepicker({
       todayHighlight: true,
+      autoclose     : true,
+      startView     : 2,
+      minView       : 2,
       orientation   : 'bottom left',
       todayBtn      : 'linked',
       format        : 'dd/mm/yyyy',
@@ -398,17 +401,17 @@ export default {
         app.params.date_from = moment($('#from').val(), 'DD/MM/YYYY').format('Y-MM-DD HH:mm:ss')
       if ($('#to').val() !== '')
         app.params.date_to   = moment(`${$('#to').val()} 23:59:59`, 'DD/MM/YYYY HH:mm:ss').format('Y-MM-DD HH:mm:ss')
-      app.getOutgoing()
+      app.getExternal()
     })
 
     // begin first table
-    this.datatable = $('#outgoing_table').DataTable({
+    this.datatable = $('#external_table').DataTable({
       responsive: true,
       searching : false,
       processing: true,
       serverSide: true,
       ajax      : {
-        url : 'api/outgoing/list',
+        url : '/api/external/list',
         type: 'POST',
         data: function (d) {
           d.params = app.params
@@ -417,17 +420,17 @@ export default {
       order  : [[7, 'desc']],
       columns: [
         { data: 'row_number' },
-        { data: 'order_no', responsivePriority: -1 },
+        { data: 'job_no', responsivePriority: -1 },
         { data: 'tracking' },
         { data: 'company_name' },
-        { data: 'from_warehouse_name' },
-        { data: 'to_country_name' },
+        { data: 'to_warehouse_name' },
+        { data: 'from_country_name' },
         { data: 'status' },
+        { data: 'created_at' },
         { data: 'shipment_date' },
         { data: 'order_date' },
         { data: 'etd' },
         { data: 'eta' },
-        { data: 'created_at' },
         { data: 'updated_at' },
         { data: 'job_close_date' },
         { data: 'actions', responsivePriority: -2 },
@@ -441,45 +444,38 @@ export default {
           targets  : 'actions',
           title    : 'Actions',
           className: 'dt-center',
-          width    : '110px',
+          width    : '100px',
           orderable: false,
           render   : function (data, type, full, meta) {
             let actionButtonCancel = ''
             let actionButtonEdit   = ''
             let actionButtonClose  = ''
             if (full.status === STATUS_OPEN) {
-              actionButtonEdit = `<a href="/outgoing/edit/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
-                                    <i class="la la-edit"></i>
-                                  </a>`
+              actionButtonEdit = `<a href="/transfer/external/edit/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details"><i class="la la-edit"></i></a>`
               if (full.tracking === '')
-                actionButtonCancel = `<a class="dropdown-item action-button-cancel"  data-index="${meta.row}" href="javascript:void(0)"><i class="la la-times-circle"></i> Cancel Job</a>`
-              else if (full.tracking === READY_SHIPING_NAME)
-                actionButtonClose = `<a class="dropdown-item action-button-close"  data-index="${meta.row}" href="javascript:void(0)"><i class="la la-folder"></i> Close Job</a>`
+                actionButtonCancel = `<a class="dropdown-item action-button-cancel" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-times-circle"></i> Cancel Job</a>`
+              else if (full.tracking === STATUS_STORED_NAME)
+                actionButtonClose = `<a class="dropdown-item action-button-close" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-folder"></i> Close Job</a>`
             }
-            return `<a href="/outgoing/detail/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
-                    <i class="la la-eye"></i>
-                  </a>
-                  ${actionButtonEdit}
-                  <span class="dropdown">
-                      <a href="javascript:void(0)" class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="dropdown" aria-expanded="true">
-                        <i class="la la-ellipsis-h"></i>
-                      </a>
-                      <div class="dropdown-menu dropdown-menu-right">
-                          <a class="dropdown-item" href="javascript:void(0)"><i class="la la-print"></i> Print</a>
-                          <a class="dropdown-item" href="javascript:void(0)"><i class="la la-print"></i> Print D.O.</a>
-                          <a class="dropdown-item" href="javascript:void(0)"><i class="la la-print"></i> Shipping Note</a>
-                          ${actionButtonCancel}
-                          ${actionButtonClose}
-                      </div>
-                  </span>`
+            return `<a href="/transfer/external/detail/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
+                      <i class="la la-eye"></i>
+                    </a>
+                    ${actionButtonEdit}
+                    <span class="dropdown">
+                        <a href="javascript:void(0)" class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="dropdown" aria-expanded="true">
+                          <i class="la la-ellipsis-h"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="javascript:void(0)"><i class="la la-print"></i> Print D.O.</a>
+                            ${actionButtonCancel}${actionButtonClose}
+                        </div>
+                    </span>`
           },
         },
         {
           targets  : 'status',
           className: 'dt-center',
           render   : function (data, type, full, meta) {
-            if (typeof data === 'undefined')
-              return data
             for (const statusIndex in JOB_STATUS) {
               if (data === JOB_STATUS[statusIndex].id)
                 return `<span class="kt-badge kt-badge--${JOB_STATUS[statusIndex].class} kt-badge--inline">${JOB_STATUS[statusIndex].text}</span>`
@@ -490,8 +486,17 @@ export default {
         {
           targets: 'date',
           render : function (data, type, full, meta) {
-            if (data !== '')
+            if (data !== '' && data !== '0000-00-00 00:00:00')
               return moment(data).format('DD/MM/Y HH:mm')
+            else
+              return ''
+          },
+        },
+        {
+          targets: 'created_at',
+          render : function (data, type, full, meta) {
+            if (data !== '')
+              return `${moment(data).format('DD/MM/Y HH:mm:ss')}<br>${full.created_by_name}`
             else
               return data
           },
@@ -501,15 +506,6 @@ export default {
           render : function (data, type, full, meta) {
             if (data !== '')
               return `${moment(data).format('DD/MM/Y HH:mm:ss')}<br>${full.updated_by_name}`
-            else
-              return data
-          },
-        },
-        {
-          targets: 'created_at',
-          render : function (data, type, full, meta) {
-            if (data !== '')
-              return `${moment(data).format('DD/MM/Y HH:mm:ss')}<br>${full.created_by_name}`
             else
               return data
           },
@@ -530,7 +526,7 @@ export default {
     })
   },
   methods: {
-    async getOutgoing () {
+    async getExternal () {
       this.params.search_by = $('#kt_form_filter').val()
       this.datatable.ajax.reload()
     },
@@ -542,7 +538,7 @@ export default {
           // eslint-disable-next-line no-undef
           swal.fire({
             title             : 'Are you sure?',
-            text              : `Job Outgoing "${row.order_no}" will be ${statusText}`,
+            text              : `Job external "${row.job_no}" will be ${statusText}`,
             type              : 'question',
             showCancelButton  : true,
             confirmButtonText : `${JOB_STATUS[statusIndex].text} Job`,
@@ -557,16 +553,16 @@ export default {
         }
       }
     },
-    async updateStatus (idOutgoing, statusId, param) {
+    async updateStatus (idExternal, statusId, param) {
       try {
         this.$nuxt.$loading.start()
         param.status    = statusId
         this.$delete(param, 'job_close_date')
-        await this.$store.dispatch('outgoing/editOutgoing', { idOutgoing: idOutgoing, data: param })
-        const data      = this.$store.getters['outgoing/getEditOutgoing']
+        await this.$store.dispatch('external/editExternal', { idExternal: idExternal, data: param })
+        const data      = this.$store.getters['external/getEditExternal']
         const parameter = {
           alertClass: 'alert-success',
-          message   : `Job Outgoing ${data.result.job_no} in Outgoing ${data.result.order_no} has been edited`,
+          message   : `Job external transfer ${data.result.job_no} has been edited`,
         }
         this.$nuxt.$emit('alertShow', parameter)
         this.$nuxt.$loading.finish()
@@ -592,10 +588,14 @@ export default {
         filter   : {},
       }
       this.datatable.ajax.reload()
+      $('#warehouse').val(null).trigger('change')
+      $('#company').val(null).trigger('change')
+      $('#kt_form_filter').val('job_no')
+      $('#kt_form_filter_date').val('created_at')
+      $('#from').val('')
+      $('#to').val('')
       $('#kt_form_status').val('')
-      $('#kt_form_filter').val('company_name')
-      $('#kt_form_filter').val('order_no')
-      $('#kt_form_filter').val('from_warehouse_name')
+      $('.selectpicker').selectpicker('refresh')
     },
   },
 }

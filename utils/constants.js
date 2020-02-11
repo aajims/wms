@@ -64,7 +64,6 @@ export const JOB_STATUS = [
   },
 ]
 
-
 export const INCOMING_STATUS = [
   {
     id: 3, text: 'Open', class: 'success',
@@ -80,16 +79,17 @@ export const INCOMING_STATUS = [
   },
   {
     id: 10, text: 'Close', class: 'dark',
-  }
+  },
 ]
-  export const OUTGOING_STATUS = [
-    {
-      id: 3, text: 'Open', class: 'success',
-    },
-    {
-      id: 4, text: 'Block', class: 'warning',
-    },
-    {
+
+export const OUTGOING_STATUS = [
+  {
+    id: 3, text: 'Open', class: 'success',
+  },
+  {
+    id: 4, text: 'Block', class: 'warning',
+  },
+  {
     id: 6, text: 'Pick', class: 'warning',
   },
   {
@@ -97,6 +97,33 @@ export const INCOMING_STATUS = [
   },
   {
     id: 8, text: 'Ready Shipping', class: 'primary',
+  },
+  {
+    id: 9, text: 'Cancel', class: 'danger',
+  },
+  {
+    id: 10, text: 'Close', class: 'dark',
+  },
+]
+
+export const EXTERNAL_STATUS = [
+  {
+    id: 3, text: 'Open', class: 'success',
+  },
+  {
+    id: 4, text: 'Block', class: 'warning',
+  },
+  {
+    id: 6, text: 'Pick', class: 'warning',
+  },
+  {
+    id: 7, text: 'Pack', class: 'warning',
+  },
+  {
+    id: 8, text: 'Ready', class: 'primary',
+  },
+  {
+    id: 9, text: 'Cancel', class: 'danger',
   },
 ]
 
@@ -131,4 +158,3 @@ export const STATUS_PACK_NAME           = 'PACKED'
 export const STATUS_CANCEL_NAME         = 'CANCEL'
 export const STATUS_CLOSE_NAME          = 'CLOSE'
 export const READY_SHIPING_NAME = 'READY FOR SHIP'
-

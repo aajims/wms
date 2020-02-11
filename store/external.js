@@ -1,36 +1,32 @@
 import axios from 'axios'
 
 export const state = () => ({
-  addProduct   : null,
-  productDetail: null,
-  editProduct  : null,
-  uniqueCode   : null,
+  addExternal   : null,
+  externalDetail: null,
+  editExternal  : null,
 })
 
 export const mutations = {
-  SET_PRODUCT_DETAIL (state, productDetail) {
-    state.productDetail = productDetail
+  SET_EXTERNAL_DETAIL (state, externalDetail) {
+    state.externalDetail = externalDetail
   },
-  ADD_PRODUCT (state, addProduct) {
-    state.addProduct = addProduct
+  ADD_EXTERNAL (state, addExternal) {
+    state.addExternal = addExternal
   },
-  EDIT_PRODUCT (state, editProduct) {
-    state.editProduct = editProduct
-  },
-  SET_UNIQUE_CODE (state, uniqueCode) {
-    state.uniqueCode = uniqueCode
+  EDIT_EXTERNAL (state, editExternal) {
+    state.editExternal = editExternal
   },
 }
 
 export const actions = {
-  async addProduct ({ commit, dispatch }, { data }) {
+  async addExternal ({ commit, dispatch }, { data }) {
     await axios({
       method: 'post',
-      url   : '/api/product/add',
+      url   : '/api/external/add',
       data  : data,
     }).then(function (response) {
       if (response.status === 200 && response.data.general_response.response_status === true)
-        commit('ADD_PRODUCT', response.data)
+        commit('ADD_EXTERNAL', response.data)
       else if (response.data.general_response.response_code === 4003)
         dispatch('removeToken', null, { root: true })
       else
@@ -44,15 +40,15 @@ export const actions = {
         throw new Error('Network Communication Error')
     })
   },
-  async editProduct ({ commit, dispatch }, { idProduct, data }) {
-    const dataPut = { id_product: idProduct, data: data }
+  async editExternal ({ commit, dispatch }, { idExternal, data }) {
+    const dataPut = { id_external: idExternal, data: data }
     await axios({
       method: 'put',
-      url   : '/api/product/edit',
+      url   : '/api/external/edit',
       data  : dataPut,
     }).then(function (response) {
       if (response.status === 200 && response.data.general_response.response_status === true)
-        commit('EDIT_PRODUCT', response.data)
+        commit('EDIT_EXTERNAL', response.data)
       else if (response.data.general_response.response_code === 4003)
         dispatch('removeToken', null, { root: true })
       else
@@ -66,37 +62,14 @@ export const actions = {
         throw new Error('Network Communication Error')
     })
   },
-  async getProductDetail ({ commit, dispatch }, { idProduct }) {
+  async getExternalDetail ({ commit, dispatch }, { idExternal }) {
     await axios({
       method: 'get',
-      url   : '/api/product/detail',
-      params: { id_product: idProduct },
+      url   : '/api/external/detail',
+      params: { id_external: idExternal },
     }).then(function (response) {
       if (response.status === 200 && response.data.general_response.response_status === true)
-        commit('SET_PRODUCT_DETAIL', response.data)
-      else if (response.data.general_response.response_code === 4003)
-        dispatch('removeToken', null, { root: true })
-      else
-        throw new Error(response.data.general_response.response_message)
-    }).catch(function (error) {
-      if (error.response === undefined)
-        throw error
-      else if (error.response.status === 403)
-        dispatch('removeToken', null, { root: true })
-      else
-        throw new Error('Network Communication Error')
-    })
-  },
-  async getUniqueCode ({ commit, dispatch }, { productId, packingId, locationId }) {
-    await axios({
-      method: 'get',
-      url   : '/api/product/unique-code',
-      params: {
-        product_id: productId, product_packing_id: packingId, warehouse_location_id: locationId,
-      },
-    }).then(function (response) {
-      if (response.status === 200 && response.data.general_response.response_status === true)
-        commit('SET_UNIQUE_CODE', response.data)
+        commit('SET_EXTERNAL_DETAIL', response.data)
       else if (response.data.general_response.response_code === 4003)
         dispatch('removeToken', null, { root: true })
       else
@@ -114,15 +87,12 @@ export const actions = {
 
 export const getters = {
   getAddSuccess: (state) => {
-    return state.addProduct
+    return state.addExternal
   },
-  getProductDetail: (state) => {
-    return state.productDetail
+  getExternalDetail: (state) => {
+    return state.externalDetail
   },
-  getEditProduct: (state) => {
-    return state.editProduct
-  },
-  getUniqueCode: (state) => {
-    return state.uniqueCode
+  getEditExternal: (state) => {
+    return state.editExternal
   },
 }

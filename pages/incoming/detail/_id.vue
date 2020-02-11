@@ -13,7 +13,7 @@
         <div class="kt-portlet__head kt-portlet__head--lg">
           <div class="kt-portlet__head-label">
             <span class="kt-portlet__head-icon">
-              <i class="kt-font-brand flaticon-add" />
+              <i class="kt-font-brand flaticon-clipboard" />
             </span>
             <h3 class="kt-portlet__head-title">
               Incoming Stock Detail
@@ -293,6 +293,7 @@
                 <thead>
                   <tr>
                     <th>SKU Number</th>
+                    <th>Product Location</th>
                     <th>Product</th>
                     <th>Packing</th>
                     <th>Quantity</th>
@@ -383,6 +384,7 @@ export default {
       data      : app.incoming.products,
       columns   : [
         { data: 'product_sku' },
+        { data: 'unique_code' },
         { data: 'product_name' },
         { data: 'product_packing_name' },
         { data: 'qty' },
