@@ -46,6 +46,13 @@ export default [
     childDisplay: true,
     children    : [
       {
+        name        : 'User',
+        icon        : 'kt-menu__link-bullet kt-menu__link-bullet--dot',
+        url         : '/user',
+        param   : false,
+        children: [],
+      },
+      {
         name    : 'Category',
         icon    : 'kt-menu__link-bullet kt-menu__link-bullet--dot',
         url     : '/category',
