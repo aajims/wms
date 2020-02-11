@@ -44,7 +44,7 @@
           <!--begin: Navigation -->
           <div class="kt-notification">
             <a
-              href="/user/profile"
+              href="/master/user/profile"
               class="kt-notification__item"
             >
               <div class="kt-notification__item-icon">
