@@ -129,7 +129,7 @@ app.get('/product/select', (request, response) => {
   })
 })
 
-app.get('/product/select-by-inventory', (request, response) => {
+app.get('/product/unique-code-first', (request, response) => {
   const token = request.cookies[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
@@ -144,7 +144,7 @@ app.get('/product/select-by-inventory', (request, response) => {
       'sort_by'                      : 'id',
       'sort'                         : 'asc',
       'search_by'                    : 'unique_code',
-      'keyword'                      : request.query.term,
+      'keyword'                      : request.query.unique_code,
       'filter[status]'               : 1,
       'filter[product_id]'           : request.query.product_id,
       'filter[product_packing_id]'   : request.query.product_packing_id,

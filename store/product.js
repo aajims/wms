@@ -1,10 +1,11 @@
 import axios from 'axios'
 
 export const state = () => ({
-  addProduct   : null,
-  productDetail: null,
-  editProduct  : null,
-  uniqueCode   : null,
+  addProduct     : null,
+  productDetail  : null,
+  editProduct    : null,
+  uniqueCode     : null,
+  uniqueCodeFirst: null,
 })
 
 export const mutations = {
@@ -19,6 +20,9 @@ export const mutations = {
   },
   SET_UNIQUE_CODE (state, uniqueCode) {
     state.uniqueCode = uniqueCode
+  },
+  SET_UNIQUE_CODE_FIRST (state, uniqueCodeFirst) {
+    state.uniqueCodeFirst = uniqueCodeFirst
   },
 }
 
@@ -92,11 +96,39 @@ export const actions = {
       method: 'get',
       url   : '/api/product/unique-code',
       params: {
-        product_id: productId, product_packing_id: packingId, warehouse_location_id: locationId,
+        product_id           : productId,
+        product_packing_id   : packingId,
+        warehouse_location_id: locationId,
       },
     }).then(function (response) {
       if (response.status === 200 && response.data.general_response.response_status === true)
         commit('SET_UNIQUE_CODE', response.data)
+      else if (response.data.general_response.response_code === 4003)
+        dispatch('removeToken', null, { root: true })
+      else
+        throw new Error(response.data.general_response.response_message)
+    }).catch(function (error) {
+      if (error.response === undefined)
+        throw error
+      else if (error.response.status === 403)
+        dispatch('removeToken', null, { root: true })
+      else
+        throw new Error('Network Communication Error')
+    })
+  },
+  async getUniqueCodeFirst ({ commit, dispatch }, { productId, packingId, locationId, uniqueCode }) {
+    await axios({
+      method: 'get',
+      url   : '/api/product/unique-code-first',
+      params: {
+        product_id           : productId,
+        product_packing_id   : packingId,
+        warehouse_location_id: locationId,
+        unique_code          : uniqueCode,
+      },
+    }).then(function (response) {
+      if (response.status === 200 && response.data.general_response.response_status === true)
+        commit('SET_UNIQUE_CODE_FIRST', response.data)
       else if (response.data.general_response.response_code === 4003)
         dispatch('removeToken', null, { root: true })
       else
@@ -124,5 +156,8 @@ export const getters = {
   },
   getUniqueCode: (state) => {
     return state.uniqueCode
+  },
+  getUniqueCodeFirst: (state) => {
+    return state.uniqueCodeFirst
   },
 }

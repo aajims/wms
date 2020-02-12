@@ -277,7 +277,10 @@
               </div>
             </div>
             <div class="kt-separator kt-separator--border-dashed kt-separator--space-xs" />
-            <div class="form-group row">
+            <div
+              v-if="parentId === 0"
+              class="form-group row"
+            >
               <div class="col-lg-3">
                 <label>Products</label>
                 <a
@@ -539,6 +542,7 @@ export default {
       modalHasOpen        : false,
       isRestore           : false,
       formChanged         : false,
+      parentId            : 0,
     }
   },
   async mounted () {
@@ -555,6 +559,7 @@ export default {
       const incomingDetail           = this.$store.getters['incoming/getIncomingDetail'].result
 
       this.incoming.id               = incomingDetail.id
+      this.incoming.parent_id        = incomingDetail.parent_id
       this.incoming.order_no         = incomingDetail.order_no
       this.incoming.job_no           = incomingDetail.job_no
       this.incoming.unique_code      = incomingDetail.unique_code
@@ -573,6 +578,7 @@ export default {
 
       this.companyName   = incomingDetail.company_name
       this.warehouseName = incomingDetail.to_warehouse_name
+      this.parentId      = incomingDetail.parent_id
 
       // set products
       incomingDetail.products.forEach((value) => {
@@ -697,7 +703,7 @@ export default {
         // validate product location
         let valid = true
         for (const key in data) {
-          if (data[key].to_warehouse_location_id === '') {
+          if (data[key].to_warehouse_location_id === '' || data[key].to_warehouse_location_id === 0) {
             valid = false
             break
           }
@@ -801,7 +807,7 @@ export default {
       })
       $('#product_packing_id').on('change', function () {
         validatorModal.element($(this))
-        if (this.productPackingOption !== null)
+        if (this.productPackingOption !== null && app.parentId === 0)
           $('#qty_max').val($('#product_packing_id').find(':selected').data('qty-max'))
       })
 
@@ -856,6 +862,15 @@ export default {
           return data.text
         },
       })
+
+      // disable input in modal
+      if (app.parentId !== 0) {
+        $('#product_id').prop('disabled', true)
+        $('#product_packing_id').prop('disabled', true)
+        $('#qty').prop('disabled', true)
+        $('#batch').prop('disabled', true)
+        $('#expired_date').attr('disabled', 'disabled')
+      }
     })
     $('#product_modal').on('hidden.bs.modal', function () {
       app.clearForm()
@@ -893,6 +908,15 @@ export default {
             return 'The location is <span class="kt-badge kt-badge--danger kt-badge--inline">FULL</span> Please select another location.'
           },
         })
+        $('.popoverButtonWarning').popover({
+          title    : 'Empty Location',
+          html     : true,
+          trigger  : 'manual',
+          placement: 'left',
+          content  : function () {
+            return 'Please select location.'
+          },
+        })
         $('.status-open').click(function () {
           const rowData = app.datatable.row($(this).data('index')).data()
           app.updateStatus(STATUS_OPEN, $(this).data('index'), rowData)
@@ -911,7 +935,9 @@ export default {
           targets  : 'location_name',
           className: 'dt-center',
           render   : function (data, type, full, meta) {
-            if (full.to_warehouse_location_id === '') {
+            if (full.to_warehouse_location_id === 0)
+              return `<a href="javascript:;" class="popoverButtonWarning"><i style="color: red" class="fa flaticon-warning"></i></a>`
+            else if (full.to_warehouse_location_id === '') {
               return `<span style="color: orange">${data} - Level ${full.to_warehouse_location_level}
                         <sup>
                           <a href="javascript:;" class="popoverButton">
@@ -1001,6 +1027,12 @@ export default {
     $('#product_table').on('mouseleave', '.flaticon2-information', function () {
       $($(this).parents('.popoverButton')).popover('hide')
     })
+    $('#product_table').on('mouseover', '.flaticon-warning', function () {
+      $($(this).parents('.popoverButtonWarning')).popover('show')
+    })
+    $('#product_table').on('mouseleave', '.flaticon-warning', function () {
+      $($(this).parents('.popoverButtonWarning')).popover('hide')
+    })
 
     // delete datatable row
     $('#product_table').on('click', '.la-trash', function () {
@@ -1033,20 +1065,25 @@ export default {
         const newOptionProduct  = new Option(rowData.product_name, rowData.product_id, true, true)
         newOptionProduct.setAttribute('data-product-sku', rowData.product_sku)
         $('#product_id').append(newOptionProduct).trigger('change')
-        const locationName      = `${rowData.to_warehouse_location_name} - Level ${rowData.to_warehouse_location_level} 
-                                (${rowData.to_warehouse_location_usage} / ${rowData.to_warehouse_location_capacity})`
-        const newOptionLocation = new Option(locationName, rowData.to_warehouse_location_id, true, true)
-        newOptionLocation.setAttribute('data-location-name', rowData.to_warehouse_location_name)
-        newOptionLocation.setAttribute('data-location-level', rowData.to_warehouse_location_level)
-        newOptionLocation.setAttribute('data-usage', rowData.to_warehouse_location_usage)
-        newOptionLocation.setAttribute('data-capacity', rowData.to_warehouse_location_capacity)
-        $('#to_warehouse_location_id').append(newOptionLocation).trigger('change')
+
+        if (rowData.to_warehouse_location_id !== 0) {
+          const locationName      = `${rowData.to_warehouse_location_name} - Level ${rowData.to_warehouse_location_level} 
+                                  (${rowData.to_warehouse_location_usage} / ${rowData.to_warehouse_location_capacity})`
+          const newOptionLocation = new Option(locationName, rowData.to_warehouse_location_id, true, true)
+          newOptionLocation.setAttribute('data-location-name', rowData.to_warehouse_location_name)
+          newOptionLocation.setAttribute('data-location-level', rowData.to_warehouse_location_level)
+          newOptionLocation.setAttribute('data-usage', rowData.to_warehouse_location_usage)
+          newOptionLocation.setAttribute('data-capacity', rowData.to_warehouse_location_capacity)
+          $('#to_warehouse_location_id').append(newOptionLocation).trigger('change')
+        }
       }
 
       $('#description_modal').val(rowData.description)
       $('#qty').val(rowData.qty)
       if (app.productPackingOption === null)
         $('#qty_max').val(rowData.to_warehouse_location_capacity)
+      if (app.parentId !== 0)
+        $('#qty_max').val(rowData.qty)
       if (rowData.expired_date !== '')
         $('#expired_date').val(moment(rowData.expired_date).format('DD/MM/Y'))
       $('#batch').val(rowData.batch)

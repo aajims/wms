@@ -234,7 +234,12 @@
               #
             </th>
             <th>Incoming No.</th>
-            <th>Tracking</th>
+            <th class="parent_job">
+              Parent Job
+            </th>
+            <th class="noorder">
+              Tracking
+            </th>
             <th class="noorder">
               Company
             </th>
@@ -414,10 +419,11 @@ export default {
           d.params = app.params
         },
       },
-      order  : [[7, 'desc']],
+      order  : [[8, 'desc']],
       columns: [
         { data: 'row_number' },
         { data: 'job_no', responsivePriority: -1 },
+        { data: 'parent_id' },
         { data: 'tracking' },
         { data: 'company_name' },
         { data: 'to_warehouse_name' },
@@ -436,6 +442,15 @@ export default {
         {
           targets  : 'noorder',
           orderable: false,
+        },
+        {
+          targets  : 'parent_job',
+          orderable: false,
+          render   : function (data, type, full, meta) {
+            if (data !== 0)
+              return `<a href="/transfer/external/detail/${btoa(data)}" title="Go to transfer" target="_blank">${full.parent_job_no}</a>`
+            return ''
+          },
         },
         {
           targets  : 'actions',
