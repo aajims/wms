@@ -9,7 +9,7 @@
           <i class="kt-font-brand la la-sign-out" />
         </span>
         <h3 class="kt-portlet__head-title">
-          Outgoing Stock
+          Outgoing Stock List
         </h3>
       </div>
       <div class="kt-portlet__head-toolbar">

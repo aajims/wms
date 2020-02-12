@@ -6,7 +6,7 @@
     <div class="kt-portlet__head kt-portlet__head--lg">
       <div class="kt-portlet__head-label">
         <span class="kt-portlet__head-icon">
-          <i class="kt-font-brand flaticon2-architecture-and-city" />
+          <i class="kt-font-brand flaticon-users-1" />
         </span>
         <h3 class="kt-portlet__head-title">
           User List
@@ -131,7 +131,9 @@
             <th>Name</th>
             <th>Phone</th>
             <th>Email</th>
-            <th class="status">Status</th>
+            <th class="status">
+              Status
+            </th>
             <th>Address</th>
             <th>Actions</th>
           </tr>
@@ -152,8 +154,6 @@
 </template>
 
 <script>
-import moment from 'moment'
-
 export default {
   data () {
     return {
