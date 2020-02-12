@@ -290,7 +290,7 @@
 
 <script>
 import moment from 'moment'
-import { JOB_STATUS, STATUS_OPEN, STATUS_CANCEL, STATUS_STORED_NAME, STATUS_CLOSE } from '@/utils/constants'
+import { JOB_STATUS, STATUS_OPEN, STATUS_CANCEL, READY_SHIPING_NAME, STATUS_CLOSE } from '@/utils/constants'
 
 export default {
   data () {
@@ -454,7 +454,7 @@ export default {
               actionButtonEdit = `<a href="/transfer/external/edit/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details"><i class="la la-edit"></i></a>`
               if (full.tracking === '')
                 actionButtonCancel = `<a class="dropdown-item action-button-cancel" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-times-circle"></i> Cancel Job</a>`
-              else if (full.tracking === STATUS_STORED_NAME)
+              else if (full.tracking === READY_SHIPING_NAME)
                 actionButtonClose = `<a class="dropdown-item action-button-close" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-folder"></i> Close Job</a>`
             }
             return `<a href="/transfer/external/detail/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">

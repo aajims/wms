@@ -523,14 +523,13 @@ export default {
       isRestore            : false,
       formChanged          : false,
       qtyPacking           : 0,
-      isEditExisting       : false,
       statusProduct        : STATUS_OPEN,
       createdAt            : '',
       updateAt             : '',
       createdByName        : '',
       updatedByName        : '',
       productId            : '',
-      modalHasOpen         : false,
+      lastStockForEdit     : 0,
     }
   },
   async mounted () {
@@ -583,7 +582,6 @@ export default {
           from_warehouse_location_level: value.from_warehouse_location_level,
           expired_date                 : value.expired_date,
           qty                          : value.qty,
-          last_stock                   : value.last_stock,
           batch                        : value.batch,
           description                  : value.description,
           status                       : value.status,
@@ -599,7 +597,7 @@ export default {
         this.outgoing.products.push(products)
 
         if (value.status !== STATUS_CANCEL)
-          this.existingUniqueCode[value.unique_code] = value.unique_code
+          this.existingUniqueCode[`${value.product_id}_${value.product_packing_id}_${value.from_warehouse_location_id}_${value.unique_code}`] = value.unique_code
       })
 
       if (outgoingDetail.etd !== '' && outgoingDetail.etd !== '0000-00-00 00:00:00')
@@ -726,7 +724,6 @@ export default {
     })
 
     $('#product_modal').on('shown.bs.modal', function () {
-      app.modalHasOpen = true
       $('#product_id').select2({
         placeholder       : 'Select product',
         minimumInputLength: 1,
@@ -777,7 +774,10 @@ export default {
       })
       $('#unique_code').on('change', function () {
         validatorModal.element($(this))
-        app.qtyPacking = $('#unique_code').find(':selected').data('qty')
+        if (app.rowId === 0)
+          app.qtyPacking = $('#unique_code').find(':selected').data('qty')
+        else
+          app.qtyPacking = app.lastStockForEdit
         $('#qty_packing').val(app.qtyPacking)
         if (app.rowIndex === null)
           $('#qty').val($('#unique_code').find(':selected').data('qty'))
@@ -957,7 +957,7 @@ export default {
     // delete datatable row
     $('#product_table').on('click', '.la-trash', function () {
       const rowData = app.datatable.row($(this).parents('tr')).data()
-      app.$delete(app.existingUniqueCode, rowData.unique_code)
+      app.$delete(app.existingUniqueCode, `${rowData.product_id}_${rowData.product_packing_id}_${rowData.from_warehouse_location_id}_${rowData.unique_code}`)
       app.datatable.row($(this).parents('tr')).remove().draw()
     })
 
@@ -973,7 +973,7 @@ export default {
       app.updatedByName       = rowData.updated_by_name
       app.warehouseLocationId = rowData.from_warehouse_location_id
       app.uniqueCode          = rowData.unique_code
-      app.uniqCodeBefore      = rowData.unique_code
+      app.uniqCodeBefore      = `${rowData.product_id}_${rowData.product_packing_id}_${rowData.from_warehouse_location_id}_${rowData.unique_code}`
       app.productId           = rowData.product_id
 
       const newOptionProduct  = new Option(rowData.product_name, rowData.product_id, true, true)
@@ -987,12 +987,7 @@ export default {
       $('#from_warehouse_location_id').append(newOptionLocation).trigger('change')
 
       if (app.rowId !== 0)
-        app.isEditExisting = true
-
-      if (app.modalHasOpen === false) {
-        app.qtyPacking = rowData.qty + rowData.last_stock
-        $('#qty_packing').val(app.qtyPacking)
-      }
+        app.setLastStock(rowData.product_id, rowData.product_packing_id, rowData.from_warehouse_location_id, rowData.unique_code, rowData.qty)
 
       $('#description_modal').val(rowData.description)
       $('#qty').val(rowData.qty)
@@ -1044,7 +1039,7 @@ export default {
         $('#product_packing_id').prop('disabled', false)
         if (this.productPackingId !== null) {
           $('#product_packing_id').val(this.productPackingId).trigger('change')
-          if (this.isEditExisting === true) {
+          if (this.rowId !== 0) {
             setTimeout(function () {
               $('#product_id').attr('disabled', true)
               $('#product_packing_id').attr('disabled', true)
@@ -1092,7 +1087,7 @@ export default {
         $('#unique_code').prop('disabled', false)
         if (this.uniqueCode !== null) {
           $('#unique_code').val(this.uniqueCode).trigger('change')
-          if (this.isEditExisting === true) {
+          if (this.rowId !== 0) {
             setTimeout(function () {
               $('#product_id').attr('disabled', true)
               $('#product_packing_id').attr('disabled', true)
@@ -1126,7 +1121,7 @@ export default {
       this.uniqueCodeSelect = [{ id: '', text: '' }]
       if (data !== null) {
         data.forEach((value) => {
-          if (app.existingUniqueCode[value.unique_code] === undefined) {
+          if (app.existingUniqueCode[`${value.product_id}_${value.product_packing_id}_${value.warehouse_location_id}_${value.unique_code}`] === undefined && value.last_stock !== 0) {
             dataTemporary = {
               id          : value.unique_code,
               text        : value.unique_code,
@@ -1166,7 +1161,7 @@ export default {
       let productId           = parseInt($('#product_id').val())
       let productPackingId    = parseInt($('#product_packing_id').val())
       let warehouseLocationId = parseInt($('#from_warehouse_location_id').val())
-      if (this.isEditExisting === true) {
+      if (this.rowId !== 0) {
         uniqueCode          = this.uniqueCode
         productId           = this.productId
         productPackingId    = this.productPackingId
@@ -1201,7 +1196,7 @@ export default {
         this.datatable.row(this.rowIndex).data(product).draw()
 
       this.$delete(this.existingUniqueCode, this.uniqCodeBefore)
-      this.existingUniqueCode[uniqueCode] = uniqueCode
+      this.existingUniqueCode[`${productId}_${productPackingId}_${warehouseLocationId}_${uniqueCode}`] = uniqueCode
       $('#product_modal').modal('hide')
     },
     clearForm () {
@@ -1209,12 +1204,13 @@ export default {
       $('#description_modal').val(null)
       $('#qty').val('')
       $('#product_id').val(null).trigger('change')
+      $('#qty_packing').val('')
       this.productPackingId    = null
       this.warehouseLocationId = null
       this.uniqueCode          = null
       this.uniqCodeBefore      = null
       this.rowId               = 0
-      this.isEditExisting      = false
+      this.lastStockForEdit    = 0
       this.statusProduct       = STATUS_OPEN
       this.createdAt           = ''
       this.updateAt            = ''
@@ -1270,6 +1266,22 @@ export default {
       this.formChanged = true
       data.status      = statusId
       setTimeout(() => this.datatable.row(rowIndex).data(data).draw(), 100)
+    },
+    async getLastStock (productId, packingId, locationId, uniqueCode, qty) {
+      await this.$store.dispatch('product/getUniqueCodeFirst', {
+        productId : productId,
+        packingId : packingId,
+        locationId: locationId,
+        uniqueCode: uniqueCode,
+      })
+      const data      = this.$store.getters['product/getUniqueCodeFirst'].result
+      if (data.length > 0)
+        this.lastStockForEdit = qty + data[0].last_stock
+    },
+    async setLastStock (productId, packingId, locationId, uniqueCode, qty) {
+      await this.getLastStock(productId, packingId, locationId, uniqueCode, qty)
+      this.qtyPacking = this.lastStockForEdit
+      $('#qty_packing').val(this.qtyPacking)
     },
   },
 }

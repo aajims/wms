@@ -870,7 +870,7 @@ export default {
     // delete datatable row
     $('#product_table').on('click', '.la-trash', function () {
       const rowData = app.datatable.row($(this).parents('tr')).data()
-      app.$delete(app.existingUniqueCode, rowData.unique_code)
+      app.$delete(app.existingUniqueCode, `${rowData.product_id}_${rowData.product_packing_id}_${rowData.from_warehouse_location_id}_${rowData.unique_code}`)
       app.datatable.row($(this).parents('tr')).remove().draw()
     })
 
@@ -880,7 +880,7 @@ export default {
       app.productPackingId    = rowData.product_packing_id
       app.warehouseLocationId = rowData.from_warehouse_location_id
       app.uniqueCode          = rowData.unique_code
-      app.uniqCodeBefore      = rowData.unique_code
+      app.uniqCodeBefore      = `${rowData.product_id}_${rowData.product_packing_id}_${rowData.from_warehouse_location_id}_${rowData.unique_code}`
       $('#product_id').val(rowData.product_id).trigger('change')
       $('#description_modal').val(rowData.description)
       $('#qty').val(rowData.qty)
@@ -967,8 +967,17 @@ export default {
       if (productId && packingId && locationId) {
         await this.getUniqueCode(productId, packingId, locationId)
         $('#unique_code').prop('disabled', false)
-        if (this.uniqueCode !== null)
+        if (this.uniqueCode !== null) {
           $('#unique_code').val(this.uniqueCode).trigger('change')
+          if (this.rowIndex !== null) {
+            const rowData         = this.datatable.row(this.rowIndex).data()
+            const newOptionUnique = new Option(rowData.unique_code, rowData.unique_code, true, true)
+            newOptionUnique.setAttribute('data-qty', (rowData.qty + rowData.last_stock))
+            newOptionUnique.setAttribute('data-batch', rowData.batch)
+            newOptionUnique.setAttribute('data-expired-date', rowData.expired_date)
+            $('#unique_code').append(newOptionUnique).trigger('change')
+          }
+        }
       } else {
         $('#unique_code').val(null).trigger('change')
         $('#unique_code').prop('disabled', true)
@@ -985,7 +994,7 @@ export default {
       this.uniqueCodeSelect = [{ id: '', text: '' }]
       if (data !== null) {
         data.forEach((value) => {
-          if (app.existingUniqueCode[value.unique_code] === undefined || (app.rowIndex !== null && app.existingUniqueCode[value.unique_code] !== undefined)) {
+          if (app.existingUniqueCode[`${value.product_id}_${value.product_packing_id}_${value.warehouse_location_id}_${value.unique_code}`] === undefined && value.last_stock !== 0) {
             dataTemporary = {
               id          : value.unique_code,
               text        : value.unique_code,
@@ -1018,13 +1027,14 @@ export default {
         product_packing_id        : parseInt($('#product_packing_id').val()),
         from_warehouse_location_id: parseInt($('#from_warehouse_location_id').val()),
         to_warehouse_location_id  : 0,
-        unique_code               : $('#unique_code').val(),
+        unique_code               : uniqueCode,
         product_name              : $('#product_id option:selected').text(),
         product_sku               : $('#product_id').find(':selected').data('product-sku'),
         packing_name              : $('#product_packing_id option:selected').text(),
         location_name             : $('#from_warehouse_location_id option:selected').text(),
         expired_date              : $('#unique_code').find(':selected').data('expired_date'),
         qty                       : parseInt($('#qty').val()),
+        last_stock                : this.qtyPacking - parseInt($('#qty').val()),
         batch                     : $('#unique_code').find(':selected').data('batch'),
         description               : $('#description_modal').val(),
       }
@@ -1034,7 +1044,7 @@ export default {
         this.datatable.row(this.rowIndex).data(product).draw()
 
       this.$delete(this.existingUniqueCode, this.uniqCodeBefore)
-      this.existingUniqueCode[uniqueCode] = uniqueCode
+      this.existingUniqueCode[`${$('#product_id').val()}_${$('#product_packing_id').val()}_${$('#from_warehouse_location_id').val()}_${uniqueCode}`] = uniqueCode
       $('#product_modal').modal('hide')
     },
     clearForm () {
