@@ -86,6 +86,28 @@
                   disabled
                 />
               </div>
+               <div class="col-lg-6">
+                <label for="country">User Type </label>
+                <input
+                  v-model="user_type"
+                  type="text"
+                  class="form-control"
+                  name="email"
+                  disabled
+                >
+              </div>
+            </div>
+            <div class="form-group row">
+              <div class="col-lg-6" id="select-warehouse" style="display: none">
+                <label >Warehouse Name </label>
+                <input
+                  v-model="user.warehouse_name"
+                  type="text"
+                  class="form-control"
+                  name="email"
+                  disabled
+                >
+              </div>
             </div>
             <div class="form-group row">
               <div class="col-lg-6">
@@ -233,10 +255,12 @@
 </template>
 
 <script>
+import { USER_TYPE } from '@/utils/constants'
     export default {
         data() {
             return {
                 No : 1,
+                user_type : null,
                 user        : [],
                 dataPrivilage   : [],
                 createdDate: '',
@@ -245,8 +269,11 @@
        async mounted () {
         await this.$store.dispatch('user/getUserDetail', { idUser: atob(this.$route.params.id) })
         this.user         = this.$store.getters['user/getUserDetail'].result
+        this.user_type    = USER_TYPE[this.user.user_type - 1].text
         this.dataPrivilage    = this.$store.getters['user/getUserDetail'].result.privilege
         this.createdDate = moment(this.user.created_at).format('DD/MM/Y HH:mm:ss')
+        var style = USER_TYPE[this.user.user_type - 1].id == 3 ? 'block' : 'none';
+        document.getElementById('select-warehouse').style.display = style;
        },
        methods: {
           handleClick(e) {
