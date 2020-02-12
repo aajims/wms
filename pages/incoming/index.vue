@@ -9,7 +9,7 @@
           <i class="kt-font-brand la la-sign-in" />
         </span>
         <h3 class="kt-portlet__head-title">
-          Incoming Stock
+          Incoming Stock List
         </h3>
       </div>
       <div class="kt-portlet__head-toolbar">

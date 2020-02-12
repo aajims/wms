@@ -6,7 +6,7 @@
     <div class="kt-portlet__head kt-portlet__head--lg">
       <div class="kt-portlet__head-label">
         <span class="kt-portlet__head-icon">
-          <i class="kt-font-brand flaticon2-shelter" />
+          <i class="kt-font-brand flaticon-map-location" />
         </span>
         <h3 class="kt-portlet__head-title">
           Location List

@@ -13,7 +13,7 @@
           <div class="kt-portlet__head kt-portlet__head--lg">
             <div class="kt-portlet__head-label">
               <span class="kt-portlet__head-icon">
-                <i class="kt-font-brand flaticon-add" />
+                <i class="kt-font-brand flaticon-clipboard" />
               </span>
               <h3 class="kt-portlet__head-title">
                 Detail User
@@ -41,7 +41,7 @@
                   disabled
                 >
               </div>
-               <div class="col-lg-6">
+              <div class="col-lg-6">
                 <label>Full Name </label>
                 <input
                   v-model="user.full_name"
@@ -86,7 +86,7 @@
                   disabled
                 />
               </div>
-               <div class="col-lg-6">
+              <div class="col-lg-6">
                 <label for="country">User Type </label>
                 <input
                   v-model="user_type"
@@ -98,8 +98,12 @@
               </div>
             </div>
             <div class="form-group row">
-              <div class="col-lg-6" id="select-warehouse" style="display: none">
-                <label >Warehouse Name </label>
+              <div
+                id="select-warehouse"
+                class="col-lg-6"
+                style="display: none"
+              >
+                <label>Warehouse Name </label>
                 <input
                   v-model="user.warehouse_name"
                   type="text"
@@ -194,7 +198,7 @@
                 </tr>
               </thead>
               <tbody>
-                  <tr
+                <tr
                   v-for="(row, index) in dataPrivilage"
                   :key="index"
                 >
@@ -205,7 +209,7 @@
                       v-model="row.view"
                       type="checkbox"
                       @click="handleClick"
-                    />
+                    >
                   </td>
                   <td>
                     <input
@@ -255,35 +259,35 @@
 </template>
 
 <script>
-import { USER_TYPE } from '@/utils/constants'
-    export default {
-        data() {
-            return {
-                No : 1,
-                user_type : null,
-                user        : [],
-                dataPrivilage   : [],
-                createdDate: '',
-            }
-        },
-       async mounted () {
-        await this.$store.dispatch('user/getUserDetail', { idUser: atob(this.$route.params.id) })
-        this.user         = this.$store.getters['user/getUserDetail'].result
-        this.user_type    = USER_TYPE[this.user.user_type - 1].text
-        this.dataPrivilage    = this.$store.getters['user/getUserDetail'].result.privilege
-        this.createdDate = moment(this.user.created_at).format('DD/MM/Y HH:mm:ss')
-        var style = USER_TYPE[this.user.user_type - 1].id == 3 ? 'block' : 'none';
-        document.getElementById('select-warehouse').style.display = style;
-       },
-       methods: {
-          handleClick(e) {
-          e.preventDefault();
-          if (this.isChecked) {    
-            this.$emit('change', false);
-          } else {
-            this.$emit('change', this.value);
-          }
-        },
-       }, 
+import moment from 'moment'
+import { USER_TYPE, USER_STAFF } from '@/utils/constants'
+export default {
+  data () {
+    return {
+      No           : 1,
+      user_type    : null,
+      user         : [],
+      dataPrivilage: [],
+      createdDate  : '',
     }
+  },
+  async mounted () {
+    await this.$store.dispatch('user/getUserDetail', { idUser: atob(this.$route.params.id) })
+    this.user                                                 = this.$store.getters['user/getUserDetail'].result
+    this.user_type                                            = USER_TYPE[this.user.user_type - 1].text
+    this.dataPrivilage                                        = this.$store.getters['user/getUserDetail'].result.privilege
+    this.createdDate                                          = moment(this.user.created_at).format('DD/MM/Y HH:mm:ss')
+    const style                                               = USER_TYPE[this.user.user_type - 1].id === USER_STAFF ? 'block' : 'none'
+    document.querySelector('#select-warehouse').style.display = style
+  },
+  methods: {
+    handleClick (event) {
+      event.preventDefault()
+      if (this.isChecked)
+        this.$emit('change', false)
+      else
+        this.$emit('change', this.value)
+    },
+  },
+}
 </script>

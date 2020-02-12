@@ -117,7 +117,11 @@
                 </select>
                 <span class="form-text text-muted">Please select User Type </span>
               </div>
-              <div class="col-lg-6" id="select-warehouse" style="display: none">
+              <div
+                id="select-warehouse"
+                class="col-lg-6"
+                style="display: none"
+              >
                 <label for="country">Warehouse <span style="color:red">*</span></label>
                 <select
                   id="warehouse"
@@ -262,7 +266,7 @@
 </template>
 
 <script>
-import { USER_TYPE } from '@/utils/constants'
+import { USER_TYPE, USER_STAFF } from '@/utils/constants'
 export default {
   data () {
     return {
@@ -282,7 +286,7 @@ export default {
         company_id  : 0,
         warehouse_id: 0,
         description : null,
-        privilege   : []
+        privilege   : [],
       },
       dataPrivilage: [
         {
@@ -430,42 +434,48 @@ export default {
     }
   },
   async mounted () {
-     $('#user_type').select2({
-        placeholder: 'Select a user type',
-        allowClear : true,
-        data       : USER_TYPE,
-      })
-      $('#user_type').val(this.user.user_type).trigger('change')
-      $('#user_type').on('change', function () {
-        app.user.user_type = $(this).val()
-       var style = this.value == 3 ? 'block' : 'none';
-        document.getElementById('select-warehouse').style.display = style;
-      })
+    $('#user_type').select2({
+      placeholder: 'Select a user type',
+      allowClear : true,
+      data       : USER_TYPE,
+    })
+    $('#user_type').val(this.user.user_type).trigger('change')
+    $('#user_type').on('change', function () {
+      app.user.user_type                                        = parseInt(this.value)
+      const style                                               = parseInt(this.value) === USER_STAFF ? 'block' : 'none'
+      document.querySelector('#select-warehouse').style.display = style
 
-      $('#warehouse').select2({
-        placeholder       : 'Select warehouse',
-        minimumInputLength: 1,
-        width             : '100%',
-        allowClear        : true,
-        ajax              : {
-            type          : 'GET',
-            url           : '/api/warehouse/select',
-            cache         : true,
-            processResults: function (data) {
-            return {
-                results: $.map(data.result, function (object) {
-                return {
-                    id         : object.id,
-                    text       : object.name,
-                }
-                }),
-            }
-            },
-          },
-        })
-        $('#warehouse').on('change', function () {
-        validator.element($(this))
-        })
+      // add rules to warehouse id
+      if (parseInt(this.value) === USER_STAFF)
+        $('#warehouse').rules('add', { required: true })
+      else
+        $('#warehouse').rules('remove')
+    })
+
+    $('#warehouse').select2({
+      placeholder       : 'Select warehouse',
+      minimumInputLength: 1,
+      width             : '100%',
+      allowClear        : true,
+      ajax              : {
+        type          : 'GET',
+        url           : '/api/warehouse/select',
+        cache         : true,
+        processResults: function (data) {
+          return {
+            results: $.map(data.result, function (object) {
+              return {
+                id  : object.id,
+                text: object.name,
+              }
+            }),
+          }
+        },
+      },
+    })
+    $('#warehouse').on('change', function () {
+      validator.element($(this))
+    })
     const customAdapter = $.fn.select2.amd.require('select2/data/customAdapter')
 
     await this.$store.dispatch('region/getCountries')
@@ -547,32 +557,31 @@ export default {
       // define validation rules
       rules: {
         username: {
-          required: true,
-          minlength  : 6
+          required : true,
+          minlength: 6,
         },
-         password: {
-          required: true,
-          minlength  : 6
+        password: {
+          required : true,
+          minlength: 6,
         },
-        full_name   : { required: true },
-        phone: {
-          required: true,
-          digits  : true,
-          minlength : 10
+        full_name: { required: true },
+        phone    : {
+          required : true,
+          digits   : true,
+          minlength: 10,
         },
         email: {
-        required : true,
-        email    : true,
-        minlength: 10
+          required : true,
+          email    : true,
+          minlength: 10,
         },
-        user_type   : { required: true },
+        user_type  : { required: true },
         address    : { required: true },
         country_id : { required: true },
         state_id   : { required: true },
         city_id    : { required: true },
         district_id: { required: true },
-        company_id:  { required: true },
-        warehouse_id: { required: true },
+        company_id : { required: true },
       // eslint-disable-next-line object-curly-newline
       },
       invalidHandler: function (event, validator) {
@@ -607,13 +616,16 @@ export default {
     async addUser () {
       if ($('#user_form').valid()) {
         // await this.setDataPrivilage(data)
-        this.user.privilege = this.dataPrivilage
+        this.user.privilege   = this.dataPrivilage
         this.user.country_id  = parseInt($('#country').val())
         this.user.state_id    = parseInt($('#state').val())
         this.user.city_id     = parseInt($('#city').val())
         this.user.district_id = parseInt($('#district').val())
-        this.user.user_type     = parseInt($('#user_type').val())
-        this.user.warehouse_id     = parseInt($('#warehouse').val())
+        this.user.user_type   = parseInt($('#user_type').val())
+        if (this.user.user_type === USER_STAFF)
+          this.user.warehouse_id = parseInt($('#warehouse').val())
+        else
+          this.user.warehouse_id = 0
         try {
           this.$nuxt.$loading.start()
           await this.$store.dispatch('user/addUser', { data: this.user })

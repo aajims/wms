@@ -303,6 +303,7 @@
                   <thead>
                     <tr>
                       <th>SKU Number</th>
+                      <th>Product Location</th>
                       <th>Product</th>
                       <th>Packing</th>
                       <th>Quantity</th>
@@ -543,6 +544,8 @@ export default {
       isRestore           : false,
       formChanged         : false,
       parentId            : 0,
+      fromLocationId      : 0,
+      uniqueCode          : 0,
     }
   },
   async mounted () {
@@ -558,23 +561,24 @@ export default {
       await this.$store.dispatch('incoming/getIncomingDetail', { idIncoming: atob(this.$route.params.id) })
       const incomingDetail           = this.$store.getters['incoming/getIncomingDetail'].result
 
-      this.incoming.id               = incomingDetail.id
-      this.incoming.parent_id        = incomingDetail.parent_id
-      this.incoming.order_no         = incomingDetail.order_no
-      this.incoming.job_no           = incomingDetail.job_no
-      this.incoming.unique_code      = incomingDetail.unique_code
-      this.incoming.transport_number = incomingDetail.transport_number
-      this.incoming.flight           = incomingDetail.flight
-      this.incoming.from             = incomingDetail.from
-      this.incoming.custom_permit    = incomingDetail.custom_permit
-      this.incoming.cargo_insurance  = incomingDetail.cargo_insurance
-      this.incoming.description      = incomingDetail.description
-      this.incoming.transport_type   = incomingDetail.transport_type
-      this.incoming.from_country_id  = incomingDetail.from_country_id
-      this.incoming.company_id       = incomingDetail.company_id
-      this.incoming.to_warehouse_id  = incomingDetail.to_warehouse_id
-      this.incoming.to_country_id    = incomingDetail.to_country_id
-      this.incoming.status           = incomingDetail.status
+      this.incoming.id                = incomingDetail.id
+      this.incoming.parent_id         = incomingDetail.parent_id
+      this.incoming.order_no          = incomingDetail.order_no
+      this.incoming.job_no            = incomingDetail.job_no
+      this.incoming.unique_code       = incomingDetail.unique_code
+      this.incoming.transport_number  = incomingDetail.transport_number
+      this.incoming.flight            = incomingDetail.flight
+      this.incoming.from              = incomingDetail.from
+      this.incoming.custom_permit     = incomingDetail.custom_permit
+      this.incoming.cargo_insurance   = incomingDetail.cargo_insurance
+      this.incoming.description       = incomingDetail.description
+      this.incoming.transport_type    = incomingDetail.transport_type
+      this.incoming.company_id        = incomingDetail.company_id
+      this.incoming.to_warehouse_id   = incomingDetail.to_warehouse_id
+      this.incoming.to_country_id     = incomingDetail.to_country_id
+      this.incoming.from_warehouse_id = incomingDetail.from_warehouse_id
+      this.incoming.from_country_id   = incomingDetail.from_country_id
+      this.incoming.status            = incomingDetail.status
 
       this.companyName   = incomingDetail.company_name
       this.warehouseName = incomingDetail.to_warehouse_name
@@ -585,8 +589,10 @@ export default {
         const products     = {
           id                            : value.id,
           product_id                    : value.product_id,
+          unique_code                   : value.unique_code,
           product_packing_id            : value.product_packing_id,
           to_warehouse_location_id      : value.to_warehouse_location_id,
+          from_warehouse_location_id    : value.from_warehouse_location_id,
           product_name                  : value.product_name,
           product_sku                   : value.product_sku,
           product_packing_name          : value.product_packing_name,
@@ -627,6 +633,10 @@ export default {
       })
       for (const property in holder)
         this.remainingLocation.push({ location_id: parseInt(property), usage: holder[property] })
+
+      // disable input if parent id != 0
+      if (this.parentId)
+        $('#transport_type').prop('disabled', true)
     } catch (error) {
 
     }
@@ -862,15 +872,6 @@ export default {
           return data.text
         },
       })
-
-      // disable input in modal
-      if (app.parentId !== 0) {
-        $('#product_id').prop('disabled', true)
-        $('#product_packing_id').prop('disabled', true)
-        $('#qty').prop('disabled', true)
-        $('#batch').prop('disabled', true)
-        $('#expired_date').attr('disabled', 'disabled')
-      }
     })
     $('#product_modal').on('hidden.bs.modal', function () {
       app.clearForm()
@@ -886,6 +887,7 @@ export default {
       data      : this.incoming.products,
       columns   : [
         { data: 'product_sku' },
+        { data: 'unique_code' },
         { data: 'product_name' },
         { data: 'product_packing_name' },
         { data: 'qty' },
@@ -1052,6 +1054,8 @@ export default {
       app.createdByName    = rowData.created_by_name
       app.updatedByName    = rowData.updated_by_name
       app.locationIdBefore = rowData.to_warehouse_location_id
+      app.fromLocationId   = rowData.from_warehouse_location_id
+      app.uniqueCode       = rowData.unique_code
 
       app.usage         = rowData.to_warehouse_location_usage
       app.capacity      = rowData.to_warehouse_location_capacity
@@ -1126,8 +1130,16 @@ export default {
       if (productId) {
         await this.getProductPacking(productId)
         $('#product_packing_id').prop('disabled', false)
-        if (this.productPackingId !== null)
+        if (this.productPackingId !== null) {
           $('#product_packing_id').val(this.productPackingId).trigger('change')
+          if (this.parentId !== 0) {
+            $('#product_id').prop('disabled', true)
+            $('#product_packing_id').prop('disabled', true)
+            $('#qty').prop('disabled', true)
+            $('#batch').prop('disabled', true)
+            $('#expired_date').attr('disabled', 'disabled')
+          }
+        }
       } else {
         $('#product_packing_id').val(null).trigger('change')
         $('#product_packing_id').prop('disabled', true)
@@ -1223,6 +1235,8 @@ export default {
           product_id                    : parseInt($('#product_id').val()),
           product_packing_id            : parseInt($('#product_packing_id').val()),
           to_warehouse_location_id      : locationId,
+          from_warehouse_location_id    : this.fromLocationId,
+          unique_code                   : this.uniqueCode,
           product_name                  : $('#product_id option:selected').text(),
           product_sku                   : $('#product_id').find(':selected').data('product-sku'),
           product_packing_name          : $('#product_packing_id').find(':selected').data('packing-name'),
@@ -1280,6 +1294,8 @@ export default {
       this.updatedByName    = ''
       this.rowId            = 0
       this.locationIdBefore = ''
+      this.fromLocationId   = 0
+      this.uniqueCode       = ''
 
       this.usage         = 0
       this.capacity      = 0
