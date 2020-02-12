@@ -643,7 +643,11 @@ import { USER_TYPE } from '@/utils/constants'
               this.user.state_id    = parseInt($('#state').val())
               this.user.city_id     = parseInt($('#city').val())
               this.user.district_id = parseInt($('#district').val())
-              this.user.warehouse_id     = parseInt($('#warehouse').val())
+              if(this.user.user_type == 2 || 3){
+                this.user.warehouse_id = 0;
+              } else {
+                this.user.warehouse_id     = parseInt($('#warehouse').val())
+              } 
               this.user.user_type    = parseInt($('#user_type').val())
               this.user.privilege = this.dataPrivilage
               this.user.status      = 1
