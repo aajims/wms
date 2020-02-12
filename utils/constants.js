@@ -127,6 +127,12 @@ export const EXTERNAL_STATUS = [
   },
 ]
 
+export const USER_TYPE = [
+  { id: '1', text: 'Super Admin' },
+  { id: '2', text: 'Admin' },
+  { id: '3', text: 'Staff' },
+]
+
 export const TRANSPORT_TYPE = [
   { id: 'air-freight', text: 'Air Freight' },
   { id: 'sea-freight', text: 'Sea Freight' },
