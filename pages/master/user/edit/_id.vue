@@ -96,7 +96,18 @@
               </div>
             </div>
             <div class="form-group row">
-              <div class="col-lg-6">
+               <div class="col-lg-6">
+                <label for="country">User Type <span style="color:red">*</span></label>
+                <select
+                  id="user_type"
+                  class="form-control kt-select2"
+                  name="user_type"
+                >
+                  <option />
+                </select>
+                <span class="form-text text-muted">Please select User Type </span>
+              </div>
+              <div class="col-lg-6" id="select-warehouse" style="display: none">
                 <label for="country">Warehouse <span style="color:red">*</span></label>
                 <select
                   id="warehouse"
@@ -242,6 +253,7 @@
 
 
 <script>
+import { USER_TYPE } from '@/utils/constants'
     export default {
         data() {
             return {
@@ -252,14 +264,14 @@
                 full_name   : null,
                 phone       : null,
                 email       : null,
-                user_type   : 3,
+                user_type   : 0,
                 address     : null,
                 country_id  : null,
                 state_id    : null,
                 city_id     : null,
                 district_id : null,
                 company_id  : 0,
-                warehouse_id: null,
+                warehouse_id: 0,
                 description : null,
                 privilege   : []
                 },
@@ -420,6 +432,7 @@
             this.user.warehouse_id  = userDetail.warehouse_id
             this.user.company_id  = userDetail.company_id
             this.warehouse_name = userDetail.warehouse_name
+            this.user.user_type = userDetail.user_type
             this.user.country_id = userDetail.country_id
             this.user.state_id = userDetail.state_id
             this.user.city_id = userDetail.city_id
@@ -442,6 +455,18 @@
           } catch (error) {
 
           }
+
+      $('#user_type').select2({
+        placeholder: 'Select a user type',
+        allowClear : true,
+        data       : USER_TYPE,
+      })
+      $('#user_type').val(this.user.user_type).trigger('change')
+      $('#user_type').on('change', function () {
+        app.user.user_type = $(this).val()
+       var style = this.value == 3 ? 'block' : 'none';
+        document.getElementById('select-warehouse').style.display = style;
+      })
 
         $('#warehouse').select2({
         placeholder       : 'Select warehouse',
@@ -619,6 +644,7 @@
               this.user.city_id     = parseInt($('#city').val())
               this.user.district_id = parseInt($('#district').val())
               this.user.warehouse_id     = parseInt($('#warehouse').val())
+              this.user.user_type    = parseInt($('#user_type').val())
               this.user.privilege = this.dataPrivilage
               this.user.status      = 1
               try {
