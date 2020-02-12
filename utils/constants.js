@@ -128,9 +128,9 @@ export const EXTERNAL_STATUS = [
 ]
 
 export const USER_TYPE = [
-  { id: '1', text: 'Super Admin' },
-  { id: '2', text: 'Admin' },
-  { id: '3', text: 'Staff' },
+  { id: 1, text: 'Super Admin' },
+  { id: 2, text: 'Admin' },
+  { id: 3, text: 'Staff' },
 ]
 
 export const TRANSPORT_TYPE = [
@@ -164,3 +164,7 @@ export const STATUS_PACK_NAME           = 'PACKED'
 export const STATUS_CANCEL_NAME         = 'CANCEL'
 export const STATUS_CLOSE_NAME          = 'CLOSE'
 export const READY_SHIPING_NAME = 'READY FOR SHIP'
+
+export const USER_SUPER_ADMIN = 1
+export const USER_ADMIN = 2
+export const USER_STAFF = 3

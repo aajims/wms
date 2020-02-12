@@ -9,7 +9,7 @@
           <i class="kt-font-brand fa flaticon2-delivery-truck" />
         </span>
         <h3 class="kt-portlet__head-title">
-          External Transfer
+          External Transfer List
         </h3>
       </div>
       <div class="kt-portlet__head-toolbar">

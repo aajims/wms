@@ -14,7 +14,7 @@
           <div class="kt-portlet__head kt-portlet__head--lg">
             <div class="kt-portlet__head-label">
               <span class="kt-portlet__head-icon">
-                <i class="kt-font-brand flaticon-add" />
+                <i class="kt-font-brand flaticon-edit-1" />
               </span>
               <h3 class="kt-portlet__head-title">
                 Edit User
@@ -96,7 +96,7 @@
               </div>
             </div>
             <div class="form-group row">
-               <div class="col-lg-6">
+              <div class="col-lg-6">
                 <label for="country">User Type <span style="color:red">*</span></label>
                 <select
                   id="user_type"
@@ -107,7 +107,11 @@
                 </select>
                 <span class="form-text text-muted">Please select User Type </span>
               </div>
-              <div class="col-lg-6" id="select-warehouse" style="display: none">
+              <div
+                id="select-warehouse"
+                class="col-lg-6"
+                style="display: none"
+              >
                 <label for="country">Warehouse <span style="color:red">*</span></label>
                 <select
                   id="warehouse"
@@ -251,431 +255,439 @@
   </div>
 </template>
 
-
 <script>
-import { USER_TYPE } from '@/utils/constants'
-    export default {
-        data() {
-            return {
-                No : 1,
-                user: {
-                username    : null,
-                password    : null,
-                full_name   : null,
-                phone       : null,
-                email       : null,
-                user_type   : 0,
-                address     : null,
-                country_id  : null,
-                state_id    : null,
-                city_id     : null,
-                district_id : null,
-                company_id  : 0,
-                warehouse_id: 0,
-                description : null,
-                privilege   : []
-                },
-                dataPrivilage: [
-                {
-                module_name: 'Dashboard',
-                module_code: 'DBD',
-                view       : 0,
-                add        : 0,
-                edit       : 0,
-                delete     : 0,
-                cancel     : 0,
-                },
-                {
-                module_name: 'Warehouse',
-                module_code: 'WHE',
-                view       : 0,
-                add        : 0,
-                edit       : 0,
-                delete     : 0,
-                cancel     : 0,
-                },
-                {
-                module_name: 'location',
-                module_code: 'LOC',
-                view       : 0,
-                add        : 0,
-                edit       : 0,
-                delete     : 0,
-                cancel     : 0,
-                },
-                {
-                module_name: 'user',
-                module_code: 'USR',
-                view       : 0,
-                add        : 0,
-                edit       : 0,
-                delete     : 0,
-                cancel     : 0,
-                },
-                {
-                module_name: 'product-category',
-                module_code: 'PCG',
-                view       : 0,
-                add        : 0,
-                edit       : 0,
-                delete     : 0,
-                cancel     : 0,
-                },
-                {
-                module_name: 'company',
-                module_code: 'CMP',
-                view       : 0,
-                add        : 0,
-                edit       : 0,
-                delete     : 0,
-                cancel     : 0,
-                },
-                {
-                module_name: 'packing',
-                module_code: 'PCK',
-                view       : 0,
-                add        : 0,
-                edit       : 0,
-                delete     : 0,
-                cancel     : 0,
-                },
-                {
-                module_name: 'product',
-                module_code: 'PDC',
-                view       : 0,
-                add        : 0,
-                edit       : 0,
-                delete     : 0,
-                cancel     : 0,
-                },
-                {
-                module_name: 'kitting',
-                module_code: 'KT',
-                view       : 0,
-                add        : 0,
-                edit       : 0,
-                delete     : 0,
-                cancel     : 0,
-                },
-                {
-                module_name: 'order',
-                module_code: 'ODR',
-                view       : 0,
-                add        : 0,
-                edit       : 0,
-                delete     : 0,
-                cancel     : 0,
-                },
-                {
-                module_name: 'job-incoming',
-                module_code: 'JIN',
-                view       : 0,
-                add        : 0,
-                edit       : 0,
-                delete     : 0,
-                cancel     : 0,
-                },
-                {
-                module_name: 'job-outgoing',
-                module_code: 'JOG',
-                view       : 0,
-                add        : 0,
-                edit       : 0,
-                delete     : 0,
-                cancel     : 0,
-                },
-                {
-                module_name: 'job-damage',
-                module_code: 'JDM',
-                view       : 0,
-                add        : 0,
-                edit       : 0,
-                delete     : 0,
-                cancel     : 0,
-                },
-                {
-                module_name: 'job-transfer',
-                module_code: 'JTF',
-                view       : 0,
-                add        : 0,
-                edit       : 0,
-                delete     : 0,
-                cancel     : 0,
-                },
-                {
-                module_name: 'report',
-                module_code: 'RPT',
-                view       : 0,
-                add        : 0,
-                edit       : 0,
-                delete     : 0,
-                cancel     : 0,
-                },
-            ],
-            states        : [],
-            cities        : [],
-            districts     : [],
-            stateOption   : null,
-            cityOption    : null,
-            districtOption: null,
-            }
+import { USER_TYPE, USER_STAFF } from '@/utils/constants'
+export default {
+  data () {
+    return {
+      No  : 1,
+      user: {
+        username    : null,
+        password    : null,
+        full_name   : null,
+        phone       : null,
+        email       : null,
+        user_type   : 0,
+        address     : null,
+        country_id  : null,
+        state_id    : null,
+        city_id     : null,
+        district_id : null,
+        company_id  : 0,
+        warehouse_id: 0,
+        description : null,
+        privilege   : [],
+      },
+      dataPrivilage: [
+        {
+          module_name: 'Dashboard',
+          module_code: 'DBD',
+          view       : 0,
+          add        : 0,
+          edit       : 0,
+          delete     : 0,
+          cancel     : 0,
         },
-       async mounted () {
-          try {
-            await this.$store.dispatch('user/getUserDetail', { idUser: atob(this.$route.params.id) })
-            const userDetail         = this.$store.getters['user/getUserDetail'].result
-            this.user.username  = userDetail.username
-            this.user.full_name  = userDetail.full_name
-            this.user.phone  = userDetail.phone
-            this.user.email  = userDetail.email
-            this.user.address  = userDetail.address
-            this.user.warehouse_id  = userDetail.warehouse_id
-            this.user.company_id  = userDetail.company_id
-            this.warehouse_name = userDetail.warehouse_name
-            this.user.user_type = userDetail.user_type
-            this.user.country_id = userDetail.country_id
-            this.user.state_id = userDetail.state_id
-            this.user.city_id = userDetail.city_id
-            this.user.district_id = userDetail.district_id
-
-            userDetail.privilege.forEach((value) => {
-              const privilege = {
-                id          : value.id,
-                module_name : value.module_name,
-                module_code : value.module_code,
-                view        : value.view,
-                add         : value.add,
-                edit        : value.edit,
-                delete      : value.delete,
-                cancel      : value.cancel
-              }
-              this.user.privilege.push(privilege)
-            });
-            this.dataPrivilage = this.user.privilege
-          } catch (error) {
-
-          }
-
-      $('#user_type').select2({
-        placeholder: 'Select a user type',
-        allowClear : true,
-        data       : USER_TYPE,
-      })
-      $('#user_type').val(this.user.user_type).trigger('change')
-      $('#user_type').on('change', function () {
-        app.user.user_type = $(this).val()
-       var style = this.value == 3 ? 'block' : 'none';
-        document.getElementById('select-warehouse').style.display = style;
-      })
-
-        $('#warehouse').select2({
-        placeholder       : 'Select warehouse',
-        minimumInputLength: 1,
-        width             : '100%',
-        allowClear        : true,
-        ajax              : {
-            type          : 'GET',
-            url           : '/api/warehouse/select',
-            cache         : true,
-            processResults: function (data) {
-            return {
-                results: $.map(data.result, function (object) {
-                return {
-                    id         : object.id,
-                    text       : object.name,
-                }
-                }),
-            }
-            },
-          },
-        })
-        const newOptionWarehouse = new Option(this.warehouse_name, this.user.warehouse_id, true, true)
-        $('#warehouse').append(newOptionWarehouse).trigger('change')
-        $('#warehouse').on('change', function () {
-        validator.element($(this))
-        })
-        const customAdapter = $.fn.select2.amd.require('select2/data/customAdapter')
-        const app           = this
-        await this.$store.dispatch('region/getCountries')
-        this.countries = this.$store.getters['region/getCountries']
-        $('#country').select2({
-        placeholder: 'Select a country',
-        allowClear : true,
-        data       : this.countries,
-        })
-        $('#country').val(this.user.country_id).trigger('change')
-        $('#country').on('change', function () {
-        validator.element($(this))
-        if ($('#country').val()) {
-            $('#state').val(null).trigger('change')
-            $('#state').prop('disabled', false)
-            app.getStatesByCountry()
-        } else {
-            $('#state').val(null).trigger('change')
-            $('#city').val(null).trigger('change')
-            $('#district').val(null).trigger('change')
-            $('#state').prop('disabled', true)
-            $('#city').prop('disabled', true)
-            $('#district').prop('disabled', true)
-        }
-        })
-
-        this.stateOption = $('#state').select2({
-        placeholder: 'Select a state',
-        allowClear : true,
-        disabled   : true,
-        dataAdapter: customAdapter,
-        data       : this.states,
-        })
-        await app.getStatesByCountry(this.user.country_id)
-        $('#state').val(this.user.state_id).trigger('change')
-        $('#state').on('change', function () {
-        validator.element($(this))
-        if ($('#state').val()) {
-            $('#city').val(null).trigger('change')
-            $('#city').prop('disabled', false)
-            app.getCitiesByState()
-        } else {
-            $('#city').val(null).trigger('change')
-            $('#district').val(null).trigger('change')
-            $('#city').prop('disabled', true)
-            $('#district').prop('disabled', true)
-        }
-        })
-
-        this.cityOption = $('#city').select2({
-        placeholder: 'Select a city',
-        allowClear : true,
-        disabled   : true,
-        dataAdapter: customAdapter,
-        data       : this.cities,
-        })
-        await app.getCitiesByState(this.user.state_id)
-        $('#city').val(this.user.city_id).trigger('change')
-        $('#city').on('change', function () {
-        validator.element($(this))
-        if ($('#city').val()) {
-            $('#district').val(null).trigger('change')
-            $('#district').prop('disabled', false)
-            app.getDistrictsByCity()
-        } else {
-            $('#district').val(null).trigger('change')
-            $('#district').prop('disabled', true)
-        }
-        })
-
-        this.districtOption = $('#district').select2({
-        placeholder: 'Select a district',
-        allowClear : true,
-        disabled   : true,
-        dataAdapter: customAdapter,
-        data       : this.states,
-        })
-        await app.getDistrictsByCity(this.user.city_id)
-        $('#district').val(this.user.district_id).trigger('change')
-        $('#district').on('change', function () {
-        validator.element($(this))
-        })
-
-        const validator = $('#user_form').validate({
-        // define validation rules
-        rules: {
-            username: {
-            required: true,
-            minlength  : 6
-            },
-            password: {
-            required: true,
-            minlength  : 6
-            },
-            full_name   : { required: true },
-            phone: {
-            required: true,
-            digits  : true,
-            minlength : 10
-            },
-            email: {
-            required : true,
-            email    : true,
-            minlength: 10
-            },
-            address    : { required: true },
-            country_id : { required: true },
-            state_id   : { required: true },
-            city_id    : { required: true },
-            district_id: { required: true },
-            company_id:  { required: true },
-            warehouse_id: { required: true },
-        // eslint-disable-next-line object-curly-newline
+        {
+          module_name: 'Warehouse',
+          module_code: 'WHE',
+          view       : 0,
+          add        : 0,
+          edit       : 0,
+          delete     : 0,
+          cancel     : 0,
         },
-        invalidHandler: function (event, validator) {
-            // eslint-disable-next-line no-undef
-            KTUtil.scrollTop()
-            event.preventDefault()
+        {
+          module_name: 'location',
+          module_code: 'LOC',
+          view       : 0,
+          add        : 0,
+          edit       : 0,
+          delete     : 0,
+          cancel     : 0,
         },
-        submitHandler: function (form) {
-            return false
+        {
+          module_name: 'user',
+          module_code: 'USR',
+          view       : 0,
+          add        : 0,
+          edit       : 0,
+          delete     : 0,
+          cancel     : 0,
         },
-        })
-       },
-       methods: {
-           async getStatesByCountry (id) {
-            this.states = []
-            await this.$store.dispatch('region/getStatesByCountry', { countryId: $('#country').val()})
-            this.states = this.$store.getters['region/getStatesByCountry']
-            this.stateOption.data('select2').dataAdapter.updateOptions(this.states)
-            },
-            async getCitiesByState (id) {
-            this.cities = []
-            await this.$store.dispatch('region/getCitiesByState', { stateId: $('#state').val() })
-            this.cities = this.$store.getters['region/getCitiesByState']
-            this.cityOption.data('select2').dataAdapter.updateOptions(this.cities)
-            },
-            async getDistrictsByCity (id) {
-            this.districts = []
-            await this.$store.dispatch('region/getDistrictsByCity', { cityId: $('#city').val() })
-            this.districts = this.$store.getters['region/getDistrictsByCity']
-            this.districtOption.data('select2').dataAdapter.updateOptions(this.districts)
-            },
-            async updateUser () {
-            if ($('#user_form').valid()) {
-              this.user.country_id  = parseInt($('#country').val())
-              this.user.state_id    = parseInt($('#state').val())
-              this.user.city_id     = parseInt($('#city').val())
-              this.user.district_id = parseInt($('#district').val())
-              if(this.user.user_type == 2 || 3){
-                this.user.warehouse_id = 0;
-              } else {
-                this.user.warehouse_id     = parseInt($('#warehouse').val())
-              } 
-              this.user.user_type    = parseInt($('#user_type').val())
-              this.user.privilege = this.dataPrivilage
-              this.user.status      = 1
-              try {
-                  this.$nuxt.$loading.start()
-                  await this.$store.dispatch('user/editUser', { idUser: atob(this.$route.params.id), data: this.user })
-                  const data      = this.$store.getters['user/getEditUser']
-                  const parameter = {
-                    alertClass: 'alert-success',
-                    message   : `user ${data.result.username} has been edited`,
-                  }
-                  this.$nuxt.$emit('alertShow', parameter)
-                  this.$nuxt.$loading.finish()
-                  // eslint-disable-next-line no-undef
-                  KTUtil.scrollTop()
-                  setTimeout(function () { window.location.href = '/master/user' }, 3000)
-                } catch (error) {
-                  const parameter = {
-                    alertClass: 'alert-danger',
-                    message   : error.message,
-                  }
-                  this.$nuxt.$emit('alertShow', parameter)
-                  this.$nuxt.$loading.finish()
-                  // eslint-disable-next-line no-undef
-                  KTUtil.scrollTop()
-                }
-              }
-            }
-       },
+        {
+          module_name: 'product-category',
+          module_code: 'PCG',
+          view       : 0,
+          add        : 0,
+          edit       : 0,
+          delete     : 0,
+          cancel     : 0,
+        },
+        {
+          module_name: 'company',
+          module_code: 'CMP',
+          view       : 0,
+          add        : 0,
+          edit       : 0,
+          delete     : 0,
+          cancel     : 0,
+        },
+        {
+          module_name: 'packing',
+          module_code: 'PCK',
+          view       : 0,
+          add        : 0,
+          edit       : 0,
+          delete     : 0,
+          cancel     : 0,
+        },
+        {
+          module_name: 'product',
+          module_code: 'PDC',
+          view       : 0,
+          add        : 0,
+          edit       : 0,
+          delete     : 0,
+          cancel     : 0,
+        },
+        {
+          module_name: 'kitting',
+          module_code: 'KT',
+          view       : 0,
+          add        : 0,
+          edit       : 0,
+          delete     : 0,
+          cancel     : 0,
+        },
+        {
+          module_name: 'order',
+          module_code: 'ODR',
+          view       : 0,
+          add        : 0,
+          edit       : 0,
+          delete     : 0,
+          cancel     : 0,
+        },
+        {
+          module_name: 'job-incoming',
+          module_code: 'JIN',
+          view       : 0,
+          add        : 0,
+          edit       : 0,
+          delete     : 0,
+          cancel     : 0,
+        },
+        {
+          module_name: 'job-outgoing',
+          module_code: 'JOG',
+          view       : 0,
+          add        : 0,
+          edit       : 0,
+          delete     : 0,
+          cancel     : 0,
+        },
+        {
+          module_name: 'job-damage',
+          module_code: 'JDM',
+          view       : 0,
+          add        : 0,
+          edit       : 0,
+          delete     : 0,
+          cancel     : 0,
+        },
+        {
+          module_name: 'job-transfer',
+          module_code: 'JTF',
+          view       : 0,
+          add        : 0,
+          edit       : 0,
+          delete     : 0,
+          cancel     : 0,
+        },
+        {
+          module_name: 'report',
+          module_code: 'RPT',
+          view       : 0,
+          add        : 0,
+          edit       : 0,
+          delete     : 0,
+          cancel     : 0,
+        },
+      ],
+      states        : [],
+      cities        : [],
+      districts     : [],
+      stateOption   : null,
+      cityOption    : null,
+      districtOption: null,
     }
+  },
+  async mounted () {
+    try {
+      await this.$store.dispatch('user/getUserDetail', { idUser: atob(this.$route.params.id) })
+      const userDetail       = this.$store.getters['user/getUserDetail'].result
+      this.user.username     = userDetail.username
+      this.user.full_name    = userDetail.full_name
+      this.user.phone        = userDetail.phone
+      this.user.email        = userDetail.email
+      this.user.address      = userDetail.address
+      this.user.warehouse_id = userDetail.warehouse_id
+      this.user.company_id   = userDetail.company_id
+      this.warehouse_name    = userDetail.warehouse_name
+      this.user.user_type    = userDetail.user_type
+      this.user.country_id   = userDetail.country_id
+      this.user.state_id     = userDetail.state_id
+      this.user.city_id      = userDetail.city_id
+      this.user.district_id  = userDetail.district_id
+
+      if (userDetail.user_type === USER_STAFF)
+        document.querySelector('#select-warehouse').style.display = 'block'
+
+      userDetail.privilege.forEach((value) => {
+        const privilege = {
+          id         : value.id,
+          module_name: value.module_name,
+          module_code: value.module_code,
+          view       : value.view,
+          add        : value.add,
+          edit       : value.edit,
+          delete     : value.delete,
+          cancel     : value.cancel,
+        }
+        this.user.privilege.push(privilege)
+      })
+      this.dataPrivilage = this.user.privilege
+    } catch (error) {
+
+    }
+
+    $('#user_type').select2({
+      placeholder: 'Select a user type',
+      allowClear : true,
+      data       : USER_TYPE,
+    })
+    $('#user_type').val(this.user.user_type).trigger('change')
+    $('#user_type').on('change', function () {
+      app.user.user_type                                        = parseInt(this.value)
+      const style                                               = parseInt(this.value) === USER_STAFF ? 'block' : 'none'
+      document.querySelector('#select-warehouse').style.display = style
+
+      // add rules to warehouse id
+      if (parseInt(this.value) === USER_STAFF)
+        $('#warehouse').rules('add', { required: true })
+      else
+        $('#warehouse').rules('remove')
+    })
+
+    $('#warehouse').select2({
+      placeholder       : 'Select warehouse',
+      minimumInputLength: 1,
+      width             : '100%',
+      allowClear        : true,
+      ajax              : {
+        type          : 'GET',
+        url           : '/api/warehouse/select',
+        cache         : true,
+        processResults: function (data) {
+          return {
+            results: $.map(data.result, function (object) {
+              return {
+                id  : object.id,
+                text: object.name,
+              }
+            }),
+          }
+        },
+      },
+    })
+    if (this.user.warehouse_id !== 0) {
+      const newOptionWarehouse = new Option(this.warehouse_name, this.user.warehouse_id, true, true)
+      $('#warehouse').append(newOptionWarehouse).trigger('change')
+    }
+    $('#warehouse').on('change', function () {
+      validator.element($(this))
+    })
+    const customAdapter = $.fn.select2.amd.require('select2/data/customAdapter')
+    const app           = this
+    await this.$store.dispatch('region/getCountries')
+    this.countries      = this.$store.getters['region/getCountries']
+    $('#country').select2({
+      placeholder: 'Select a country',
+      allowClear : true,
+      data       : this.countries,
+    })
+    $('#country').val(this.user.country_id).trigger('change')
+    $('#country').on('change', function () {
+      validator.element($(this))
+      if ($('#country').val()) {
+        $('#state').val(null).trigger('change')
+        $('#state').prop('disabled', false)
+        app.getStatesByCountry()
+      } else {
+        $('#state').val(null).trigger('change')
+        $('#city').val(null).trigger('change')
+        $('#district').val(null).trigger('change')
+        $('#state').prop('disabled', true)
+        $('#city').prop('disabled', true)
+        $('#district').prop('disabled', true)
+      }
+    })
+
+    this.stateOption = $('#state').select2({
+      placeholder: 'Select a state',
+      allowClear : true,
+      disabled   : true,
+      dataAdapter: customAdapter,
+      data       : this.states,
+    })
+    await app.getStatesByCountry(this.user.country_id)
+    $('#state').val(this.user.state_id).trigger('change')
+    $('#state').on('change', function () {
+      validator.element($(this))
+      if ($('#state').val()) {
+        $('#city').val(null).trigger('change')
+        $('#city').prop('disabled', false)
+        app.getCitiesByState()
+      } else {
+        $('#city').val(null).trigger('change')
+        $('#district').val(null).trigger('change')
+        $('#city').prop('disabled', true)
+        $('#district').prop('disabled', true)
+      }
+    })
+
+    this.cityOption = $('#city').select2({
+      placeholder: 'Select a city',
+      allowClear : true,
+      disabled   : true,
+      dataAdapter: customAdapter,
+      data       : this.cities,
+    })
+    await app.getCitiesByState(this.user.state_id)
+    $('#city').val(this.user.city_id).trigger('change')
+    $('#city').on('change', function () {
+      validator.element($(this))
+      if ($('#city').val()) {
+        $('#district').val(null).trigger('change')
+        $('#district').prop('disabled', false)
+        app.getDistrictsByCity()
+      } else {
+        $('#district').val(null).trigger('change')
+        $('#district').prop('disabled', true)
+      }
+    })
+
+    this.districtOption = $('#district').select2({
+      placeholder: 'Select a district',
+      allowClear : true,
+      disabled   : true,
+      dataAdapter: customAdapter,
+      data       : this.states,
+    })
+    await app.getDistrictsByCity(this.user.city_id)
+    $('#district').val(this.user.district_id).trigger('change')
+    $('#district').on('change', function () {
+      validator.element($(this))
+    })
+
+    const validator = $('#user_form').validate({
+      // define validation rules
+      rules: {
+        username: {
+          required : true,
+          minlength: 6,
+        },
+        password: {
+          required : true,
+          minlength: 6,
+        },
+        full_name: { required: true },
+        phone    : {
+          required : true,
+          digits   : true,
+          minlength: 10,
+        },
+        email: {
+          required : true,
+          email    : true,
+          minlength: 10,
+        },
+        address    : { required: true },
+        country_id : { required: true },
+        state_id   : { required: true },
+        city_id    : { required: true },
+        district_id: { required: true },
+        company_id : { required: true },
+        // eslint-disable-next-line object-curly-newline
+      },
+      invalidHandler: function (event, validator) {
+        // eslint-disable-next-line no-undef
+        KTUtil.scrollTop()
+        event.preventDefault()
+      },
+      submitHandler: function (form) {
+        return false
+      },
+    })
+  },
+  methods: {
+    async getStatesByCountry (id) {
+      this.states = []
+      await this.$store.dispatch('region/getStatesByCountry', { countryId: $('#country').val() })
+      this.states = this.$store.getters['region/getStatesByCountry']
+      this.stateOption.data('select2').dataAdapter.updateOptions(this.states)
+    },
+    async getCitiesByState (id) {
+      this.cities = []
+      await this.$store.dispatch('region/getCitiesByState', { stateId: $('#state').val() })
+      this.cities = this.$store.getters['region/getCitiesByState']
+      this.cityOption.data('select2').dataAdapter.updateOptions(this.cities)
+    },
+    async getDistrictsByCity (id) {
+      this.districts = []
+      await this.$store.dispatch('region/getDistrictsByCity', { cityId: $('#city').val() })
+      this.districts = this.$store.getters['region/getDistrictsByCity']
+      this.districtOption.data('select2').dataAdapter.updateOptions(this.districts)
+    },
+    async updateUser () {
+      if ($('#user_form').valid()) {
+        this.user.country_id  = parseInt($('#country').val())
+        this.user.state_id    = parseInt($('#state').val())
+        this.user.city_id     = parseInt($('#city').val())
+        this.user.district_id = parseInt($('#district').val())
+        if (this.user.user_type === USER_STAFF)
+          this.user.warehouse_id = parseInt($('#warehouse').val())
+        else
+          this.user.warehouse_id = 0
+        this.user.user_type = parseInt($('#user_type').val())
+        this.user.privilege = this.dataPrivilage
+        this.user.status    = 1
+        try {
+          this.$nuxt.$loading.start()
+          await this.$store.dispatch('user/editUser', { idUser: atob(this.$route.params.id), data: this.user })
+          const data      = this.$store.getters['user/getEditUser']
+          const parameter = {
+            alertClass: 'alert-success',
+            message   : `user ${data.result.username} has been edited`,
+          }
+          this.$nuxt.$emit('alertShow', parameter)
+          this.$nuxt.$loading.finish()
+          // eslint-disable-next-line no-undef
+          KTUtil.scrollTop()
+          setTimeout(function () { window.location.href = '/master/user' }, 3000)
+        } catch (error) {
+          const parameter = {
+            alertClass: 'alert-danger',
+            message   : error.message,
+          }
+          this.$nuxt.$emit('alertShow', parameter)
+          this.$nuxt.$loading.finish()
+          // eslint-disable-next-line no-undef
+          KTUtil.scrollTop()
+        }
+      }
+    },
+  },
+}
 </script>
