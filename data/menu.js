@@ -107,4 +107,12 @@ export default [
       },
     ],
   },
+  {
+    name        : 'Damage List',
+    icon        : 'la la-sign-in',
+    url         : '/damage',
+    folder      : false,
+    childDisplay: false,
+    children    : [],
+  },
 ]
