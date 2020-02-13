@@ -78,9 +78,9 @@
               >
             </div>
             <div class="col-lg-6">
-              <label>Capacity Max</label>
+              <label>Warehouse</label>
               <input
-                v-model="location.capacity_max"
+                v-model="location.warehouse_name"
                 type="text"
                 class="form-control"
                 readonly
@@ -111,15 +111,6 @@
           </div>
           <div class="form-group row">
             <div class="col-lg-6">
-              <label>Warehouse</label>
-              <input
-                v-model="location.warehouse_name"
-                type="text"
-                class="form-control"
-                readonly
-              >
-            </div>
-            <div class="col-lg-6">
               <label>Blocked By</label>
               <input
                 v-model="location.company_name"
@@ -127,6 +118,32 @@
                 class="form-control"
                 readonly
               >
+            </div>
+            <div class="col-lg-2">
+              <label>&nbsp;</label>
+              <div class="kt-checkbox-list">
+                <label class="kt-checkbox kt-checkbox--brand">
+                  <input
+                    type="checkbox"
+                    disabled="disabled"
+                    :checked="location.bonded_location"
+                  > Bonded Location
+                  <span />
+                </label>
+              </div>
+            </div>
+            <div class="col-lg-2">
+              <label>&nbsp;</label>
+              <div class="kt-checkbox-list">
+                <label class="kt-checkbox kt-checkbox--brand">
+                  <input
+                    type="checkbox"
+                    disabled="disabled"
+                    :checked="location.stock_quarantine"
+                  > Stock Quarantine
+                  <span />
+                </label>
+              </div>
             </div>
           </div>
           <div class="form-group row">
@@ -141,29 +158,6 @@
               />
             </div>
             <div class="col-lg-6">
-              <label>&nbsp;</label>
-              <div class="kt-checkbox-list">
-                <label class="kt-checkbox kt-checkbox--brand">
-                  <input
-                    type="checkbox"
-                    disabled="disabled"
-                    :checked="location.bonded_location"
-                  > Bonded Location
-                  <span />
-                </label>
-                <label class="kt-checkbox kt-checkbox--brand">
-                  <input
-                    type="checkbox"
-                    disabled="disabled"
-                    :checked="location.stock_quarantine"
-                  > Stock Quarantine
-                  <span />
-                </label>
-              </div>
-            </div>
-          </div>
-          <div class="form-group row">
-            <div class="col-lg-6">
               <label>Created By</label>
               <input
                 v-model="location.created_by_name"
@@ -172,6 +166,8 @@
                 readonly
               >
             </div>
+          </div>
+          <div class="form-group row">
             <div class="col-lg-6">
               <label>Created Date</label>
               <input
@@ -181,8 +177,6 @@
                 readonly
               >
             </div>
-          </div>
-          <div class="form-group row">
             <div class="col-lg-6">
               <label>Updated By</label>
               <input
@@ -192,6 +186,8 @@
                 readonly
               >
             </div>
+          </div>
+          <div class="form-group row">
             <div class="col-lg-6">
               <label>Updated Date</label>
               <input

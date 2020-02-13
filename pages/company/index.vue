@@ -48,12 +48,6 @@
                       <option value="address">
                         Address
                       </option>
-                      <option value="city_name">
-                        City
-                      </option>
-                      <option value="country_name">
-                        Country
-                      </option>
                     </select>
                   </div>
                 </div>
@@ -191,10 +185,6 @@ export default {
         data: function (d) {
           d.params = app.params
         },
-        // "complete": function(xhr, status){
-        //     console.log(JSON.parse(xhr.responseText));
-        //     console.log(status);
-        // }
       },
       order  : [[7, 'desc']],
       columns: [
@@ -224,6 +214,7 @@ export default {
           width    : '110px',
           orderable: false,
           render   : function (data, type, full, meta) {
+            const idEncoded = btoa(full.id)
             return `
                         <a href="/company/detail/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
                           <i class="la la-eye"></i>
@@ -237,7 +228,8 @@ export default {
                             </a>
                             <div class="dropdown-menu dropdown-menu-right">
                                 <a class="dropdown-item action-button-status" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-power-off"></i> Update Status</a>
-                                <a class="dropdown-item" href="/company/packing/list/${full.id}"><i class="fa flaticon2-open-box"></i> Packing</a>
+                                <a class="dropdown-item" href="/company/packing/list/${idEncoded}"><i class="fa flaticon2-open-box"></i> Packing</a>
+                                <a class="dropdown-item" href="/company/product/list/${idEncoded}"><i class="fa flaticon2-supermarket"></i> Product</a>
                                 <a class="dropdown-item" href="javascript:void(0)"><i class="la la-qrcode"></i> Print QR Code</a>
                             </div>
                         </span>`

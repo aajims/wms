@@ -99,14 +99,15 @@
                 >
               </div>
               <div class="col-lg-6">
-                <label>Capacity max <span style="color:red">*</span></label>
-                <input
-                  v-model="location.capacity_max"
-                  type="text"
-                  class="form-control"
-                  name="capacity_max"
-                  placeholder="Enter capacity max"
+                <label for="country">Warehouse <span style="color:red">*</span></label>
+                <select
+                  id="warehouse"
+                  class="form-control kt-select2"
+                  name="warehouse_id"
                 >
+                  <option />
+                </select>
+                <span class="form-text text-muted" />
               </div>
             </div>
             <div class="form-group row">
@@ -134,17 +135,6 @@
             </div>
             <div class="form-group row">
               <div class="col-lg-6">
-                <label for="country">Warehouse <span style="color:red">*</span></label>
-                <select
-                  id="warehouse"
-                  class="form-control kt-select2"
-                  name="warehouse_id"
-                >
-                  <option />
-                </select>
-                <span class="form-text text-muted" />
-              </div>
-              <div class="col-lg-6">
                 <label for="country">Blocked By</label>
                 <select
                   id="blocked_by"
@@ -153,6 +143,30 @@
                 >
                   <option />
                 </select>
+              </div>
+              <div class="col-lg-2">
+                <label>&nbsp;</label>
+                <div class="kt-checkbox-list">
+                  <label class="kt-checkbox kt-checkbox--brand">
+                    <input
+                      v-model="location.bonded_location"
+                      type="checkbox"
+                    > Bonded Location
+                    <span />
+                  </label>
+                </div>
+              </div>
+              <div class="col-lg-2">
+                <label>&nbsp;</label>
+                <div class="kt-checkbox-list">
+                  <label class="kt-checkbox kt-checkbox--brand">
+                    <input
+                      v-model="location.stock_quarantine"
+                      type="checkbox"
+                    > Stock Quarantine
+                    <span />
+                  </label>
+                </div>
               </div>
             </div>
             <div class="form-group row">
@@ -165,25 +179,6 @@
                   rows="3"
                   name="description"
                 />
-              </div>
-              <div class="col-lg-6">
-                <label>&nbsp;</label>
-                <div class="kt-checkbox-list">
-                  <label class="kt-checkbox kt-checkbox--brand">
-                    <input
-                      v-model="location.bonded_location"
-                      type="checkbox"
-                    > Bonded Location
-                    <span />
-                  </label>
-                  <label class="kt-checkbox kt-checkbox--brand">
-                    <input
-                      v-model="location.stock_quarantine"
-                      type="checkbox"
-                    > Stock Quarantine
-                    <span />
-                  </label>
-                </div>
               </div>
             </div>
           </div>
@@ -213,7 +208,6 @@ export default {
         code                   : null,
         level                  : null,
         capacity_dimension_type: null,
-        capacity_max           : null,
         capacity               : null,
         weight_max             : null,
         weight_type            : null,
@@ -232,7 +226,6 @@ export default {
     this.location.code                    = locationDetail.code
     this.location.level                   = locationDetail.level
     this.location.capacity_dimension_type = locationDetail.capacity_dimension_type
-    this.location.capacity_max            = locationDetail.capacity_max
     this.location.capacity                = locationDetail.capacity
     this.location.weight_type             = locationDetail.weight_type
     this.location.weight_max              = locationDetail.weight_max
@@ -303,8 +296,10 @@ export default {
         },
       },
     })
-    const newOptionCompany = new Option(locationDetail.company_name, locationDetail.company_id, true, true)
-    $('#blocked_by').append(newOptionCompany).trigger('change')
+    if (locationDetail.company_id !== 0) {
+      const newOptionCompany = new Option(locationDetail.company_name, locationDetail.company_id, true, true)
+      $('#blocked_by').append(newOptionCompany).trigger('change')
+    }
     $('#blocked_by').on('change', function () {
       validator.element($(this))
     })
@@ -318,7 +313,6 @@ export default {
         warehouse_id           : { required: true },
         capacity               : { required: true, digits: true },
         capacity_dimension_type: { required: true },
-        capacity_max           : { required: true, digits: true },
         weight_max             : { required: true, digits: true },
         weight_type            : { required: true },
       },
@@ -335,7 +329,6 @@ export default {
   methods: {
     async editLocation () {
       if ($('#location_form').valid()) {
-        this.location.capacity_max            = parseInt(this.location.capacity_max)
         this.location.capacity                = parseInt(this.location.capacity)
         this.location.weight_max              = parseInt(this.location.weight_max)
         this.location.warehouse_id            = parseInt($('#warehouse').val())

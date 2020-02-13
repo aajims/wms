@@ -4,6 +4,7 @@ export const state = () => ({
   addPacking   : null,
   packingDetail: null,
   editPacking  : null,
+  packing      : null,
 })
 
 export const mutations = {
@@ -15,6 +16,9 @@ export const mutations = {
   },
   EDIT_PACKING (state, editPacking) {
     state.editPacking = editPacking
+  },
+  SET_PACKING (state, packing) {
+    state.packing = packing
   },
 }
 
@@ -83,6 +87,22 @@ export const actions = {
         throw new Error('Network Communication Error')
     })
   },
+  async getPacking ({ commit }, { idCompany }) {
+    await axios({
+      method: 'get',
+      url   : '/api/packing/select',
+      params: { id_company: idCompany },
+    }).then(function (response) {
+      if (response.status === 200 && response.data.general_response.response_status === true) {
+        const packing = [{ id: '', text: '' }]
+        for (const pack in response.data.result)
+          packing.push({ id: response.data.result[pack].id, text: response.data.result[pack].name })
+        commit('SET_PACKING', packing)
+      }
+    }).catch(function () {
+      throw new Error('Network Communication Error')
+    })
+  },
 }
 
 export const getters = {
@@ -94,5 +114,8 @@ export const getters = {
   },
   getEditPacking: (state) => {
     return state.editPacking
+  },
+  getPacking: (state) => {
+    return state.packing
   },
 }

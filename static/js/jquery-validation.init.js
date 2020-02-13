@@ -8,6 +8,10 @@ const valueGetParentContainer = function (element) {
     return $(element).closest('.bootstrap-select')
   else if ($(element).closest('.col-lg-6').length > 0)
     return $(element).closest('.col-lg-6')
+  else if ($(element).closest('.col-lg-4').length > 0)
+    return $(element).closest('.col-lg-4')
+  else if ($(element).closest('.col-lg-3').length > 0)
+    return $(element).closest('.col-lg-3')
   else
     return $(element).closest('.form-group')
 }

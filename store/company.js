@@ -100,6 +100,7 @@ export const actions = {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       params : { id_company: idCompany },
     }).then(function (response) {
+      console.log(response)
       if (response.status === 200 && response.data.general_response.response_status === true)
         commit('SET_COMPANY_DETAIL', response.data)
       else if (response.data.general_response.response_code === 4003)

@@ -6,7 +6,7 @@
     <div class="kt-portlet__head kt-portlet__head--lg">
       <div class="kt-portlet__head-label">
         <span class="kt-portlet__head-icon">
-          <i class="kt-font-brand flaticon2-shelter" />
+          <i class="kt-font-brand flaticon-map-location" />
         </span>
         <h3 class="kt-portlet__head-title">
           Location List
@@ -505,7 +505,7 @@ export default {
                             <div class="dropdown-menu dropdown-menu-right">
                                 <a class="dropdown-item action-button-status" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-power-off"></i> Update Status</a>
                                 <a class="dropdown-item" href="javascript:void(0)"><i class="la la-search"></i> View Location Product</a>
-                                <a class="dropdown-item" href="/master/location/qrcode/${full.id}"><i class="la la-qrcode"></i> Print QR Code</a>
+                                <a class="dropdown-item" href="/master/location/qrcode/${full.id}" target="_blank"><i class="la la-qrcode"></i> Print QR Code</a>
                             </div>
                         </span>`
           },

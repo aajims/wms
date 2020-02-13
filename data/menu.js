@@ -21,7 +21,22 @@ export default [
         param   : true,
         children: [],
       },
+      {
+        name    : 'Product',
+        icon    : 'kt-menu__link-bullet kt-menu__link-bullet--dot',
+        url     : '/product/list',
+        param   : true,
+        children: [],
+      },
     ],
+  },
+  {
+    name        : 'Incoming Stock',
+    icon        : 'la la-sign-in',
+    url         : '/incoming',
+    folder      : false,
+    childDisplay: false,
+    children    : [],
   },
   {
     name        : 'Master',
@@ -45,6 +60,13 @@ export default [
         children: [],
       },
       {
+        name    : 'User',
+        icon    : 'kt-menu__link-bullet kt-menu__link-bullet--dot',
+        url     : '/user',
+        param   : false,
+        children: [],
+      },
+      {
         name    : 'Warehouse',
         icon    : 'kt-menu__link-bullet kt-menu__link-bullet--dot',
         url     : '/warehouse',
@@ -54,9 +76,27 @@ export default [
     ],
   },
   {
-    name    : 'Order List',
-    icon    : 'fa flaticon2-shopping-cart-1',
-    url     : '/order',
-    children: [],
+    name        : 'Outgoing Stock',
+    icon        : 'la la-sign-out',
+    url         : '/outgoing',
+    folder      : false,
+    childDisplay: false,
+    children    : [],
+  },
+  {
+    name        : 'Transfer Stock',
+    icon        : 'la la-refresh',
+    url         : '/transfer',
+    folder      : true,
+    childDisplay: true,
+    children    : [
+      {
+        name    : 'External',
+        icon    : 'kt-menu__link-bullet kt-menu__link-bullet--dot',
+        url     : '/external',
+        param   : false,
+        children: [],
+      },
+    ],
   },
 ]

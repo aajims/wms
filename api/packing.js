@@ -78,4 +78,30 @@ app.get('/packing/detail', (request, response) => {
   })
 })
 
+app.get('/packing/select', (request, response) => {
+  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  axios({
+    method : 'get',
+    url    : `${process.env.API_URL}/v1/packing-type`,
+    headers: {
+      'Content-Type' : 'application/x-www-form-urlencoded',
+      'Authorization': `Bearer ${token}`,
+    },
+    params: {
+      'page'              : 1,
+      'per_page'          : 1000,
+      'sort_by'           : 'name',
+      'sort'              : 'asc',
+      'search_by'         : 'name',
+      'keyword'           : '',
+      'filter[status]'    : 1,
+      'filter[company_id]': request.query.id_company,
+    },
+  }).then(function (responseApi) {
+    response.send(responseApi.data)
+  }).catch(function (error) {
+    response.status(error.response.status).send(error.response.data)
+  })
+})
+
 module.exports = app
