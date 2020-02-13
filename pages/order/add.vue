@@ -39,8 +39,18 @@
         </div>
         <div class="kt-portlet__body">
           <div class="form-group row">
-            <div class="col-lg-6">
-              <label>Company Name <span style="color:red">*</span></label>
+            <div class="col-lg-4">
+              <label>Order No. <span style="color:red">*</span></label>
+              <input
+                v-model="order.order_no"
+                type="text"
+                class="form-control"
+                name="order_no"
+                placeholder="Enter order number"
+              >
+            </div>
+            <div class="col-lg-4">
+              <label>Company <span style="color:red">*</span></label>
               <select
                   id="company"
                   class="form-control kt-select2"
@@ -49,50 +59,139 @@
                   <option />
                 </select>
             </div>
-            <div class="col-lg-6">
-              <label>Type <span style="color:red">*</span></label>
-              <input
-                id="description"
-                v-model="order.type"
-                class="form-control"
-              />
+             <div class="col-lg-4">
+              <div class="kt-form__label">
+                <label>Order Date <span style="color:red">*</span></label>
+              </div>
+              <div class="kt-form__control">
+                <div class="input-group date">
+                  <input
+                    id="order_date"
+                    name="order_date"
+                    class="form-control"
+                    readonly
+                    placeholder="Select order Date"
+                  >
+                  <div class="input-group-append">
+                    <span class="input-group-text">
+                      <i class="la la-calendar" />
+                    </span>
+                  </div>
+                </div>
+                <span class="form-text text-muted" />
+              </div>
             </div>
           </div>
           <div class="form-group row">
-            <div class="col-lg-6">
-              <label>ETD <span style="color:red">*</span></label>
-              <input
-                v-model="order.etd"
-                type="text"
-                class="form-control"
-              >
+            <div class="col-lg-4">
+              <div class="kt-form__label">
+                <label>ETD <span style="color:red">*</span></label>
+              </div>
+              <div class="kt-form__control">
+                <div class="input-group date">
+                  <input
+                    id="etd"
+                    name="etd"
+                    class="form-control"
+                    readonly
+                    placeholder="Select etd"
+                  >
+                  <div class="input-group-append">
+                    <span class="input-group-text">
+                      <i class="la la-calendar" />
+                    </span>
+                  </div>
+                </div>
+                <span class="form-text text-muted" />
+              </div>
             </div>
-            <div class="col-lg-6">
-              <label>ETA <span style="color:red">*</span></label>
-              <input
-                v-model="order.eta"
-                type="text"
-                class="form-control"
-              >
+            <div class="col-lg-4">
+              <div class="kt-form__label">
+                <label>ETA <span style="color:red">*</span></label>
+              </div>
+              <div class="kt-form__control">
+                <div class="input-group date">
+                  <input
+                    id="eta"
+                    name="eta"
+                    class="form-control"
+                    readonly
+                    placeholder="Select eta"
+                  >
+                  <div class="input-group-append">
+                    <span class="input-group-text">
+                      <i class="la la-calendar" />
+                    </span>
+                  </div>
+                </div>
+                <span class="form-text text-muted" />
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="kt-form__label">
+                <label>Shipment Date</label>
+              </div>
+            <div class="kt-form__control">
+              <div class="input-group date">
+                <input
+                  id="shipment_date"
+                  name="shipment_date"
+                  type="text"
+                  class="form-control"
+                  readonly
+                  placeholder="Select shipment date"
+                >
+                <div class="input-group-append">
+                  <span class="input-group-text">
+                    <i class="la la-calendar" />
+                  </span>
+                </div>
+              </div>
+            </div>
             </div>
           </div>
           <div class="form-group row">
-            <div class="col-lg-6">
-              <label>Tranport Type <span style="color:red">*</span></label>
-              <input
-                v-model="order.transport_type"
-                type="text"
-                class="form-control"
-              >
+            <div class="col-lg-4">
+              <div class="kt-form__label">
+                <label>Transport Type <span style="color:red">*</span></label>
+              </div>
+              <div class="kt-form__control">
+                <select
+                  id="transport_type"
+                  class="form-control kt-select2"
+                  name="transport_type"
+                >
+                  <option />
+                </select>
+                <span class="form-text text-muted" />
+              </div>
             </div>
-            <div class="col-lg-6">
-              <label>Transport Number <span style="color:red">*</span></label>
-              <input
-                v-model="order.tranport_number"
-                type="text"
-                class="form-control"
+            <div
+                v-if="order.transport_type === 'truck'"
+                class="col-lg-4"
               >
-            </div>
+                <label>Transport Number</label>
+                <input
+                  v-model="incoming.transport_number"
+                  type="text"
+                  class="form-control"
+                  name="transport_number"
+                  placeholder="Enter transport number"
+                >
+              </div>
+              <div
+                v-if="order.transport_type === 'air-freight'"
+                class="col-lg-4"
+              >
+                <label>Flight</label>
+                <input
+                  v-model="order.flight"
+                  type="text"
+                  class="form-control"
+                  name="flight"
+                  placeholder="Enter flight"
+                >
+              </div>
           </div>
           <div class="form-group row">
             <div class="col-lg-4">
@@ -194,7 +293,20 @@
               />
             </div>
           </div>
-         
+         <div class="kt-separator kt-separator--border-dashed kt-separator--space-xs" />
+            <div class="form-group row">
+              <div class="col-lg-3">
+                <label>Products</label>
+                <a
+                  href="javascript:;"
+                  class="btn btn-bold btn-sm btn-label-brand"
+                  style="margin-left: 10px"
+                  @click="openModal"
+                >
+                  <i class="la la-plus" /> Add
+                </a>
+              </div>
+            </div>
         </div>
         <div class="kt-portlet__body">
             <!--begin: Datatable -->
@@ -218,23 +330,6 @@
                     <th>Status</th>
                 </tr>
                 </thead>
-                <tbody>
-                    <tr v-for="row in datatable" :key="row.id">
-                        <td>{{ row.order_id }}</td>
-                        <td>{{ row.product_id }}</td>
-                        <td>{{ row.product_packing_id }}</td>
-                        <td>{{ row.from_warehouse_location_name }}</td>
-                        <td>{{ row.to_warehouse_location_name }}</td>
-                        <td>{{ row.batch }}</td>
-                        <td>{{ row.qty }}</td>
-                        <td>{{ row.nett_weight }} /{{ row.nett_weight_type }}</td>
-                        <td>{{ row.gross_weight }} /{{ row.gross_weight_type }}</td>
-                        <td>{{ expired }}</td>
-                        <td>{{ row.created_by_name }}</td>
-                        <td v-if="row.status===1">Active</td>
-                        <td v-else>Inactive</td>
-                    </tr>
-                </tbody>
             </table>
             <!--end: Datatable -->
         </div>
@@ -249,17 +344,165 @@
       <i class="flaticon flaticon-up-arrow-1" />
     </div>
     <!-- end::Scrolltop -->
+     <!--begin::Modal-->
+    <div
+      id="product_modal"
+      class="modal fade"
+      role="dialog"
+      aria-hidden="true"
+    >
+      <form
+        id="product_form"
+        ref="form"
+      >
+        <div
+          class="modal-dialog modal-lg"
+          role="document"
+        >
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">
+                Product
+              </h5>
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+              />
+            </div>
+            <div class="modal-body">
+              <div class="form-group row">
+                <div class="col-lg-6">
+                  <label>Product <span style="color:red">*</span></label>
+                  <select
+                    id="product_id"
+                    name="product_id"
+                    class="form-control kt-select2"
+                  >
+                    <option />
+                  </select>
+                  <span class="form-text text-muted" />
+                </div>
+                <div class="col-lg-6">
+                  <label>Packing <span style="color:red">*</span></label>
+                  <select
+                    id="product_packing_id"
+                    name="product_packing_id"
+                    class="form-control kt-select2"
+                  >
+                    <option />
+                  </select>
+                  <span class="form-text text-muted">Please select a product </span>
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-lg-3">
+                  <label>Qty Max (Packing)</label>
+                  <input
+                    id="qty_max"
+                    type="text"
+                    class="form-control"
+                    disabled="disabled"
+                  >
+                </div>
+                <div class="col-lg-3">
+                  <label>Product Qty <span style="color:red">*</span></label>
+                  <input
+                    id="qty"
+                    name="qty"
+                    type="text"
+                    class="form-control"
+                  >
+                </div>
+                <div class="col-lg-6">
+                  <div class="kt-form__label">
+                    <label>Expired Date</label>
+                  </div>
+                  <div class="kt-form__control">
+                    <div class="input-group date">
+                      <input
+                        id="expired_date"
+                        type="text"
+                        class="form-control"
+                        readonly
+                        placeholder="Select expired date"
+                      >
+                      <div class="input-group-append">
+                        <span class="input-group-text">
+                          <i class="la la-calendar" />
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-lg-6">
+                  <label>Batch <span style="color:red">*</span></label>
+                  <input
+                    id="batch"
+                    name="batch"
+                    type="text"
+                    class="form-control"
+                  >
+                </div>
+                <div class="col-lg-6">
+                  <label>Location <span style="color:red">*</span></label>
+                  <select
+                    id="to_warehouse_location_id"
+                    name="to_warehouse_location_id"
+                    class="form-control kt-select2"
+                  >
+                    <option />
+                  </select>
+                  <span class="form-text text-muted" />
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-lg-6">
+                  <label for="description">Description</label>
+                  <textarea
+                    id="description_modal"
+                    class="form-control"
+                    rows="3"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-dismiss="modal"
+              >
+                Close
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <!--end::Modal-->
   </div>
 </template>
 
 <script>
+import moment from 'moment'
+import { TRANSPORT_TYPE } from '@/utils/constants'
     export default {
         data() {
             return {
-                states   : [],
-                cities   : [],
-                districts: [],
+                rowIndex : null,
+                countries: [],
                 order  : {
+                    order_no : null,
                     company_id  : null,
                     type    : null,
                     etd    : null,
@@ -322,9 +565,10 @@
                 },
             },
             })
-            $('#warehouse_to').on('change', function () {
-            validator.element($(this))
+            $('#warehouse_from').on('change', function () {
+               validator.element($(this))
             })
+
             $('#warehouse_to').select2({
             placeholder       : 'Select warehouse',
             minimumInputLength: 1,
@@ -374,6 +618,26 @@
                 $('#company').on('change', function () {
                 validator.element($(this))
                 })
+
+             $('#etd, #eta').datetimepicker({
+                todayHighlight: true,
+                autoclose     : true,
+                pickerPosition: 'bottom-left',
+                todayBtn      : 'linked',
+                format        : 'dd/mm/yyyy hh:ii',
+                minuteStep    : 1,
+              }).on('changeDate', function (event) {
+                validator.element($(this))
+              })
+
+              $('#shipment_date, #order_date').datetimepicker({
+                todayHighlight: true,
+                autoclose     : true,
+                pickerPosition: 'bottom-left',
+                todayBtn      : 'linked',
+                format        : 'dd/mm/yyyy hh:ii',
+                minuteStep    : 1,
+              })
 
             const validator = $('#order_form').validate({
             // define validation rules
@@ -442,44 +706,57 @@
                     allowClear : true,
                     data       : this.countries,
                     })
-                    $('#country_to').on('change', function () {
-                    validator.element($(this))
-                    if ($('#country_to').val()) {
-                        $('#state').val(null).trigger('change')
-                        $('#state').prop('disabled', false)
-                        app.getStatesByCountry()
-                    } else {
-                        $('#state').val(null).trigger('change')
-                        $('#city').val(null).trigger('change')
-                        $('#district').val(null).trigger('change')
-                        $('#state').prop('disabled', true)
-                        $('#city').prop('disabled', true)
-                        $('#district').prop('disabled', true)
-                    }
+                $('#country_to').on('change', function () {
+                validator.element($(this))
+                if ($('#country_to').val()) {
+                    $('#state').val(null).trigger('change')
+                    $('#state').prop('disabled', false)
+                    app.getStatesByCountry()
+                } else {
+                    $('#state').val(null).trigger('change')
+                    $('#city').val(null).trigger('change')
+                    $('#district').val(null).trigger('change')
+                    $('#state').prop('disabled', true)
+                    $('#city').prop('disabled', true)
+                    $('#district').prop('disabled', true)
+                }
+                })
+                this.stateOption = $('#state_to').select2({
+                    placeholder: 'Select a state',
+                    allowClear : true,
+                    disabled   : true,
+                    dataAdapter: customAdapter,
+                    data       : this.states,
                     })
-                    this.stateOption = $('#state_to').select2({
-                        placeholder: 'Select a state',
-                        allowClear : true,
-                        disabled   : true,
-                        dataAdapter: customAdapter,
-                        data       : this.states,
-                        })
-                        $('#state_to').on('change', function () {
-                        validator.element($(this))
-                        if ($('#state_to').val()) {
-                            $('#city').val(null).trigger('change')
-                            $('#city').prop('disabled', false)
-                            app.getCitiesByState()
-                        } else {
-                            $('#city').val(null).trigger('change')
-                            $('#district').val(null).trigger('change')
-                            $('#city').prop('disabled', true)
-                            $('#district').prop('disabled', true)
-                        }
-                        })
-        // await this.$store.dispatch('order/getOrderDetail', { idOrder: this.$route.params.id })
-        // this.order    = this.$store.getters['order/getOrderDetail'].result
-        
-        }
+                $('#state_to').on('change', function () {
+                validator.element($(this))
+                if ($('#state_to').val()) {
+                    $('#city').val(null).trigger('change')
+                    $('#city').prop('disabled', false)
+                    app.getCitiesByState()
+                } else {
+                    $('#city').val(null).trigger('change')
+                    $('#district').val(null).trigger('change')
+                    $('#city').prop('disabled', true)
+                    $('#district').prop('disabled', true)
+                }
+                })
+        }, 
+        methods: {
+          openModal () {
+            if ($('#company_id').val() === '' || $('#to_warehouse_id').val() === '') {
+              // eslint-disable-next-line no-undef
+              swal.fire({
+                title             : 'Warning!',
+                text              : 'Please select company and warehouse',
+                type              : 'warning',
+                buttonsStyling    : false,
+                confirmButtonClass: 'btn btn-warning',
+              })
+              return false
+            }
+            $('#product_modal').modal('show')
+          },
+        },
     }
 </script>
