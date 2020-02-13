@@ -1316,6 +1316,7 @@ export default {
       this.locationLevel = ''
     },
     setDataPost (data) {
+      this.$delete(this.incoming, 'unique_code')
       if ($('#etd').val() !== '')
         this.incoming.etd = moment($('#etd').val(), 'DD/MM/YYYY HH:mm').format('Y-MM-DD HH:mm:ss')
       if ($('#eta').val() !== '')
@@ -1327,7 +1328,14 @@ export default {
       this.incoming.transport_type = $('#transport_type').val()
       if ($('#from_country_id').val() !== '')
         this.incoming.from_country_id = parseInt($('#from_country_id').val())
-      this.incoming.products        = data
+
+      const dataToPost       = []
+      data.forEach((value) => {
+        this.$delete(value, 'unique_code')
+        dataToPost.push(value)
+      })
+
+      this.incoming.products = dataToPost
     },
     async editIncoming (data) {
       if ($('#incoming_form').valid()) {
