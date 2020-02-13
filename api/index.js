@@ -17,6 +17,7 @@ const order     = require('./order')
 const incoming  = require('./incoming')
 const external  = require('./external')
 const user      = require('./user')
+const internal  = require('./internal')
 
 // Import API Routes
 app.use(login)
@@ -32,6 +33,7 @@ app.use(product)
 app.use(incoming)
 app.use(external)
 app.use(user)
+app.use(internal)
 
 // Export the server middleware
 module.exports = {

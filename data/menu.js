@@ -97,6 +97,13 @@ export default [
         param   : false,
         children: [],
       },
+      {
+        name    : 'Internal',
+        icon    : 'kt-menu__link-bullet kt-menu__link-bullet--dot',
+        url     : '/internal',
+        param   : false,
+        children: [],
+      },
     ],
   },
 ]
