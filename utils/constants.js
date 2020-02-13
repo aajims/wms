@@ -168,3 +168,7 @@ export const READY_SHIPING_NAME = 'READY FOR SHIP'
 export const USER_SUPER_ADMIN = 1
 export const USER_ADMIN = 2
 export const USER_STAFF = 3
+
+export const CONDITION_GOOD = 1
+export const CONDITION_QUARANTINE = 2
+export const CONDITION_DAMAGED = 3

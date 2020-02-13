@@ -6,21 +6,21 @@
     <div class="kt-portlet__head kt-portlet__head--lg">
       <div class="kt-portlet__head-label">
         <span class="kt-portlet__head-icon">
-          <i class="kt-font-brand la la-sign-in" />
+          <i class="kt-font-brand fa flaticon2-shopping-cart-1" />
         </span>
         <h3 class="kt-portlet__head-title">
-          Incoming Stock List
+          Internal Transfer List
         </h3>
       </div>
       <div class="kt-portlet__head-toolbar">
         <div class="kt-portlet__head-wrapper">
           <div class="kt-portlet__head-actions">
             <a
-              href="/incoming/add"
+              href="/transfer/internal/add"
               class="btn btn-brand btn-elevate btn-icon-sm"
             >
               <i class="la la-plus" />
-              <span class="kt-hidden-mobile">Add Incoming Stock</span>
+              <span class="kt-hidden-mobile">Add Internal Transfer</span>
             </a>
           </div>
         </div>
@@ -63,7 +63,7 @@
                     type="text"
                     class="form-control"
                     placeholder="Search..."
-                    @keyup="getIncoming()"
+                    @keyup="getInternal()"
                   >
                   <span class="kt-input-icon__icon kt-input-icon__icon--left">
                     <span><i class="la la-search" /></span>
@@ -225,7 +225,7 @@
     <div class="kt-portlet__body">
       <!--begin: Datatable -->
       <table
-        id="incoming_table"
+        id="internal_table"
         class="table table-hover table-checkable nowrap"
       >
         <thead>
@@ -233,13 +233,8 @@
             <th class="noorder">
               #
             </th>
-            <th>Incoming No.</th>
-            <th class="parent_job">
-              Parent Job
-            </th>
-            <th class="noorder">
-              Tracking
-            </th>
+            <th>Transfer No.</th>
+            <th>Tracking</th>
             <th class="noorder">
               Company
             </th>
@@ -295,7 +290,7 @@
 
 <script>
 import moment from 'moment'
-import { JOB_STATUS, STATUS_OPEN, STATUS_CANCEL, STATUS_STORED_NAME, STATUS_CLOSE } from '@/utils/constants'
+import { JOB_STATUS, STATUS_OPEN, STATUS_CANCEL, READY_SHIPING_NAME, STATUS_CLOSE } from '@/utils/constants'
 
 export default {
   data () {
@@ -352,7 +347,7 @@ export default {
         app.params.filter.to_warehouse_id = $('#warehouse').val()
       else
         app.$delete(app.params.filter, 'to_warehouse_id')
-      app.getIncoming()
+      app.getInternal()
     })
 
     $('#company').select2({
@@ -381,7 +376,7 @@ export default {
         app.params.filter.company_id = $('#company').val()
       else
         app.$delete(app.params.filter, 'company_id')
-      app.getIncoming()
+      app.getInternal()
     })
 
     $('#kt_form_status').on('change', function () {
@@ -389,11 +384,14 @@ export default {
         app.params.filter.status = $('#kt_form_status').val()
       else
         app.$delete(app.params.filter, 'status')
-      app.getIncoming()
+      app.getInternal()
     })
 
     $('#from, #to').datetimepicker({
       todayHighlight: true,
+      autoclose     : true,
+      startView     : 2,
+      minView       : 2,
       orientation   : 'bottom left',
       todayBtn      : 'linked',
       format        : 'dd/mm/yyyy',
@@ -403,27 +401,26 @@ export default {
         app.params.date_from = moment($('#from').val(), 'DD/MM/YYYY').format('Y-MM-DD HH:mm:ss')
       if ($('#to').val() !== '')
         app.params.date_to   = moment(`${$('#to').val()} 23:59:59`, 'DD/MM/YYYY HH:mm:ss').format('Y-MM-DD HH:mm:ss')
-      app.getIncoming()
+      app.getInternal()
     })
 
     // begin first table
-    this.datatable = $('#incoming_table').DataTable({
+    this.datatable = $('#internal_table').DataTable({
       responsive: true,
       searching : false,
       processing: true,
       serverSide: true,
       ajax      : {
-        url : '/api/incoming/list',
+        url : '/api/internal/list',
         type: 'POST',
         data: function (d) {
           d.params = app.params
         },
       },
-      order  : [[8, 'desc']],
+      order  : [[7, 'desc']],
       columns: [
         { data: 'row_number' },
         { data: 'job_no', responsivePriority: -1 },
-        { data: 'parent_id' },
         { data: 'tracking' },
         { data: 'company_name' },
         { data: 'to_warehouse_name' },
@@ -444,15 +441,6 @@ export default {
           orderable: false,
         },
         {
-          targets  : 'parent_job',
-          orderable: false,
-          render   : function (data, type, full, meta) {
-            if (data !== 0)
-              return `<a href="/transfer/external/detail/${btoa(data)}" title="Go to transfer" target="_blank">${full.parent_job_no}</a>`
-            return ''
-          },
-        },
-        {
           targets  : 'actions',
           title    : 'Actions',
           className: 'dt-center',
@@ -463,15 +451,13 @@ export default {
             let actionButtonEdit   = ''
             let actionButtonClose  = ''
             if (full.status === STATUS_OPEN) {
-              actionButtonEdit = `<a href="/incoming/edit/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
-                                    <i class="la la-edit"></i>
-                                  </a>`
-              if (full.tracking === '' && full.parent_id === 0)
-                actionButtonCancel = `<a class="dropdown-item action-button-cancel"  data-index="${meta.row}" href="javascript:void(0)"><i class="la la-times-circle"></i> Cancel Job</a>`
-              else if (full.tracking === STATUS_STORED_NAME)
-                actionButtonClose = `<a class="dropdown-item action-button-close"  data-index="${meta.row}" href="javascript:void(0)"><i class="la la-folder"></i> Close Job</a>`
+              actionButtonEdit = `<a href="/transfer/internal/edit/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details"><i class="la la-edit"></i></a>`
+              if (full.tracking === '')
+                actionButtonCancel = `<a class="dropdown-item action-button-cancel" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-times-circle"></i> Cancel Job</a>`
+              else if (full.tracking === READY_SHIPING_NAME)
+                actionButtonClose = `<a class="dropdown-item action-button-close" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-folder"></i> Close Job</a>`
             }
-            return `<a href="/incoming/detail/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
+            return `<a href="/transfer/internal/detail/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
                       <i class="la la-eye"></i>
                     </a>
                     ${actionButtonEdit}
@@ -480,8 +466,7 @@ export default {
                           <i class="la la-ellipsis-h"></i>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item" href="javascript:void(0)"><i class="la la-print"></i> Print</a>
-                            <a class="dropdown-item" href="/incoming/qrcode/${btoa(full.id)}" target="_blank"><i class="la la-qrcode"></i> Print QR Code</a>
+                            <a class="dropdown-item" href="javascript:void(0)"><i class="la la-print"></i> Print D.O.</a>
                             ${actionButtonCancel}${actionButtonClose}
                         </div>
                     </span>`
@@ -541,7 +526,7 @@ export default {
     })
   },
   methods: {
-    async getIncoming () {
+    async getInternal () {
       this.params.search_by = $('#kt_form_filter').val()
       this.datatable.ajax.reload()
     },
@@ -553,7 +538,7 @@ export default {
           // eslint-disable-next-line no-undef
           swal.fire({
             title             : 'Are you sure?',
-            text              : `Job incoming "${row.job_no}" will be ${statusText}`,
+            text              : `Job internal "${row.job_no}" will be ${statusText}`,
             type              : 'question',
             showCancelButton  : true,
             confirmButtonText : `${JOB_STATUS[statusIndex].text} Job`,
@@ -568,16 +553,16 @@ export default {
         }
       }
     },
-    async updateStatus (idIncoming, statusId, param) {
+    async updateStatus (idInternal, statusId, param) {
       try {
         this.$nuxt.$loading.start()
         param.status    = statusId
         this.$delete(param, 'job_close_date')
-        await this.$store.dispatch('incoming/editIncoming', { idIncoming: idIncoming, data: param })
-        const data      = this.$store.getters['incoming/getEditIncoming']
+        await this.$store.dispatch('internal/editInternal', { idInternal: idInternal, data: param })
+        const data      = this.$store.getters['internal/getEditInternal']
         const parameter = {
           alertClass: 'alert-success',
-          message   : `Job incoming ${data.result.job_no} has been edited`,
+          message   : `Job internal transfer ${data.result.job_no} has been edited`,
         }
         this.$nuxt.$emit('alertShow', parameter)
         this.$nuxt.$loading.finish()
