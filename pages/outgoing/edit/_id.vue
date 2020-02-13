@@ -926,7 +926,7 @@ export default {
               if (full.status !== STATUS_READY_SHIPING)
                 shipButton = `<a class="dropdown-item status-ship" data-index="${meta.row}" href="javascript:void(0)"><i class="fa flaticon2-box"></i> Ready For Ship</a>`
               if (full.status !== STATUS_CANCEL)
-                cancelButton     = `<a class="dropdown-item status-cancel" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-times-circle"></i> Cancel Job</a>`
+                cancelButton     = `<a class="dropdown-item status-cancel" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-times-circle"></i> Cancel</a>`
               additionalButton = `<span class="dropdown">
                                       <a href="javascript:void(0)" class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="dropdown" aria-expanded="true">
                                         <i class="la la-ellipsis-h"></i>
@@ -1227,11 +1227,6 @@ export default {
       if ($('#shipment_date').val() !== '')
         this.outgoing.shipment_date = moment($('#shipment_date').val(), 'DD/MM/YYYY HH:mm').format('Y-MM-DD HH:mm:ss')
 
-      const dataToPost       = []
-      data.forEach((value) => {
-        if (value.is_cancel === undefined)
-          dataToPost.push(value)
-      })
       this.outgoing.products = data
     },
     async editOutgoing (data) {

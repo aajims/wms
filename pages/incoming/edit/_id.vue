@@ -496,7 +496,7 @@
 
 <script>
 import moment from 'moment'
-import { TRANSPORT_TYPE, INCOMING_STATUS, STATUS_OPEN, STATUS_BLOCK, STATUS_STORED } from '@/utils/constants'
+import { TRANSPORT_TYPE, INCOMING_STATUS, STATUS_OPEN, STATUS_BLOCK, STATUS_STORED, STATUS_CANCEL } from '@/utils/constants'
 
 export default {
   data () {
@@ -610,6 +610,10 @@ export default {
           created_by_name               : value.created_by_name,
           updated_by_name               : value.updated_by_name,
         }
+
+        if (value.status === STATUS_CANCEL)
+          products.is_cancel = true
+
         this.incoming.products.push(products)
       })
 
@@ -931,6 +935,10 @@ export default {
           const rowData = app.datatable.row($(this).data('index')).data()
           app.updateStatus(STATUS_STORED, $(this).data('index'), rowData)
         })
+        $('.status-cancel').click(function () {
+          const rowData = app.datatable.row($(this).data('index')).data()
+          app.updateStatus(STATUS_CANCEL, $(this).data('index'), rowData)
+        })
       },
       columnDefs: [
         {
@@ -982,25 +990,30 @@ export default {
         {
           targets: 'actions',
           render : function (data, type, full, meta) {
+            if (full.is_cancel !== undefined)
+              return ''
             let additionalButton
             if (full.id === 0)
               additionalButton = `<a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Delete"><i class="la la-trash"></i></a>`
             else {
-              let openButton  = ''
-              let blockButton = ''
-              let storeButton = ''
+              let openButton   = ''
+              let blockButton  = ''
+              let storeButton  = ''
+              let cancelButton = ''
               if (full.status !== STATUS_OPEN)
                 openButton = `<a class="dropdown-item status-open" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-folder-open"></i> Open</a>`
               if (full.status !== STATUS_BLOCK)
                 blockButton = `<a class="dropdown-item status-block" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-list"></i> Block</a>`
               if (full.status !== STATUS_STORED)
                 storeButton = `<a class="dropdown-item status-store" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-list-alt"></i> Store</a>`
+              if (full.status !== STATUS_CANCEL)
+                cancelButton     = `<a class="dropdown-item status-cancel" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-times-circle"></i> Cancel</a>`
               additionalButton = `<span class="dropdown">
                                       <a href="javascript:void(0)" class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="dropdown" aria-expanded="true">
                                         <i class="la la-ellipsis-h"></i>
                                       </a>
                                       <div class="dropdown-menu dropdown-menu-right" rolw="menu">
-                                          ${openButton}${blockButton}${storeButton}
+                                          ${openButton}${blockButton}${storeButton}${cancelButton}
                                       </div>
                                   </span>`
             }
