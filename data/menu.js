@@ -92,6 +92,14 @@ export default [
     children    : [],
   },
   {
+    name        : 'Damage List',
+    icon        : 'la la-sign-in',
+    url         : '/damage',
+    folder      : false,
+    childDisplay: false,
+    children    : [],
+  },
+  {
     name        : 'Transfer Stock',
     icon        : 'la la-refresh',
     url         : '/transfer',
@@ -108,9 +116,9 @@ export default [
     ],
   },
   {
-    name        : 'Damage List',
+    name        : 'Report Stock Balance',
     icon        : 'la la-sign-in',
-    url         : '/damage',
+    url         : '/stock-balance',
     folder      : false,
     childDisplay: false,
     children    : [],

@@ -18,6 +18,7 @@ const incoming  = require('./incoming')
 const external  = require('./external')
 const user      = require('./user')
 const damage      = require('./damage')
+const balance      = require('./balance')
 
 // Import API Routes
 app.use(login)
@@ -34,6 +35,7 @@ app.use(incoming)
 app.use(external)
 app.use(user)
 app.use(damage)
+app.use(balance)
 
 // Export the server middleware
 module.exports = {
