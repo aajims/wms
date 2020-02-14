@@ -240,6 +240,9 @@
             <th class="noorder">
               Tracking
             </th>
+            <th class="status">
+              Status
+            </th>
             <th class="noorder">
               Company
             </th>
@@ -248,9 +251,6 @@
             </th>
             <th class="noorder">
               Country
-            </th>
-            <th class="status">
-              Status
             </th>
             <th class="created_at">
               Created
@@ -425,10 +425,10 @@ export default {
         { data: 'job_no', responsivePriority: -1 },
         { data: 'parent_id' },
         { data: 'tracking' },
+        { data: 'status' },
         { data: 'company_name' },
         { data: 'to_warehouse_name' },
         { data: 'from_country_name' },
-        { data: 'status' },
         { data: 'created_at' },
         { data: 'shipment_date' },
         { data: 'order_date' },
@@ -462,6 +462,8 @@ export default {
             let actionButtonCancel = ''
             let actionButtonEdit   = ''
             let actionButtonClose  = ''
+            let actionButtonQr     = ''
+
             if (full.status === STATUS_OPEN) {
               actionButtonEdit = `<a href="/incoming/edit/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
                                     <i class="la la-edit"></i>
@@ -471,6 +473,9 @@ export default {
               else if (full.tracking === STATUS_STORED_NAME)
                 actionButtonClose = `<a class="dropdown-item action-button-close"  data-index="${meta.row}" href="javascript:void(0)"><i class="la la-folder"></i> Close Job</a>`
             }
+            if (full.status !== STATUS_CANCEL)
+              actionButtonQr = `<a class="dropdown-item" href="/incoming/qrcode/${btoa(full.id)}" target="_blank"><i class="la la-qrcode"></i> Print QR Code</a>`
+
             return `<a href="/incoming/detail/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
                       <i class="la la-eye"></i>
                     </a>
@@ -481,8 +486,7 @@ export default {
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">
                             <a class="dropdown-item" href="javascript:void(0)"><i class="la la-print"></i> Print</a>
-                            <a class="dropdown-item" href="/incoming/qrcode/${btoa(full.id)}" target="_blank"><i class="la la-qrcode"></i> Print QR Code</a>
-                            ${actionButtonCancel}${actionButtonClose}
+                            ${actionButtonQr}${actionButtonCancel}${actionButtonClose}
                         </div>
                     </span>`
           },

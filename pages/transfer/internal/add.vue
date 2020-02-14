@@ -427,7 +427,7 @@ export default {
       productPackingId     : null,
       warehouseLocationId  : null,
       uniqueCode           : null,
-      uniqCodeBefore       : null,
+      uniqueCodeBefore     : null,
       existingUniqueCode   : [],
       fromWarehouseIdBefore: '',
       toCompanyIdBefore    : '',
@@ -919,7 +919,7 @@ export default {
       app.warehouseLocationId = rowData.from_warehouse_location_id
       app.locationIdBefore    = rowData.to_warehouse_location_id
       app.uniqueCode          = rowData.unique_code
-      app.uniqCodeBefore      = `${rowData.product_id}_${rowData.product_packing_id}_${rowData.from_warehouse_location_id}_${rowData.unique_code}`
+      app.uniqueCodeBefore    = `${rowData.product_id}_${rowData.product_packing_id}_${rowData.from_warehouse_location_id}_${rowData.unique_code}`
       $('#product_id').val(rowData.product_id).trigger('change')
       $('#to_warehouse_location_id').val(rowData.to_warehouse_location_id).trigger('change')
       $('#condition').val(rowData.product_status).trigger('change')
@@ -1099,14 +1099,14 @@ export default {
         last_stock                : this.qtyPacking - parseInt($('#qty').val()),
         batch                     : $('#unique_code').find(':selected').data('batch'),
         description               : $('#description_modal').val(),
-        product_status            : $('#condition').val(),
+        product_status            : parseInt($('#condition').val()),
       }
       if (this.rowIndex === null)
         this.datatable.row.add(product).draw().node()
       else
         this.datatable.row(this.rowIndex).data(product).draw()
 
-      this.$delete(this.existingUniqueCode, this.uniqCodeBefore)
+      this.$delete(this.existingUniqueCode, this.uniqueCodeBefore)
       this.existingUniqueCode[`${$('#product_id').val()}_${$('#product_packing_id').val()}_${$('#from_warehouse_location_id').val()}_${uniqueCode}`] = uniqueCode
 
       // add new usage to existing usage
@@ -1134,7 +1134,7 @@ export default {
       this.productPackingId    = null
       this.warehouseLocationId = null
       this.uniqueCode          = null
-      this.uniqCodeBefore      = null
+      this.uniqueCodeBefore    = null
       this.locationIdBefore    = ''
     },
     setDataPost (data) {

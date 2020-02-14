@@ -82,6 +82,24 @@ export const INCOMING_STATUS = [
   },
 ]
 
+export const INTERNAL_STATUS = [
+  {
+    id: 3, text: 'Open', class: 'success',
+  },
+  {
+    id: 4, text: 'Block', class: 'warning',
+  },
+  {
+    id: 5, text: 'Stored', class: 'primary',
+  },
+  {
+    id: 9, text: 'Cancel', class: 'danger',
+  },
+  {
+    id: 10, text: 'Close', class: 'dark',
+  },
+]
+
 export const OUTGOING_STATUS = [
   {
     id: 3, text: 'Open', class: 'success',
