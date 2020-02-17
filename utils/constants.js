@@ -82,6 +82,24 @@ export const INCOMING_STATUS = [
   },
 ]
 
+export const INTERNAL_STATUS = [
+  {
+    id: 3, text: 'Open', class: 'success',
+  },
+  {
+    id: 4, text: 'Block', class: 'warning',
+  },
+  {
+    id: 5, text: 'Stored', class: 'primary',
+  },
+  {
+    id: 9, text: 'Cancel', class: 'danger',
+  },
+  {
+    id: 10, text: 'Close', class: 'dark',
+  },
+]
+
 export const OUTGOING_STATUS = [
   {
     id: 3, text: 'Open', class: 'success',
@@ -168,3 +186,7 @@ export const READY_SHIPING_NAME = 'READY FOR SHIP'
 export const USER_SUPER_ADMIN = 1
 export const USER_ADMIN = 2
 export const USER_STAFF = 3
+
+export const CONDITION_GOOD = 1
+export const CONDITION_QUARANTINE = 2
+export const CONDITION_DAMAGED = 3

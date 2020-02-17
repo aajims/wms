@@ -838,10 +838,15 @@ export default {
                   if (parseInt(value.location_id) === parseInt(object.id))
                     usageRemaining = value.usage
                 })
+                let usagePrint     = 0
+                if (usageRemaining === 0)
+                  usagePrint = object.usage
+                else
+                  usagePrint = usageRemaining
                 if (object.usage !== object.capacity && usageRemaining < object.capacity) {
                   return {
                     id           : object.id,
-                    text         : `${object.name} - Level ${object.level} (${object.usage} / ${object.capacity})`,
+                    text         : `${object.name} - Level ${object.level} (${usagePrint} / ${object.capacity})`,
                     location_name: `${object.name} - Level ${object.level}`,
                     usage        : object.usage,
                     capacity     : object.capacity,
@@ -1073,7 +1078,7 @@ export default {
       // add existing usage
       this.remainingLocation.forEach((value) => {
         if (parseInt(value.location_id) === location)
-          usage = usage + value.usage
+          usage = value.usage
       })
 
       for (let i = 0; i < totalRow; i++) {
