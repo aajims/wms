@@ -94,22 +94,6 @@
                   </div>
                 </div>
               </div>
-              <div class="col-md-3 kt-margin-b-20-tablet-and-mobile">
-                <div class="kt-form__group">
-                  <div class="kt-form__label">
-                    <label>Warehouse:</label>
-                  </div>
-                  <div class="kt-form__control">
-                    <select
-                      id="warehouse"
-                      class="form-control kt-select2"
-                      name="to_warehouse_id"
-                    >
-                      <option />
-                    </select>
-                  </div>
-                </div>
-              </div>
               <div class="col-md-2 kt-margin-b-20-tablet-and-mobile">
                 <div class="kt-form__group">
                   <div class="kt-form__label">
@@ -233,7 +217,7 @@
             <th class="noorder">
               #
             </th>
-            <th>Transfer No.</th>
+            <th>Job No.</th>
             <th>Tracking</th>
             <th class="noorder">
               Company
