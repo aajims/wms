@@ -31,6 +31,14 @@ export default [
     ],
   },
   {
+    name        : 'Order List',
+    icon        : 'la la-sign-in',
+    url         : '/order',
+    folder      : false,
+    childDisplay: false,
+    children    : [],
+  },
+  {
     name        : 'Incoming Stock',
     icon        : 'la la-sign-in',
     url         : '/incoming',
@@ -105,5 +113,13 @@ export default [
         children: [],
       },
     ],
+  },
+  {
+    name        : 'Damage List',
+    icon        : 'la la-sign-in',
+    url         : '/damage',
+    folder      : false,
+    childDisplay: false,
+    children    : [],
   },
 ]
