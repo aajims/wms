@@ -761,14 +761,6 @@ export default {
           },
         },
       })
-
-      if (app.rowId !== 0) {
-        $('#product_id').attr('disabled', true)
-        $('#product_packing_id').attr('disabled', true)
-        $('#from_warehouse_location_id').attr('disabled', true)
-        $('#unique_code').attr('disabled', true)
-      } else
-        $('#product_id').attr('disabled', false)
     })
     $('#product_modal').on('hidden.bs.modal', function () {
       app.clearForm()
@@ -889,7 +881,7 @@ export default {
               if (full.status !== STATUS_READY_SHIPING)
                 shipButton = `<a class="dropdown-item status-ship" data-index="${meta.row}" href="javascript:void(0)"><i class="fa flaticon2-box"></i> Ready For Ship</a>`
               if (full.status !== STATUS_CANCEL)
-                cancelButton     = `<a class="dropdown-item status-cancel" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-times-circle"></i> Cancel Job</a>`
+                cancelButton     = `<a class="dropdown-item status-cancel" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-times-circle"></i> Cancel</a>`
               additionalButton = `<span class="dropdown">
                                       <a href="javascript:void(0)" class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="dropdown" aria-expanded="true">
                                         <i class="la la-ellipsis-h"></i>
@@ -964,7 +956,6 @@ export default {
       rules: {
         product_id                : { required: true },
         product_packing_id        : { required: true },
-        to_warehouse_location_id  : { required: true },
         from_warehouse_location_id: { required: true },
         unique_code               : { required: true },
         qty                       : {
@@ -1193,11 +1184,6 @@ export default {
       this.external.to_country_id   = parseInt($('#to_warehouse_id').find(':selected').data('country-id'))
       this.external.to_warehouse_id = parseInt($('#to_warehouse_id').val())
 
-      const dataToPost       = []
-      data.forEach((value) => {
-        if (value.is_cancel === undefined)
-          dataToPost.push(value)
-      })
       this.external.products = data
     },
     async editExternal (data) {

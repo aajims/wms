@@ -7,7 +7,7 @@ body {
   <client-only>
     <div>
       <div
-        v-for="data in incoming.products"
+        v-for="data in internal.products"
         :key="data.id"
       >
         <div
@@ -32,7 +32,7 @@ body {
           <div style="padding: 5px; padding-left: 2px; border: 2px; border-left: 4px; border-right: 4px; border-color: #000; border-style: solid;">
             Company: <br><br>
             <div style="margin-top: -10px;">
-              <center><span style="font-size: 14px;">{{ incoming.company_name }}</span></center>
+              <center><span style="font-size: 14px;">{{ internal.company_name }}</span></center>
             </div>
           </div>
           <div style="padding: 5px; padding-left: 2px; border: 2px; border-left: 4px; border-right: 4px; border-color: #000; border-style: solid;">
@@ -44,7 +44,7 @@ body {
                 >
                   Job Number :<br><br>
                   <div style="margin-top: -10px;">
-                    <center><span style="font-size: 10px;">{{ incoming.job_no }}</span></center>
+                    <center><span style="font-size: 10px;">{{ internal.job_no }}</span></center>
                   </div>
                 </td>
                 <td
@@ -62,7 +62,7 @@ body {
                 >
                   Country:<br><br>
                   <div style="margin-top: -10px;">
-                    <center><span style="font-size: 10px;">{{ incoming.from_country_name }}</span></center>
+                    <center><span style="font-size: 10px;">{{ internal.from_country_name }}</span></center>
                   </div>
                 </td>
               </tr>
@@ -85,7 +85,7 @@ body {
                   style="width: 33%; padding: 2px;  border: 2px; border-left: 4px; font-family: Arial, Helvetica, sans-serif; font-size: 8px; font-weight: bold;"
                 >
                   Expire Date:<br><br> <div style="margin-top: -10px;">
-                    <center><span style="font-size: 10px;">{{ date(incoming.expired_date) }}</span></center>
+                    <center><span style="font-size: 10px;">{{ date(internal.expired_date) }}</span></center>
                   </div>
                 </td>
               </tr>
@@ -118,7 +118,7 @@ export default {
   layout: 'admin-blank',
   data () {
     return {
-      incoming    : [],
+      internal    : [],
       size        : 400,
       statusCancel: STATUS_CANCEL,
     }
@@ -129,8 +129,8 @@ export default {
   },
   methods: {
     async getData () {
-      await this.$store.dispatch('incoming/getIncomingDetail', { idIncoming: atob(this.$route.params.id) })
-      this.incoming    = this.$store.getters['incoming/getIncomingDetail'].result
+      await this.$store.dispatch('internal/getInternalDetail', { idInternal: atob(this.$route.params.id) })
+      this.internal    = this.$store.getters['internal/getInternalDetail'].result
     },
     date: function (date) {
       return moment(date).format('DD/MM/Y')
