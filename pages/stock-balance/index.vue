@@ -219,11 +219,11 @@
             <th class="noorder">
               #
             </th>
-            <th>Job No.</th>
-            <th class="noorder">
+            <th class="noorder">Job No.</th>
+            <th>
               Company
             </th>
-            <th class="noorder">
+            <th>
               Warehouse
             </th>
             <th>
@@ -269,7 +269,7 @@
 
 <script>
 import moment from 'moment'
-import { JOB_STATUS, STATUS_OPEN, STATUS_CANCEL } from '@/utils/constants'
+import { STATUS, STATUS_OPEN, STATUS_CANCEL } from '@/utils/constants'
 
 export default {
   data () {
@@ -284,7 +284,7 @@ export default {
         order_date   : 'Order Date',
         shipment_date: 'Shipment Date',
       },
-      job_status: JOB_STATUS,
+      status: STATUS,
       datatable : [],
       params    : {
         keyword  : '',
@@ -415,9 +415,9 @@ export default {
           targets  : 'status',
           className: 'dt-center',
           render   : function (data, type, full, meta) {
-            for (const statusIndex in JOB_STATUS) {
-              if (data === JOB_STATUS[statusIndex].id)
-                return `<span class="kt-badge kt-badge--${JOB_STATUS[statusIndex].class} kt-badge--inline">${JOB_STATUS[statusIndex].text}</span>`
+            for (const statusIndex in STATUS) {
+              if (data === STATUS[statusIndex].id)
+                return `<span class="kt-badge kt-badge--${STATUS[statusIndex].class} kt-badge--inline">${STATUS[statusIndex].text}</span>`
             }
             return data
           },
