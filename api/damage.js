@@ -13,7 +13,7 @@ app.post('/damage/list', (request, response) => {
   const token  = request.cookies[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
-    url    : `${process.env.API_URL}/v1//job-damage/`,
+    url    : `${process.env.API_URL}/v1/job-damage/`,
     headers: {
       'Content-Type' : 'application/x-www-form-urlencoded',
       'Authorization': `Bearer ${token}`,
