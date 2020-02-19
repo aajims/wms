@@ -28,7 +28,6 @@ export default function ({ store, redirect, route }) {
     const userProvilege = store.getters['getUserData'].privilege
     for (const key in userProvilege) {
       if (userProvilege[key].module_code === moduleCode) {
-        // userProvilege[key].add = 0
         if (route.path.includes('/add')) {
           if (userProvilege[key].add === STATUS_FALSE)
             redirect('/error/noaccess')

@@ -87,23 +87,6 @@
           </div>
           <div class="form-group row">
             <div class="col-lg-6">
-              <label>Condition</label>
-              <input
-                :value="condition"
-                type="text"
-                class="form-control"
-                readonly
-              >
-            </div>
-            <div class="col-lg-6">
-              <label>Status</label><br>
-              <span
-                :class="`btn btn-${status.class}`"
-              > {{ status.text }} </span>
-            </div>
-          </div>
-          <div class="form-group row">
-            <div class="col-lg-6">
               <label>Created By</label>
               <input
                 :value="product.created_by_name"
@@ -152,6 +135,12 @@
                 readonly
               />
             </div>
+            <div class="col-lg-6">
+              <label>Status</label><br>
+              <span
+                :class="`btn btn-${status.class}`"
+              > {{ status.text }} </span>
+            </div>
           </div>
           <div class="kt-separator kt-separator--border-dashed kt-separator--space-lg" />
           <div class="form-group row">
@@ -164,7 +153,7 @@
               <!--begin: Datatable -->
               <table
                 id="packing_table"
-                class="table table-hover table-checkable"
+                class="table table-hover table-checkable nowrap"
               >
                 <thead>
                   <tr>
@@ -199,7 +188,7 @@
 </template>
 
 <script>
-import { PRODUCT_TYPE, PRODUCT_CONDITION, STATUS } from '@/utils/constants'
+import { PRODUCT_TYPE, STATUS } from '@/utils/constants'
 import moment from 'moment'
 
 export default {
@@ -211,7 +200,6 @@ export default {
       idCompanyEncoded: null,
       datatable       : [],
       type            : '',
-      condition       : '',
       status          : [],
     }
   },
@@ -221,7 +209,6 @@ export default {
       this.product          = this.$store.getters['product/getProductDetail'].result
       this.idCompanyEncoded = btoa(this.product.company_id)
       this.type             = PRODUCT_TYPE[this.product.type - 1].text
-      this.condition        = PRODUCT_CONDITION[this.product.product_status - 1].text
       this.status           = STATUS[this.product.status]
       this.createdDate      = moment(this.product.created_at).format('DD/MM/Y HH:mm:ss')
       if (this.updatedDate !== '' && this.updatedDate !== null)

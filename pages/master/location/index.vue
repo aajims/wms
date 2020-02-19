@@ -16,6 +16,7 @@
         <div class="kt-portlet__head-wrapper">
           <div class="kt-portlet__head-actions">
             <a
+              v-if="pageAccess.add === statusTrue"
               href="/master/location/add"
               class="btn btn-brand btn-elevate btn-icon-sm"
             >
@@ -23,6 +24,7 @@
               <span class="kt-hidden-mobile">Add Location</span>
             </a>
             <a
+              v-if="pageAccess.add === statusTrue"
               href="/master/location/import"
               class="btn btn-brand btn-elevate btn-icon-sm"
             >
@@ -306,6 +308,7 @@
 
 <script>
 import moment from 'moment'
+import { STATUS_TRUE } from '@/utils/constants'
 
 export default {
   data () {
@@ -316,9 +319,14 @@ export default {
         search_by: '',
         filter   : {},
       },
+      pageAccess: {},
+      statusTrue: STATUS_TRUE,
     }
   },
   mounted () {
+    // get page access
+    this.pageAccess = this.$store.getters['getAccessPage']
+
     const app = this
     $('#warehouse').select2({
       placeholder       : 'Select warehouse',
@@ -491,23 +499,26 @@ export default {
           width    : '110px',
           orderable: false,
           render   : function (data, type, full, meta) {
-            return `
-                        <a href="/master/location/detail/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
-                          <i class="la la-eye"></i>
+            let actionButtonStatus = ''
+            let actionButtonEdit   = ''
+            if (app.pageAccess.edit === app.statusTrue) {
+              actionButtonEdit   = `<a href="/master/location/edit/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details"><i class="la la-edit"></i></a>`
+              actionButtonStatus = `<a class="dropdown-item action-button-status" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-power-off"></i> Update Status</a>`
+            }
+            return `<a href="/master/location/detail/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
+                      <i class="la la-eye"></i>
+                    </a>
+                    ${actionButtonEdit}
+                    <span class="dropdown">
+                        <a href="javascript:void(0)" class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="dropdown" aria-expanded="true">
+                          <i class="la la-ellipsis-h"></i>
                         </a>
-                        <a href="/master/location/edit/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
-                          <i class="la la-edit"></i>
-                        </a>
-                        <span class="dropdown">
-                            <a href="javascript:void(0)" class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="dropdown" aria-expanded="true">
-                              <i class="la la-ellipsis-h"></i>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item action-button-status" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-power-off"></i> Update Status</a>
-                                <a class="dropdown-item" href="javascript:void(0)"><i class="la la-search"></i> View Location Product</a>
-                                <a class="dropdown-item" href="/master/location/qrcode/${full.id}" target="_blank"><i class="la la-qrcode"></i> Print QR Code</a>
-                            </div>
-                        </span>`
+                        <div class="dropdown-menu dropdown-menu-right">
+                            ${actionButtonStatus}
+                            <a class="dropdown-item" href="javascript:void(0)"><i class="la la-search"></i> View Location Product</a>
+                            <a class="dropdown-item" href="/master/location/qrcode/${full.id}" target="_blank"><i class="la la-qrcode"></i> Print QR Code</a>
+                        </div>
+                    </span>`
           },
         },
         {
