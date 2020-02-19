@@ -10,7 +10,7 @@ const library = require('./library.js')
 
 app.post('/packing/list', (request, response) => {
   const params = library.generateDatatableParameter(request.body)
-  const token  = request.cookies[`${process.env.APP_ENV}_token`]
+  const token  = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
     url    : `${process.env.API_URL}/v1/packing-type/`,
@@ -29,7 +29,7 @@ app.post('/packing/list', (request, response) => {
 })
 
 app.post('/packing/add', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'post',
     url    : `${process.env.API_URL}/v1/packing-type/`,
@@ -46,7 +46,7 @@ app.post('/packing/add', (request, response) => {
 })
 
 app.put('/packing/edit', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'put',
     url    : `${process.env.API_URL}/v1/packing-type/${request.body.id_packing}`,
@@ -63,7 +63,7 @@ app.put('/packing/edit', (request, response) => {
 })
 
 app.get('/packing/detail', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
     url    : `${process.env.API_URL}/v1/packing-type/${request.query.id_packing}`,
@@ -79,7 +79,7 @@ app.get('/packing/detail', (request, response) => {
 })
 
 app.get('/packing/select', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
     url    : `${process.env.API_URL}/v1/packing-type`,

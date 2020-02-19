@@ -16,7 +16,7 @@ app.use(fileUpload({
 const library = require('./library.js')
 
 app.get('/location/select', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
     url    : `${process.env.API_URL}/v1/location`,
@@ -43,7 +43,7 @@ app.get('/location/select', (request, response) => {
 
 app.post('/location/list', (request, response) => {
   const params = library.generateDatatableParameter(request.body)
-  const token  = request.cookies[`${process.env.APP_ENV}_token`]
+  const token  = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
     url    : `${process.env.API_URL}/v1/location/`,
@@ -62,7 +62,7 @@ app.post('/location/list', (request, response) => {
 })
 
 app.post('/location/add', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'post',
     url    : `${process.env.API_URL}/v1/location`,
@@ -79,7 +79,7 @@ app.post('/location/add', (request, response) => {
 })
 
 app.get('/location/detail', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
     url    : `${process.env.API_URL}/v1/location/${request.query.id_location}`,
@@ -95,7 +95,7 @@ app.get('/location/detail', (request, response) => {
 })
 
 app.put('/location/edit', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'put',
     url    : `${process.env.API_URL}/v1/location/${request.body.id_location}`,
@@ -113,7 +113,7 @@ app.put('/location/edit', (request, response) => {
 
 app.get('/location/export', (request, response) => {
   const params = library.generateParameter(request.query)
-  const token  = request.cookies[`${process.env.APP_ENV}_token`]
+  const token  = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
     url    : `${process.env.API_URL}/v1/location/data/export`,
@@ -135,7 +135,7 @@ app.post('/location/import', (request, response) => {
   const stream   = fileStream.createReadStream(request.files.file.tempFilePath)
   formData.append('warehouse_id', request.body.warehouse_id)
   formData.append('file', stream)
-  const token    = request.cookies[`${process.env.APP_ENV}_token`]
+  const token    = request.session[`${process.env.APP_ENV}_token`]
   const headers  = Object.assign({}, formData.getHeaders(), { Authorization: `Bearer ${token}` })
   axios({
     method : 'post',
@@ -153,7 +153,7 @@ app.post('/location/import', (request, response) => {
 })
 
 app.get('/location/select', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
     url    : `${process.env.API_URL}/v1/location`,
@@ -179,7 +179,7 @@ app.get('/location/select', (request, response) => {
 })
 
 app.get('/location/select-by-product', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
     url    : `${process.env.API_URL}/v1/location-product/${request.query.product_id}/${request.query.product_packing_id}`,

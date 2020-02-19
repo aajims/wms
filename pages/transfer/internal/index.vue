@@ -16,6 +16,7 @@
         <div class="kt-portlet__head-wrapper">
           <div class="kt-portlet__head-actions">
             <a
+              v-if="pageAccess.add === statusTrue"
               href="/transfer/internal/add"
               class="btn btn-brand btn-elevate btn-icon-sm"
             >
@@ -290,7 +291,7 @@
 
 <script>
 import moment from 'moment'
-import { JOB_STATUS, STATUS_OPEN, STATUS_CANCEL, STATUS_STORED_NAME, STATUS_CLOSE } from '@/utils/constants'
+import { JOB_STATUS, STATUS_OPEN, STATUS_CANCEL, STATUS_STORED_NAME, STATUS_CLOSE, STATUS_TRUE } from '@/utils/constants'
 
 export default {
   data () {
@@ -317,9 +318,14 @@ export default {
         search_by: '',
         filter   : {},
       },
+      pageAccess: {},
+      statusTrue: STATUS_TRUE,
     }
   },
   async mounted () {
+    // get page access
+    this.pageAccess = this.$store.getters['getAccessPage']
+
     const app = this
     $('#warehouse').select2({
       placeholder       : 'Select warehouse',
@@ -452,8 +458,9 @@ export default {
             let actionButtonClose  = ''
             let actionButtonQr     = ''
             if (full.status === STATUS_OPEN) {
-              actionButtonEdit = `<a href="/transfer/internal/edit/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details"><i class="la la-edit"></i></a>`
-              if (full.tracking === '')
+              if (app.pageAccess.edit === app.statusTrue)
+                actionButtonEdit = `<a href="/transfer/internal/edit/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details"><i class="la la-edit"></i></a>`
+              if (full.tracking === '' && app.pageAccess.cancel === app.statusTrue)
                 actionButtonCancel = `<a class="dropdown-item action-button-cancel" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-times-circle"></i> Cancel Job</a>`
               else if (full.tracking === STATUS_STORED_NAME)
                 actionButtonClose = `<a class="dropdown-item action-button-close" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-folder"></i> Close Job</a>`

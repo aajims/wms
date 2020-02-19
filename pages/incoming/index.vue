@@ -16,6 +16,7 @@
         <div class="kt-portlet__head-wrapper">
           <div class="kt-portlet__head-actions">
             <a
+              v-if="pageAccess.add === statusTrue"
               href="/incoming/add"
               class="btn btn-brand btn-elevate btn-icon-sm"
             >
@@ -295,7 +296,7 @@
 
 <script>
 import moment from 'moment'
-import { JOB_STATUS, STATUS_OPEN, STATUS_CANCEL, STATUS_STORED_NAME, STATUS_CLOSE } from '@/utils/constants'
+import { JOB_STATUS, STATUS_OPEN, STATUS_CANCEL, STATUS_STORED_NAME, STATUS_CLOSE, STATUS_TRUE, JOB_DAMAGE } from '@/utils/constants'
 
 export default {
   data () {
@@ -322,9 +323,14 @@ export default {
         search_by: '',
         filter   : {},
       },
+      pageAccess: {},
+      statusTrue: STATUS_TRUE,
     }
   },
   async mounted () {
+    // get page access
+    this.pageAccess = this.$store.getters['getAccessPage']
+
     const app = this
     $('#warehouse').select2({
       placeholder       : 'Select warehouse',
@@ -447,8 +453,11 @@ export default {
           targets  : 'parent_job',
           orderable: false,
           render   : function (data, type, full, meta) {
+            let url = `/transfer/external/detail/${btoa(data)}`
+            if (full.parent_type === JOB_DAMAGE)
+              url = `/damage/detail/${btoa(data)}`
             if (data !== 0)
-              return `<a href="/transfer/external/detail/${btoa(data)}" title="Go to transfer" target="_blank">${full.parent_job_no}</a>`
+              return `<a href="${url}" title="Go to parent job" target="_blank">${full.parent_job_no}</a>`
             return ''
           },
         },
@@ -465,10 +474,9 @@ export default {
             let actionButtonQr     = ''
 
             if (full.status === STATUS_OPEN) {
-              actionButtonEdit = `<a href="/incoming/edit/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
-                                    <i class="la la-edit"></i>
-                                  </a>`
-              if (full.tracking === '' && full.parent_id === 0)
+              if (app.pageAccess.edit === app.statusTrue)
+                actionButtonEdit = `<a href="/incoming/edit/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details"><i class="la la-edit"></i></a>`
+              if (full.tracking === '' && full.parent_id === 0 && app.pageAccess.cancel === app.statusTrue)
                 actionButtonCancel = `<a class="dropdown-item action-button-cancel"  data-index="${meta.row}" href="javascript:void(0)"><i class="la la-times-circle"></i> Cancel Job</a>`
               else if (full.tracking === STATUS_STORED_NAME)
                 actionButtonClose = `<a class="dropdown-item action-button-close"  data-index="${meta.row}" href="javascript:void(0)"><i class="la la-folder"></i> Close Job</a>`

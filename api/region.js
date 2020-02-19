@@ -7,7 +7,7 @@ app.use(cookieParser())
 app.use(bodyParser.urlencoded({ extended: true }))
 
 app.get('/country/select', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
     url    : `${process.env.API_URL}/v1/master/country`,
@@ -32,7 +32,7 @@ app.get('/country/select', (request, response) => {
 })
 
 app.get('/state-by-country/select', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
     url    : `${process.env.API_URL}/v1/master/state-by-country`,
@@ -55,7 +55,7 @@ app.get('/state-by-country/select', (request, response) => {
 })
 
 app.get('/city-by-state/select', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
     url    : `${process.env.API_URL}/v1/master/city-by-state`,
@@ -78,7 +78,7 @@ app.get('/city-by-state/select', (request, response) => {
 })
 
 app.get('/district-by-city/select', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
     url    : `${process.env.API_URL}/v1/master/district-by-city`,
