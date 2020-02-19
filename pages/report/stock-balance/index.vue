@@ -187,21 +187,6 @@
                 </div>
               </div>
             </div>
-            <div class="col-md-3 kt-margin-b-20-tablet-and-mobile">
-              <div class="kt-form__group">
-                <div class="kt-form__label">
-                  <label>Company:</label>
-                </div>
-                <div class="kt-form__control">
-                  <select
-                    id="company"
-                    class="form-control kt-select2"
-                  >
-                    <option />
-                  </select>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -219,6 +204,7 @@
             <th class="noorder">
               #
             </th>
+            <th class="noorder">QR Code </th>
             <th class="noorder">SKU </th>
             <th>
               Batch
@@ -296,8 +282,6 @@ export default {
       filter_date_by: {
         created_at   : 'Created Date',
         updated_at   : 'Updated Date',
-        order_date   : 'Order Date',
-        shipment_date: 'Shipment Date',
       },
       status: STATUS,
       datatable : [],
@@ -409,7 +393,8 @@ export default {
       order  : [[7, 'desc']],
       columns: [
         { data: 'row_number' },
-        { data: 'product_sku', responsivePriority: -1 },
+        { data: 'unique_code', responsivePriority: -1 },
+        { data: 'product_sku' },
         { data: 'batch' },
         { data: 'warehouse_name' },
         { data: 'warehouse_location_name' },
