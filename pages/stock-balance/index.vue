@@ -219,18 +219,30 @@
             <th class="noorder">
               #
             </th>
-            <th class="noorder">Job No.</th>
+            <th class="noorder">SKU </th>
             <th>
-              Company
+              Batch
             </th>
             <th>
               Warehouse
             </th>
             <th>
-              Product Name
+              Location
             </th>
             <th>
-              Product SKU
+              Total Stock
+            </th>
+            <th>
+              Out Stock
+            </th>
+            <th>
+              Last Stock
+            </th>
+            <th>
+              Reserved Stock
+            </th>
+            <th>
+              Total M3
             </th>
             <th class="status">
               Status
@@ -239,10 +251,13 @@
               Created
             </th>
             <th>
-              Product Category Name
+              Product 
             </th>
             <th>
-              Product Type Name
+              Category 
+            </th>
+            <th>
+              Packing Type
             </th>
            <th class="date">
               Expired Date
@@ -394,16 +409,21 @@ export default {
       order  : [[7, 'desc']],
       columns: [
         { data: 'row_number' },
-        { data: 'job_no', responsivePriority: -1 },
-        { data: 'company_name' },
+        { data: 'product_sku', responsivePriority: -1 },
+        { data: 'batch' },
         { data: 'warehouse_name' },
-        { data: 'product_name' },
-        { data: 'product_sku' },
+        { data: 'warehouse_location_name' },
+        { data: 'first_stock' },
+        { data: 'out_stock' },
+        { data: 'last_stock' },
+        { data: 'reserved_stock' },
+        { data: 'total_m3' },
         { data: 'status' },
         { data: 'created_at' },
-        { data: 'expired_date' },
+        { data: 'product_name' },
         { data: 'product_category_name' },
         { data: 'packing_type_name' },
+        { data: 'expired_date' },
         { data: 'updated_at' },
       ],
       columnDefs: [
