@@ -93,6 +93,7 @@ export default [
   },
   {
     name        : 'Damage List',
+    moduleCode  : 'JDM',
     icon        : 'la la-sign-in',
     url         : '/damage',
     folder      : false,
@@ -123,11 +124,22 @@ export default [
     ],
   },
   {
-    name        : 'Report Stock Balance',
-    icon        : 'la la-sign-in',
-    url         : '/stock-balance',
-    folder      : false,
-    childDisplay: false,
-    children    : [],
-  },
+    name        : 'Report',
+    moduleCode  : 'RPT',
+    icon        : 'fa flaticon-layer',
+    url         : '/report',
+    folder      : true,
+    childDisplay: true,
+    children    : [
+      {
+        name        : 'Report Stock Balance',
+        moduleCode  : '',
+        icon        : 'kt-menu__link-bullet kt-menu__link-bullet--dot',
+        url         : '/stock-balance',
+        folder      : false,
+        childDisplay: false,
+        children    : [],
+      },
+    ]
+  }
 ]
