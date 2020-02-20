@@ -471,7 +471,7 @@ export default {
                       </a>
                       <div class="dropdown-menu dropdown-menu-right">
                           <a class="dropdown-item" href="javascript:void(0)"><i class="la la-print"></i> Print</a>
-                          <a class="dropdown-item" href="javascript:void(0)"><i class="la la-print"></i> Print D.O.</a>
+                          <a class="dropdown-item" href="/outgoing/delivery-order/${btoa(full.id)}" target="_blank"><i class="la la-print"></i> Print D.O.</a>
                           <a class="dropdown-item" href="javascript:void(0)"><i class="la la-print"></i> Shipping Note</a>
                           ${actionButtonCancel}
                           ${actionButtonClose}
