@@ -6,7 +6,7 @@
     <div class="kt-portlet__head kt-portlet__head--lg">
       <div class="kt-portlet__head-label">
         <span class="kt-portlet__head-icon">
-          <i class="kt-font-brand fa flaticon2-delivery-truck" />
+          <i class="kt-font-brand fa flaticon2-line-chart" />
         </span>
         <h3 class="kt-portlet__head-title">
           Report Stock Of Balance
@@ -67,7 +67,7 @@
                       id="kt_form_status"
                       class="form-control bootstrap-select selectpicker"
                     >
-                       <option value="">
+                      <option value="">
                         All
                       </option>
                       <option value="1">
@@ -204,8 +204,12 @@
             <th class="noorder">
               #
             </th>
-            <th class="noorder">QR Code </th>
-            <th class="noorder">SKU </th>
+            <th class="noorder">
+              QR Code
+            </th>
+            <th class="noorder">
+              SKU
+            </th>
             <th>
               Batch
             </th>
@@ -233,19 +237,19 @@
             <th class="status">
               Status
             </th>
-             <th class="created_at">
+            <th class="created_at">
               Created
             </th>
             <th>
-              Product 
+              Product
             </th>
             <th>
-              Category 
+              Category
             </th>
             <th>
               Packing Type
             </th>
-           <th class="date">
+            <th class="date">
               Expired Date
             </th>
             <th class="updated_at">
@@ -270,22 +274,22 @@
 
 <script>
 import moment from 'moment'
-import { STATUS, STATUS_OPEN, STATUS_CANCEL } from '@/utils/constants'
+import { STATUS } from '@/utils/constants'
 
 export default {
   data () {
     return {
       filter_by: {
-        job_no          : 'Job No',
+        job_no     : 'Job No',
         unique_code: 'Unique Code',
       },
       filter_date_by: {
-        created_at   : 'Created Date',
-        updated_at   : 'Updated Date',
+        created_at: 'Created Date',
+        updated_at: 'Updated Date',
       },
-      status: STATUS,
-      datatable : [],
-      params    : {
+      status   : STATUS,
+      datatable: [],
+      params   : {
         keyword  : '',
         search_by: '',
         filter   : {},
@@ -456,88 +460,11 @@ export default {
         },
       ],
     })
-
-    // update datatable row
-    this.datatable.on('draw.dt', function () {
-      $('.action-button-cancel').click(function () {
-        const rowData = app.datatable.row($(this).data('index')).data()
-        app.setStatus(STATUS_CANCEL, rowData)
-      })
-      $('.action-button-close').click(function () {
-        const rowData = app.datatable.row($(this).data('index')).data()
-        app.setStatus(STATUS_CLOSE, rowData)
-      })
-    })
   },
   methods: {
     async getBalance () {
       this.params.search_by = $('#kt_form_filter').val()
       this.datatable.ajax.reload()
-    },
-    async setStatus (statusId, row) {
-      const app         = this
-      for (const statusIndex in JOB_STATUS) {
-        if (statusId === JOB_STATUS[statusIndex].id) {
-          const statusText = `${JOB_STATUS[statusIndex].text.charAt(0).toLowerCase()}${JOB_STATUS[statusIndex].text.slice(1)}`
-          // eslint-disable-next-line no-undef
-          swal.fire({
-            title             : 'Are you sure?',
-            text              : `Job balance "${row.job_no}" will be ${statusText}`,
-            type              : 'question',
-            showCancelButton  : true,
-            confirmButtonText : `${JOB_STATUS[statusIndex].text} Job`,
-            buttonsStyling    : false,
-            confirmButtonClass: `btn btn-${JOB_STATUS[statusIndex].class}`,
-            cancelButtonClass : 'btn btn-default',
-          }).then(function (result) {
-            if (result.value)
-              app.updateStatus(row.id, statusId, row)
-          })
-          break
-        }
-      }
-    },
-    async updateStatus (idBalance, statusId, param) {
-      try {
-        this.$nuxt.$loading.start()
-        param.status    = statusId
-        this.$delete(param, 'job_close_date')
-        await this.$store.dispatch('damage/editDamage', { idBalance: idBalance, data: param })
-        const data      = this.$store.getters['balance/getEditBalance']
-        const parameter = {
-          alertClass: 'alert-success',
-          message   : `Stock Balance ${data.result.job_no} has been edited`,
-        }
-        this.$nuxt.$emit('alertShow', parameter)
-        this.$nuxt.$loading.finish()
-        // eslint-disable-next-line no-undef
-        KTUtil.scrollTop()
-        this.datatable.ajax.reload()
-      } catch (error) {
-        param.status    = STATUS_OPEN
-        const parameter = {
-          alertClass: 'alert-danger',
-          message   : error.message,
-        }
-        this.$nuxt.$emit('alertShow', parameter)
-        this.$nuxt.$loading.finish()
-        // eslint-disable-next-line no-undef
-        KTUtil.scrollTop()
-      }
-    },
-    async clearForm () {
-      this.params = {
-        keyword  : '',
-        search_by: '',
-        filter   : {},
-      }
-      this.datatable.ajax.reload()
-      $('#warehouse').val(null).trigger('change')
-      $('#company').val(null).trigger('change')
-      $('#kt_form_filter').val('job_no')
-      $('#kt_form_filter_date').val('created_at')
-      $('#kt_form_status').val('')
-      $('.selectpicker').selectpicker('refresh')
     },
   },
 }

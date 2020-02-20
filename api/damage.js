@@ -10,7 +10,7 @@ const library = require('./library.js')
 
 app.post('/damage/list', (request, response) => {
   const params = library.generateDatatableParameter(request.body)
-  const token  = request.cookies[`${process.env.APP_ENV}_token`]
+  const token  = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
     url    : `${process.env.API_URL}/v1/job-damage/`,
@@ -29,7 +29,7 @@ app.post('/damage/list', (request, response) => {
 })
 
 app.post('/damage/add', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'post',
     url    : `${process.env.API_URL}/v1/job-damage`,
@@ -46,7 +46,7 @@ app.post('/damage/add', (request, response) => {
 })
 
 app.put('/damage/edit', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'put',
     url    : `${process.env.API_URL}/v1/job-damage/${request.body.id_damage}`,
@@ -63,7 +63,7 @@ app.put('/damage/edit', (request, response) => {
 })
 
 app.get('/damage/detail', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
     url    : `${process.env.API_URL}/v1/job-damage/${request.query.id_damage}`,
