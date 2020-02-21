@@ -233,9 +233,6 @@
             <th class="status">
               Status
             </th>
-             <th class="created_at">
-              Created
-            </th>
             <th>
               Product 
             </th>
@@ -244,12 +241,6 @@
             </th>
             <th>
               Packing Type
-            </th>
-           <th class="date">
-              Expired Date
-            </th>
-            <th class="updated_at">
-              Updated Date
             </th>
           </tr>
         </thead>
@@ -276,8 +267,7 @@ export default {
   data () {
     return {
       filter_by: {
-        job_no          : 'Job No',
-        unique_code: 'Unique Code',
+        unique_code: 'Unique Code'
       },
       filter_date_by: {
         created_at   : 'Created Date',
@@ -404,12 +394,9 @@ export default {
         { data: 'reserved_stock' },
         { data: 'total_m3' },
         { data: 'status' },
-        { data: 'created_at' },
         { data: 'product_name' },
         { data: 'product_category_name' },
         { data: 'packing_type_name' },
-        { data: 'expired_date' },
-        { data: 'updated_at' },
       ],
       columnDefs: [
         {
