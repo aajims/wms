@@ -9,7 +9,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 const library = require('./library.js')
 
 app.get('/company/select', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
     url    : `${process.env.API_URL}/v1/company`,
@@ -35,7 +35,7 @@ app.get('/company/select', (request, response) => {
 
 app.post('/company/list', (request, response) => {
   const params = library.generateDatatableParameter(request.body)
-  const token  = request.cookies[`${process.env.APP_ENV}_token`]
+  const token  = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
     url    : `${process.env.API_URL}/v1/company/`,
@@ -53,7 +53,7 @@ app.post('/company/list', (request, response) => {
   })
 })
 app.post('/company/add', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'post',
     url    : `${process.env.API_URL}/v1/company`,
@@ -69,7 +69,7 @@ app.post('/company/add', (request, response) => {
   })
 })
 app.get('/company/detail', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
     url    : `${process.env.API_URL}/v1/company/${request.query.id_company}`,
@@ -85,7 +85,7 @@ app.get('/company/detail', (request, response) => {
 })
 
 app.put('/company/edit', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'put',
     url    : `${process.env.API_URL}/v1/company/${request.body.id_company}`,
@@ -102,7 +102,7 @@ app.put('/company/edit', (request, response) => {
 })
 
 app.get('/company/select', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
     url    : `${process.env.API_URL}/v1/company`,

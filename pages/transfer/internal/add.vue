@@ -1097,7 +1097,7 @@ export default {
         expired_date              : $('#unique_code').find(':selected').data('expired_date'),
         qty                       : parseInt($('#qty').val()),
         last_stock                : this.qtyPacking - parseInt($('#qty').val()),
-        batch                     : $('#unique_code').find(':selected').data('batch'),
+        batch                     : $('#unique_code').find(':selected').data('batch').toString(),
         description               : $('#description_modal').val(),
         product_status            : parseInt($('#condition').val()),
       }

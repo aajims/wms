@@ -101,19 +101,19 @@
         data-ktmenu-dropdown-timeout="500"
       >
         <ul
-          v-if="menus.length > 0"
+          v-if="menuForDisplay.length > 0"
           class="kt-menu__nav "
         >
           <!-- generete menu parent -->
           <li
-            v-for="menu in menus"
+            v-for="menu in menuForDisplay"
             :key="menu.name"
             :class="'kt-menu__item ' + [route === menu.url ? 'kt-menu__item--active' : ''] + [parentOpen === menu.name && menu.children.length > 0 ? 'kt-menu__item--submenu kt-menu__item--open' : '']"
             aria-haspopup="true"
             data-ktmenu-submenu-toggle="hover"
           >
             <a
-              v-if="menu.childDisplay === true"
+              v-if="menu.childDisplay === true && (menuAccess[menu.moduleCode] === statusTrue || menu.moduleCode === '')"
               href="javascript:;"
               class="kt-menu__link kt-menu__toggle"
             >
@@ -171,14 +171,48 @@
 
 <script>
 import menus from '@/data/menu'
+import { STATUS_TRUE } from '@/utils/constants'
+
 export default {
   data () {
     return {
-      menus     : menus,
-      route     : `/${this.$nuxt.$route.path.split('/')[1]}`,
-      childRoute: `/${this.$nuxt.$route.path.split('/')[2]}`,
-      parentOpen: '',
+      menus         : menus,
+      menuForDisplay: [],
+      route         : `/${this.$nuxt.$route.path.split('/')[1]}`,
+      childRoute    : `/${this.$nuxt.$route.path.split('/')[2]}`,
+      parentOpen    : '',
+      statusTrue    : STATUS_TRUE,
+      menuAccess    : [],
     }
+  },
+  created () {
+    const menuAccess = this.$store.getters['getMenuAccess']
+    this.menuAccess  = menuAccess
+
+    const app = this
+    menus.forEach((value, key) => {
+      if (value.moduleCode === '') {
+        let hasChildDisplay = false
+        const parentValue   = {
+          name        : value.name,
+          moduleCode  : value.moduleCode,
+          icon        : value.icon,
+          url         : value.url,
+          folder      : value.folder,
+          childDisplay: value.childDisplay,
+          children    : [],
+        }
+        value.children.forEach((childValue) => {
+          if (menuAccess[childValue.moduleCode] === STATUS_TRUE || childValue.moduleCode === '') {
+            parentValue.children.push(childValue)
+            hasChildDisplay = true
+          }
+        })
+        if (hasChildDisplay)
+          app.menuForDisplay.push(parentValue)
+      } else if (menuAccess[value.moduleCode] === STATUS_TRUE)
+        app.menuForDisplay.push(value)
+    })
   },
 }
 </script>

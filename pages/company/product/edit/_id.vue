@@ -114,17 +114,6 @@
                   rows="3"
                 />
               </div>
-              <div class="col-lg-6">
-                <label>Condition <span style="color:red">*</span></label>
-                <select
-                  id="condition"
-                  class="form-control kt-select2"
-                  name="condition"
-                >
-                  <option />
-                </select>
-                <span class="form-text text-muted" />
-              </div>
             </div>
             <div class="kt-separator kt-separator--border-dashed kt-separator--space-lg" />
             <div class="form-group row">
@@ -322,7 +311,7 @@
 </template>
 
 <script>
-import { PRODUCT_TYPE, PRODUCT_CONDITION, WEIGHT_TYPE, STATUS } from '@/utils/constants'
+import { PRODUCT_TYPE, WEIGHT_TYPE, STATUS } from '@/utils/constants'
 
 export default {
   data () {
@@ -425,14 +414,6 @@ export default {
       validator.element($(this))
     })
 
-    $('#condition').select2({
-      data: PRODUCT_CONDITION, placeholder: 'Select a product condition', allowClear: true,
-    })
-    $('#condition').val(this.product.product_status).trigger('change')
-    $('#condition').on('change', function () {
-      validator.element($(this))
-    })
-
     const validator = $('#product_form').validate({
       // define validation rules
       rules: {
@@ -440,7 +421,6 @@ export default {
         sku                : { required: true },
         category           : { required: true },
         type               : { required: true },
-        condition          : { required: true },
         minimum_stock_alert: {
           required      : true,
           number        : true,
@@ -670,7 +650,6 @@ export default {
         this.product.minimum_stock_alert = parseInt(this.product.minimum_stock_alert)
         this.product.product_category_id = parseInt($('#category').val())
         this.product.type                = parseInt($('#type').val())
-        this.product.product_status      = parseInt($('#condition').val())
         this.product.products_packing    = data
         try {
           this.$nuxt.$loading.start()

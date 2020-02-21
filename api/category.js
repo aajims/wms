@@ -10,7 +10,7 @@ const library = require('./library.js')
 
 app.post('/category/list', (request, response) => {
   const params = library.generateDatatableParameter(request.body)
-  const token  = request.cookies[`${process.env.APP_ENV}_token`]
+  const token  = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
     url    : `${process.env.API_URL}/v1/product-category/`,
@@ -29,7 +29,7 @@ app.post('/category/list', (request, response) => {
 })
 
 app.post('/category/add', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'post',
     url    : `${process.env.API_URL}/v1/product-category`,
@@ -46,7 +46,7 @@ app.post('/category/add', (request, response) => {
 })
 
 app.get('/category/detail', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
     url    : `${process.env.API_URL}/v1/product-category/${request.query.id_category}`,
@@ -62,7 +62,7 @@ app.get('/category/detail', (request, response) => {
 })
 
 app.put('/category/edit', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'put',
     url    : `${process.env.API_URL}/v1/product-category/${request.body.id_category}`,
@@ -79,7 +79,7 @@ app.put('/category/edit', (request, response) => {
 })
 
 app.get('/category/select', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
     url    : `${process.env.API_URL}/v1/product-category`,

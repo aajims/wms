@@ -16,6 +16,7 @@
         <div class="kt-portlet__head-wrapper">
           <div class="kt-portlet__head-actions">
             <a
+              v-if="pageAccess.add === statusTrue"
               :href="`/company/packing/add/${idCompanyEncoded}`"
               class="btn btn-brand btn-elevate btn-icon-sm"
             >
@@ -152,6 +153,7 @@
 
 <script>
 import moment from 'moment'
+import { STATUS_TRUE } from '@/utils/constants'
 
 export default {
   data () {
@@ -165,9 +167,14 @@ export default {
         search_by: '',
         filter   : { company_id: '' },
       },
+      pageAccess: {},
+      statusTrue: STATUS_TRUE,
     }
   },
   async mounted () {
+    // get page access
+    this.pageAccess = this.$store.getters['getAccessPage']
+
     try {
       this.idCompanyDecoded = atob(this.$route.params.id)
     } catch (error) {
@@ -244,16 +251,19 @@ export default {
           width    : '110px',
           orderable: false,
           render   : function (data, type, full, meta) {
-            const idEncoded = btoa(full.id)
-            return `<a href="/company/packing/detail/${idEncoded}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
-                      <i class="la la-eye"></i>
-                    </a>
-                    <a href="/company/packing/edit/${idEncoded}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
+            let actionButton   = ''
+            if (app.pageAccess.edit === app.statusTrue) {
+              actionButton   = `<a href="/company/packing/edit/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
                       <i class="la la-edit"></i>
                     </a>
                     <a class="btn btn-sm btn-clean btn-icon btn-icon-md action-button-status" data-index="${meta.row}" href="javascript:void(0)" title="Update Status">
                         <i class="la la-power-off"></i>
                     </a>`
+            }
+            return `<a href="/company/packing/detail/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
+                      <i class="la la-eye"></i>
+                    </a>
+                    ${actionButton}`
           },
         },
         {

@@ -10,7 +10,7 @@ const library = require('./library.js')
 
 app.post('/order/list', (request, response) => {
   const params = library.generateDatatableParameter(request.body)
-  const token  = request.cookies[`${process.env.APP_ENV}_token`]
+  const token  = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
     url    : `${process.env.API_URL}/v1/order`,
@@ -29,7 +29,7 @@ app.post('/order/list', (request, response) => {
 })
 
 app.post('/order/add', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'post',
     url    : `${process.env.API_URL}/v1/order`,
@@ -46,7 +46,7 @@ app.post('/order/add', (request, response) => {
 })
 
 app.get('/order/detail', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
     url    : `${process.env.API_URL}/v1/order/${request.query.id_order}`,
@@ -62,7 +62,7 @@ app.get('/order/detail', (request, response) => {
 })
 
 app.put('/order/edit', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'put',
     url    : `${process.env.API_URL}/v1/order/${request.body.id_order}`,

@@ -10,7 +10,7 @@ const library = require('./library.js')
 
 app.post('/incoming/list', (request, response) => {
   const params = library.generateDatatableParameter(request.body)
-  const token  = request.cookies[`${process.env.APP_ENV}_token`]
+  const token  = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
     url    : `${process.env.API_URL}/v1/job-incoming/`,
@@ -29,7 +29,7 @@ app.post('/incoming/list', (request, response) => {
 })
 
 app.post('/incoming/add', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'post',
     url    : `${process.env.API_URL}/v1/job-incoming`,
@@ -46,7 +46,7 @@ app.post('/incoming/add', (request, response) => {
 })
 
 app.put('/incoming/edit', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'put',
     url    : `${process.env.API_URL}/v1/job-incoming/${request.body.id_incoming}`,
@@ -63,7 +63,7 @@ app.put('/incoming/edit', (request, response) => {
 })
 
 app.get('/incoming/detail', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
     url    : `${process.env.API_URL}/v1/job-incoming/${request.query.id_incoming}`,

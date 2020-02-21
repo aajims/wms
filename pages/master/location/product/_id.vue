@@ -6,32 +6,18 @@
     <div class="kt-portlet__head kt-portlet__head--lg">
       <div class="kt-portlet__head-label">
         <span class="kt-portlet__head-icon">
-          <i class="kt-font-brand flaticon-squares-3" />
+          <i class="kt-font-brand flaticon2-open-box" />
         </span>
         <h3 class="kt-portlet__head-title">
-          Category List
+          Product List ({{ company.name }})
         </h3>
-      </div>
-      <div class="kt-portlet__head-toolbar">
-        <div class="kt-portlet__head-wrapper">
-          <div class="kt-portlet__head-actions">
-            <a
-              v-if="pageAccess.add === statusTrue"
-              href="/master/category/add"
-              class="btn btn-brand btn-elevate btn-icon-sm"
-            >
-              <i class="la la-plus" />
-              <span class="kt-hidden-mobile">Add Category</span>
-            </a>
-          </div>
-        </div>
       </div>
     </div>
     <div class="kt-portlet__body">
       <!--begin: Search Form -->
       <div class="kt-form kt-form--label-right kt-margin-t-20 kt-margin-b-10">
         <div class="row align-items-center">
-          <div class="col-xl-8 order-2 order-xl-1">
+          <div class="col-xl-10 order-2 order-xl-1">
             <div class="row align-items-center">
               <div class="col-md-3 kt-margin-b-20-tablet-and-mobile">
                 <div class="kt-form__group">
@@ -46,11 +32,8 @@
                       <option value="name">
                         Name
                       </option>
-                      <option value="code">
-                        Code
-                      </option>
-                      <option value="description">
-                        Description
+                      <option value="sku">
+                        SKU / Model
                       </option>
                     </select>
                   </div>
@@ -66,7 +49,7 @@
                     type="text"
                     class="form-control"
                     placeholder="Search..."
-                    @keyup="getCategory(params.page)"
+                    @keyup="getProduct()"
                   >
                   <span class="kt-input-icon__icon kt-input-icon__icon--left">
                     <span><i class="la la-search" /></span>
@@ -119,20 +102,23 @@
       </div>
       <!--end: Search Form -->
     </div>
+
     <div class="kt-portlet__body">
       <!--begin: Datatable -->
       <table
-        id="category_table"
+        id="product_table"
         class="table table-hover table-checkable"
       >
         <thead>
           <tr>
             <th>#</th>
-            <th>Code</th>
+            <th>SKU / Model</th>
             <th>Name</th>
-            <th>Description</th>
             <th>Status</th>
-            <th>created</th>
+            <th>Category</th>
+            <th>Type</th>
+            <th>Created By</th>
+            <th>Created</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -153,24 +139,38 @@
 
 <script>
 import moment from 'moment'
-import { STATUS_TRUE } from '@/utils/constants'
+import { PRODUCT_TYPE, STATUS_TRUE } from '@/utils/constants'
 
 export default {
   data () {
     return {
+      idCompany: null,
       datatable: [],
+      company  : [],
       params   : {
         keyword  : '',
         search_by: '',
-        filter   : {},
+        filter   : { company_id: '' },
       },
       pageAccess: {},
       statusTrue: STATUS_TRUE,
     }
   },
-  mounted () {
+  async mounted () {
     // get page access
     this.pageAccess = this.$store.getters['getAccessPage']
+
+    const param = atob(this.$route.params.id)
+    if (this.$route.params.id !== undefined)
+      this.params.filter.company_id = param
+
+    try {
+      await this.$store.dispatch('company/getCompanyDetail', { idCompany: param })
+      this.company   = this.$store.getters['company/getCompanyDetail'].result
+      this.idCompany = btoa(this.company.id)
+    } catch (error) {
+      this.company = { id: '', name: '' }
+    }
 
     const app = this
     $('#kt_form_status').on('change', function () {
@@ -178,38 +178,37 @@ export default {
         app.params.filter.status = $('#kt_form_status').val()
       else
         app.$delete(app.params.filter, 'status')
-      app.getCategory()
+      app.getProduct()
     })
+
     // begin first table
-    this.datatable        = $('#category_table').DataTable({
+    this.datatable = $('#product_table').DataTable({
       responsive: true,
       searching : false,
       processing: true,
       serverSide: true,
       ajax      : {
-        url : '/api/category/list',
+        url : '/api/product/list',
         type: 'POST',
         data: function (d) {
           d.params = app.params
         },
       },
-      order  : [[5, 'desc']],
+      order  : [[7, 'desc']],
       columns: [
         { data: 'row_number' },
-        { data: 'code' },
+        { data: 'sku' },
         { data: 'name' },
-        { data: 'description' },
         { data: 'status' },
+        { data: 'product_category_name' },
+        { data: 'type' },
+        { data: 'created_by_name' },
         { data: 'created_at' },
         { data: 'actions', responsivePriority: -1 },
       ],
       columnDefs: [
         {
           targets  : 0,
-          orderable: false,
-        },
-        {
-          targets  : 1,
           orderable: false,
         },
         {
@@ -221,21 +220,21 @@ export default {
           render   : function (data, type, full, meta) {
             let actionButton   = ''
             if (app.pageAccess.edit === app.statusTrue) {
-              actionButton   = `<a href="/master/category/edit/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
+              actionButton   = `<a href="/company/product/edit/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
                       <i class="la la-edit"></i>
                     </a>
-                    <a class="btn btn-sm btn-clean btn-icon action-button-status" data-index="${meta.row}" href="javascript:void(0)">
-                      <i class="la la-power-off"></i>
+                    <a class="btn btn-sm btn-clean btn-icon btn-icon-md action-button-status" data-index="${meta.row}" href="javascript:void(0)" title="Update Status">
+                        <i class="la la-power-off"></i>
                     </a>`
             }
-            return `<a href="/master/category/detail/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
+            return `<a href="/company/product/detail/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
                       <i class="la la-eye"></i>
                     </a>
                     ${actionButton}`
           },
         },
         {
-          targets  : 4,
+          targets  : 3,
           className: 'dt-center',
           render   : function (data, type, full, meta) {
             const status = {
@@ -249,6 +248,19 @@ export default {
           },
         },
         {
+          targets  : 5,
+          className: 'dt-center',
+          render   : function (data, type, full, meta) {
+            let productType = ''
+            for (const type in PRODUCT_TYPE) {
+              if (PRODUCT_TYPE[type].id === full.type)
+                productType = PRODUCT_TYPE[type].text
+            }
+
+            return productType
+          },
+        },
+        {
           targets  : -2,
           className: 'dt-center',
           render   : function (data, type, full, meta) {
@@ -257,16 +269,16 @@ export default {
         },
       ],
     })
+
     this.datatable.on('draw.dt', function () {
       $('.action-button-status').click(function () {
         const rowData = app.datatable.row($(this).data('index')).data()
-        // app.$delete(rowData, 'unique_code')
         app.setStatus(rowData)
       })
     })
   },
   methods: {
-    async getCategory () {
+    async getProduct () {
       this.params.search_by = $('#kt_form_filter').val()
       this.datatable.ajax.reload()
     },
@@ -277,7 +289,7 @@ export default {
       // eslint-disable-next-line no-undef
       swal.fire({
         title             : 'Are you sure?',
-        text              : `Category "${row.name}" ${statusText}`,
+        text              : `Product "${row.name}" ${statusText}`,
         type              : 'question',
         showCancelButton  : true,
         confirmButtonText : statusText,
@@ -289,15 +301,15 @@ export default {
           app.updateStatus(row.id, row)
       })
     },
-    async updateStatus (idCategory, param) {
+    async updateStatus (idProduct, param) {
       try {
         this.$nuxt.$loading.start()
         param.status    = param.status === 1 ? 0 : 1
-        await this.$store.dispatch('category/editCategory', { idCategory: idCategory, data: param })
-        const data      = this.$store.getters['category/getEditCategory']
+        await this.$store.dispatch('product/editProduct', { idProduct: idProduct, data: param })
+        const data      = this.$store.getters['product/getEditProduct']
         const parameter = {
           alertClass: 'alert-success',
-          message   : `Category ${data.result.name} has been edited`,
+          message   : `Product ${data.result.name} has been edited`,
         }
         this.$nuxt.$emit('alertShow', parameter)
         this.$nuxt.$loading.finish()
@@ -320,13 +332,12 @@ export default {
       this.params = {
         keyword  : '',
         search_by: '',
-        filter   : {},
+        filter   : { company_id: atob(this.$route.params.id) },
       }
       this.datatable.ajax.reload()
-      $('#kt_form_status').val('')
       $('#kt_form_filter').val('name')
-      $('#kt_form_filter').val('code')
-      $('#kt_form_filter').val('description')
+      $('#kt_form_status').val('')
+      $('.selectpicker').selectpicker('refresh')
     },
   },
 }

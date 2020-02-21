@@ -16,6 +16,7 @@
         <div class="kt-portlet__head-wrapper">
           <div class="kt-portlet__head-actions">
             <a
+              v-if="pageAccess.add === statusTrue"
               href="/company/add"
               class="btn btn-brand btn-elevate btn-icon-sm"
             >
@@ -152,6 +153,7 @@
 
 <script>
 import moment from 'moment'
+import { STATUS_TRUE } from '@/utils/constants'
 
 export default {
   data () {
@@ -162,9 +164,14 @@ export default {
         search_by: '',
         filter   : {},
       },
+      pageAccess: {},
+      statusTrue: STATUS_TRUE,
     }
   },
   mounted () {
+    // get page access
+    this.pageAccess = this.$store.getters['getAccessPage']
+
     const app = this
     $('#kt_form_status').on('change', function () {
       if ($('#kt_form_status').val() !== '' && $('#kt_form_status').val() !== null)
@@ -214,20 +221,24 @@ export default {
           width    : '110px',
           orderable: false,
           render   : function (data, type, full, meta) {
-            const idEncoded = btoa(full.id)
+            const idEncoded        = btoa(full.id)
+            let actionButtonStatus = ''
+            let actionButtonEdit   = ''
+            if (app.pageAccess.edit === app.statusTrue) {
+              actionButtonEdit   = `<a href="/company/edit/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details"><i class="la la-edit"></i></a>`
+              actionButtonStatus = `<a class="dropdown-item action-button-status" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-power-off"></i> Update Status</a>`
+            }
             return `
                         <a href="/company/detail/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
                           <i class="la la-eye"></i>
                         </a>
-                        <a href="/company/edit/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
-                          <i class="la la-edit"></i>
-                        </a>
+                        ${actionButtonEdit}
                         <span class="dropdown">
                             <a href="javascript:void(0)" class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="dropdown" aria-expanded="true">
                               <i class="la la-ellipsis-h"></i>
                             </a>
                             <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item action-button-status" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-power-off"></i> Update Status</a>
+                                ${actionButtonStatus}
                                 <a class="dropdown-item" href="/company/packing/list/${idEncoded}"><i class="fa flaticon2-open-box"></i> Packing</a>
                                 <a class="dropdown-item" href="/company/product/list/${idEncoded}"><i class="fa flaticon2-supermarket"></i> Product</a>
                                 <a class="dropdown-item" href="javascript:void(0)"><i class="la la-qrcode"></i> Print QR Code</a>

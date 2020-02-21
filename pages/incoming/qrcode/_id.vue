@@ -1,4 +1,7 @@
 <style>
+@page {
+  size: auto;
+}
 body {
   color: black;
 }
@@ -13,7 +16,7 @@ body {
         <div
           v-if="data.status !== statusCancel"
           class="container"
-          style="margin: 0cm !important; width:98%; font-family: Arial, Helvetica, sans-serif; font-size: 8px; font-weight: bold;"
+          style="margin: 0cm !important; width:100%; font-family: Arial, Helvetica, sans-serif; font-size: 8px; font-weight: bold; page-break-before:always;"
         >
           <div style="background-color: black; color: #fff; padding: 10px;" />
           <div style="padding: 5px; padding-left: 2px; border: 2px; border-left: 4px; border-right: 4px; border-color: #000; border-style: solid;">
@@ -60,9 +63,9 @@ body {
                   valign="top"
                   style="width: 33%; padding: 2px;  border: 2px; border-left: 4px; font-family: Arial, Helvetica, sans-serif; font-size: 8px; font-weight: bold;"
                 >
-                  Country:<br><br>
+                  Created:<br><br>
                   <div style="margin-top: -10px;">
-                    <center><span style="font-size: 10px;">{{ incoming.from_country_name }}</span></center>
+                    <center><span style="font-size: 10px;">{{ date(incoming.created_at) }}</span></center>
                   </div>
                 </td>
               </tr>
@@ -104,7 +107,6 @@ body {
             </div>
           </div>
         </div>
-        <div style="display:block; page-break-before:always;" />
       </div>
     </div>
   </client-only>
@@ -119,7 +121,7 @@ export default {
   data () {
     return {
       incoming    : [],
-      size        : 400,
+      size        : 250,
       statusCancel: STATUS_CANCEL,
     }
   },

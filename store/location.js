@@ -1,11 +1,12 @@
 import axios from 'axios'
 
 export const state = () => ({
-  addLocation   : null,
-  locationDetail: null,
-  editLocation  : null,
-  exportLocation: null,
-  importLocation: null,
+  addLocation        : null,
+  locationDetail     : null,
+  editLocation       : null,
+  exportLocation     : null,
+  importLocation     : null,
+  locationByWarehouse: null,
 })
 
 export const mutations = {
@@ -23,6 +24,9 @@ export const mutations = {
   },
   IMPORT_LOCATION (state, importLocation) {
     state.importLocation = importLocation
+  },
+  SET_LOCATION_BY_WAREHOUSE (state, locationByWarehouse) {
+    state.locationByWarehouse = locationByWarehouse
   },
 }
 
@@ -132,6 +136,31 @@ export const actions = {
         throw new Error('Network Communication Error')
     })
   },
+  async getLocationByWarehouse ({ commit, dispatch }, { warehouseId, page, perpage }) {
+    await axios({
+      method: 'get',
+      url   : '/api/location-by-warehouse',
+      params: {
+        warehouse_id: warehouseId,
+        page        : page,
+        perpage     : perpage,
+      },
+    }).then(function (response) {
+      if (response.status === 200 && response.data.general_response.response_status === true)
+        commit('SET_LOCATION_BY_WAREHOUSE', response.data)
+      else if (response.data.general_response.response_code === 4003)
+        dispatch('removeToken', null, { root: true })
+      else
+        throw new Error(response.data.general_response.response_message)
+    }).catch(function (error) {
+      if (error.response === undefined)
+        throw error
+      else if (error.response.status === 403)
+        dispatch('removeToken', null, { root: true })
+      else
+        throw new Error('Network Communication Error')
+    })
+  },
   async setExportLocationNull ({ commit }) {
     commit('EXPORT_LOCATION', null)
   },
@@ -152,5 +181,8 @@ export const getters = {
   },
   getImportLocation: (state) => {
     return state.importLocation
+  },
+  getLocationByWarehouse: (state) => {
+    return state.locationByWarehouse
   },
 }

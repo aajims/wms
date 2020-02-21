@@ -16,6 +16,7 @@
         <div class="kt-portlet__head-wrapper">
           <div class="kt-portlet__head-actions">
             <a
+              v-if="pageAccess.add === statusTrue"
               href="/master/user/add"
               class="btn btn-brand btn-elevate btn-icon-sm"
             >
@@ -154,6 +155,8 @@
 </template>
 
 <script>
+import { STATUS_TRUE } from '@/utils/constants'
+
 export default {
   data () {
     return {
@@ -163,9 +166,14 @@ export default {
         search_by: '',
         filter   : {},
       },
+      pageAccess: {},
+      statusTrue: STATUS_TRUE,
     }
   },
   mounted () {
+    // get page access
+    this.pageAccess = this.$store.getters['getAccessPage']
+
     const app = this
     $('#kt_form_status').on('change', function () {
       if ($('#kt_form_status').val() !== '' && $('#kt_form_status').val() !== null)
@@ -214,16 +222,19 @@ export default {
           width    : '110px',
           orderable: false,
           render   : function (data, type, full, meta) {
-            return `
-                  <a href="/master/user/detail/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
-                    <i class="la la-eye"></i>
-                  </a>
-                  <a href="/master/user/edit/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
-                    <i class="la la-edit"></i>
-                  </a>
-                  <a class="btn btn-sm btn-clean btn-icon action-button-status" data-index="${meta.row}" href="javascript:void(0)">
-                    <i class="la la-power-off"></i>
-                  </a>`
+            let actionButton   = ''
+            if (app.pageAccess.edit === app.statusTrue) {
+              actionButton   = `<a href="/master/user/edit/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
+                      <i class="la la-edit"></i>
+                    </a>
+                    <a class="btn btn-sm btn-clean btn-icon action-button-status" data-index="${meta.row}" href="javascript:void(0)">
+                      <i class="la la-power-off"></i>
+                    </a>`
+            }
+            return `<a href="/master/user/detail/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
+                      <i class="la la-eye"></i>
+                    </a>
+                    ${actionButton}`
           },
         },
         {
