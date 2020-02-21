@@ -51,7 +51,7 @@ export default {
   },
   methods: {
     async getData () {
-      await this.$store.dispatch('location/getLocationDetail', { idLocation: this.$route.params.id })
+      await this.$store.dispatch('location/getLocationDetail', { idLocation: atob(this.$route.params.id) })
       this.location    = this.$store.getters['location/getLocationDetail'].result
     },
   },

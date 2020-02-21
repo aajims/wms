@@ -229,7 +229,7 @@ export default {
     }
   },
   async mounted () {
-    await this.$store.dispatch('warehouse/getWarehouseDetail', { idWarehouse: this.$route.params.id })
+    await this.$store.dispatch('warehouse/getWarehouseDetail', { idWarehouse: atob(this.$route.params.id) })
     const warehouseDetail      = this.$store.getters['warehouse/getWarehouseDetail'].result
     this.warehouse.name        = warehouseDetail.name
     this.warehouse.code        = warehouseDetail.code
@@ -389,7 +389,7 @@ export default {
         this.warehouse.status      = 1
         try {
           this.$nuxt.$loading.start()
-          await this.$store.dispatch('warehouse/editWarehouse', { idWarehouse: this.$route.params.id, data: this.warehouse })
+          await this.$store.dispatch('warehouse/editWarehouse', { idWarehouse: atob(this.$route.params.id), data: this.warehouse })
           const data      = this.$store.getters['warehouse/getEditWarehouse']
           const parameter = {
             alertClass: 'alert-success',

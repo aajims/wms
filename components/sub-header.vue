@@ -70,6 +70,13 @@ export default {
               param = `/${this.$nuxt.$route.params.id}`
             this.currentPage = subMenu.name
             this.data.push({ name: subMenu.name, url: `${menu.url}${subMenu.url}${param}` })
+            for (const childMenu of subMenu.children) {
+              let param = ''
+              if (childMenu.param === true)
+                param = `/${this.$nuxt.$route.params.id}`
+              this.currentPage = childMenu.name
+              this.data.push({ name: childMenu.name, url: `${menu.url}${subMenu.url}${childMenu.url}${param}` })
+            }
           }
         }
       }

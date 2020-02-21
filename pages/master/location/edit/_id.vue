@@ -220,7 +220,7 @@ export default {
     }
   },
   async mounted () {
-    await this.$store.dispatch('location/getLocationDetail', { idLocation: this.$route.params.id })
+    await this.$store.dispatch('location/getLocationDetail', { idLocation: atob(this.$route.params.id) })
     const locationDetail                  = this.$store.getters['location/getLocationDetail'].result
     this.location.name                    = locationDetail.name
     this.location.code                    = locationDetail.code
@@ -340,7 +340,7 @@ export default {
         this.location.status                  = 1
         try {
           this.$nuxt.$loading.start()
-          await this.$store.dispatch('location/editLocation', { idLocation: this.$route.params.id, data: this.location })
+          await this.$store.dispatch('location/editLocation', { idLocation: atob(this.$route.params.id), data: this.location })
           const data      = this.$store.getters['location/getEditLocation']
           const parameter = {
             alertClass: 'alert-success',

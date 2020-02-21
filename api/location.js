@@ -204,4 +204,30 @@ app.get('/location/select-by-product', (request, response) => {
   })
 })
 
+app.get('/location-by-warehouse', (request, response) => {
+  const token = request.session[`${process.env.APP_ENV}_token`]
+  axios({
+    method : 'get',
+    url    : `${process.env.API_URL}/v1/location`,
+    headers: {
+      'Content-Type' : 'application/x-www-form-urlencoded',
+      'Authorization': `Bearer ${token}`,
+    },
+    params: {
+      'page'                : request.query.page,
+      'per_page'            : request.query.perpage,
+      'sort_by'             : 'created_at',
+      'sort'                : 'desc',
+      'search_by'           : 'name',
+      'keyword'             : '',
+      'filter[status]'      : 1,
+      'filter[warehouse_id]': request.query.warehouse_id,
+    },
+  }).then(function (responseApi) {
+    response.send(responseApi.data)
+  }).catch(function (error) {
+    response.status(error.response.status).send(error.response.data)
+  })
+})
+
 module.exports = app

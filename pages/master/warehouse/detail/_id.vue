@@ -232,7 +232,7 @@ export default {
     }
   },
   async mounted () {
-    await this.$store.dispatch('warehouse/getWarehouseDetail', { idWarehouse: this.$route.params.id })
+    await this.$store.dispatch('warehouse/getWarehouseDetail', { idWarehouse: atob(this.$route.params.id) })
     this.warehouse   = this.$store.getters['warehouse/getWarehouseDetail'].result
     this.createdDate = moment(this.warehouse.created_at).format('DD/MM/Y HH:mm:ss')
     this.updatedDate = moment(this.warehouse.updated_at).format('DD/MM/Y HH:mm:ss')

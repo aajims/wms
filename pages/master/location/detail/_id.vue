@@ -236,7 +236,7 @@ export default {
     }
   },
   async mounted () {
-    await this.$store.dispatch('location/getLocationDetail', { idLocation: this.$route.params.id })
+    await this.$store.dispatch('location/getLocationDetail', { idLocation: atob(this.$route.params.id) })
     this.location    = this.$store.getters['location/getLocationDetail'].result
     this.createdDate = moment(this.location.created_at).format('DD/MM/Y HH:mm:ss')
     this.updatedDate = moment(this.location.updated_at).format('DD/MM/Y HH:mm:ss')

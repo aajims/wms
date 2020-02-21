@@ -39,6 +39,14 @@
               <i class="la la-file-excel-o" />
               <span class="kt-hidden-mobile">Export</span>
             </a>
+            <a
+              href="javascript:void(0)"
+              class="btn btn-brand btn-elevate btn-icon-sm"
+              @click="printMultipleQrCode"
+            >
+              <i class="la la-qrcode" />
+              <span class="kt-hidden-mobile">Print Qr Code</span>
+            </a>
           </div>
         </div>
       </div>
@@ -323,7 +331,7 @@ export default {
       statusTrue: STATUS_TRUE,
     }
   },
-  mounted () {
+  async mounted () {
     // get page access
     this.pageAccess = this.$store.getters['getAccessPage']
 
@@ -502,10 +510,10 @@ export default {
             let actionButtonStatus = ''
             let actionButtonEdit   = ''
             if (app.pageAccess.edit === app.statusTrue) {
-              actionButtonEdit   = `<a href="/master/location/edit/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details"><i class="la la-edit"></i></a>`
+              actionButtonEdit   = `<a href="/master/location/edit/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details"><i class="la la-edit"></i></a>`
               actionButtonStatus = `<a class="dropdown-item action-button-status" data-index="${meta.row}" href="javascript:void(0)"><i class="la la-power-off"></i> Update Status</a>`
             }
-            return `<a href="/master/location/detail/${full.id}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
+            return `<a href="/master/location/detail/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
                       <i class="la la-eye"></i>
                     </a>
                     ${actionButtonEdit}
@@ -515,8 +523,8 @@ export default {
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">
                             ${actionButtonStatus}
-                            <a class="dropdown-item" href="javascript:void(0)"><i class="la la-search"></i> View Location Product</a>
-                            <a class="dropdown-item" href="/master/location/qrcode/${full.id}" target="_blank"><i class="la la-qrcode"></i> Print QR Code</a>
+                            <a class="dropdown-item" href="/master/location/product/${btoa(full.id)}"><i class="la la-search"></i> View Location Product</a>
+                            <a class="dropdown-item" href="/master/location/qrcode/${btoa(full.id)}" target="_blank"><i class="la la-qrcode"></i> Print QR Code</a>
                         </div>
                     </span>`
           },
@@ -551,6 +559,16 @@ export default {
         app.setStatus(rowData)
       })
     })
+
+    try {
+      await this.$store.dispatch('warehouse/getWarehouseDetail', { idWarehouse: atob(this.$route.query.param) })
+      const warehouse          = this.$store.getters['warehouse/getWarehouseDetail'].result
+      const newOptionWarehouse = new Option(warehouse.name, warehouse.id, true, true)
+      $('#warehouse').append(newOptionWarehouse).trigger('change')
+      app.getLocation()
+    } catch (error) {
+
+    }
   },
   methods: {
     async setStatus (row) {
@@ -654,6 +672,15 @@ export default {
         // eslint-disable-next-line no-undef
         KTUtil.scrollTop()
       }
+    },
+    printMultipleQrCode () {
+      const pageInfo = this.datatable.page.info()
+      const param    = {
+        warehouse_id: parseInt($('#warehouse').val()),
+        page        : (pageInfo.page + 1),
+        perpage     : pageInfo.length,
+      }
+      window.open(`/master/location/multiple-qrcode/${btoa(JSON.stringify(param))}`, '_blank')
     },
   },
 }

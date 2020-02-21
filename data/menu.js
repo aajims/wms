@@ -117,7 +117,16 @@ export default [
         icon      : 'kt-menu__link-bullet kt-menu__link-bullet--dot',
         url       : '/location',
         param     : false,
-        children  : [],
+        children  : [
+          {
+            name      : 'Product',
+            moduleCode: '',
+            icon      : 'kt-menu__link-bullet kt-menu__link-bullet--dot',
+            url       : '/product',
+            param     : true,
+            children  : [],
+          },
+        ],
       },
       {
         name      : 'User',
