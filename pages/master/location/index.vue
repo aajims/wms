@@ -674,6 +674,17 @@ export default {
       }
     },
     printMultipleQrCode () {
+      if ($('#warehouse').val() === '') {
+        // eslint-disable-next-line no-undef
+        swal.fire({
+          title             : 'Error!',
+          text              : 'Please select warehouse',
+          type              : 'error',
+          buttonsStyling    : false,
+          confirmButtonClass: 'btn btn-danger',
+        })
+        return false
+      }
       const pageInfo = this.datatable.page.info()
       const param    = {
         warehouse_id: parseInt($('#warehouse').val()),
