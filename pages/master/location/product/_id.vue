@@ -243,7 +243,7 @@ export default {
           render   : function (data, type, full, meta) {
             let productType = ''
             for (const type in PRODUCT_TYPE) {
-              if (PRODUCT_TYPE[type].id === full.type)
+              if (PRODUCT_TYPE[type].id === full.product_type)
                 productType = PRODUCT_TYPE[type].text
             }
 
