@@ -33,6 +33,7 @@ app.get('/product/select', (request, response) => {
     response.status(error.response.status).send(error.response.data)
   })
 })
+
 app.post('/product/list', (request, response) => {
   const params = library.generateDatatableParameter(request.body)
   const token  = request.session[`${process.env.APP_ENV}_token`]
@@ -180,6 +181,26 @@ app.get('/product/unique-code', (request, response) => {
     },
   }).then(function (responseApi) {
     response.send(responseApi.data)
+  }).catch(function (error) {
+    response.status(error.response.status).send(error.response.data)
+  })
+})
+
+app.post('/product-location/list', (request, response) => {
+  const params = library.generateDatatableParameter(request.body)
+  const token  = request.session[`${process.env.APP_ENV}_token`]
+  axios({
+    method : 'get',
+    url    : `${process.env.API_URL}/v1/product-inventory`,
+    headers: {
+      'Content-Type' : 'application/x-www-form-urlencoded',
+      'Authorization': `Bearer ${token}`,
+    },
+    params: params,
+  }).then(function (responseApi) {
+    // formating data for metronic datatable
+    const data = library.generateDatatableResult(responseApi)
+    response.send(data)
   }).catch(function (error) {
     response.status(error.response.status).send(error.response.data)
   })
