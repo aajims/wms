@@ -9,7 +9,7 @@
           <i class="kt-font-brand flaticon2-open-box" />
         </span>
         <h3 class="kt-portlet__head-title">
-          Product List ({{ company.name }})
+          Product List ({{ location.warehouse_name }}, {{ location.name }})
         </h3>
       </div>
     </div>
@@ -111,15 +111,27 @@
       >
         <thead>
           <tr>
-            <th>#</th>
+            <th class="no-order">
+              #
+            </th>
             <th>SKU / Model</th>
             <th>Name</th>
-            <th>Status</th>
-            <th>Category</th>
-            <th>Type</th>
+            <th class="no-order">
+              Category
+            </th>
+            <th class="status">
+              Status
+            </th>
+            <th class="no-order">
+              Last Stock
+            </th>
+            <th class="type">
+              Type
+            </th>
             <th>Created By</th>
-            <th>Created</th>
-            <th>Actions</th>
+            <th class="created_at">
+              Created
+            </th>
           </tr>
         </thead>
       </table>
@@ -144,13 +156,13 @@ import { PRODUCT_TYPE, STATUS_TRUE } from '@/utils/constants'
 export default {
   data () {
     return {
-      idCompany: null,
-      datatable: [],
-      company  : [],
-      params   : {
+      idLocation: null,
+      datatable : [],
+      location  : [],
+      params    : {
         keyword  : '',
         search_by: '',
-        filter   : { company_id: '' },
+        filter   : { warehouse_location_id: '' },
       },
       pageAccess: {},
       statusTrue: STATUS_TRUE,
@@ -162,14 +174,14 @@ export default {
 
     const param = atob(this.$route.params.id)
     if (this.$route.params.id !== undefined)
-      this.params.filter.company_id = param
+      this.params.filter.warehouse_location_id = param
 
     try {
-      await this.$store.dispatch('company/getCompanyDetail', { idCompany: param })
-      this.company   = this.$store.getters['company/getCompanyDetail'].result
-      this.idCompany = btoa(this.company.id)
+      await this.$store.dispatch('location/getLocationDetail', { idLocation: param })
+      this.location   = this.$store.getters['location/getLocationDetail'].result
+      this.idLocation = btoa(this.location.id)
     } catch (error) {
-      this.company = { id: '', name: '' }
+      this.location = { id: '', name: '' }
     }
 
     const app = this
@@ -188,53 +200,31 @@ export default {
       processing: true,
       serverSide: true,
       ajax      : {
-        url : '/api/product/list',
+        url : '/api/product-location/list',
         type: 'POST',
         data: function (d) {
           d.params = app.params
         },
       },
-      order  : [[7, 'desc']],
+      order  : [[8, 'desc']],
       columns: [
         { data: 'row_number' },
-        { data: 'sku' },
-        { data: 'name' },
-        { data: 'status' },
+        { data: 'product_sku' },
+        { data: 'product_name' },
         { data: 'product_category_name' },
-        { data: 'type' },
+        { data: 'status' },
+        { data: 'last_stock' },
+        { data: 'product_type' },
         { data: 'created_by_name' },
         { data: 'created_at' },
-        { data: 'actions', responsivePriority: -1 },
       ],
       columnDefs: [
         {
-          targets  : 0,
+          targets  : 'no-order',
           orderable: false,
         },
         {
-          targets  : -1,
-          title    : 'Actions',
-          className: 'dt-center',
-          width    : '110px',
-          orderable: false,
-          render   : function (data, type, full, meta) {
-            let actionButton   = ''
-            if (app.pageAccess.edit === app.statusTrue) {
-              actionButton   = `<a href="/company/product/edit/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
-                      <i class="la la-edit"></i>
-                    </a>
-                    <a class="btn btn-sm btn-clean btn-icon btn-icon-md action-button-status" data-index="${meta.row}" href="javascript:void(0)" title="Update Status">
-                        <i class="la la-power-off"></i>
-                    </a>`
-            }
-            return `<a href="/company/product/detail/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
-                      <i class="la la-eye"></i>
-                    </a>
-                    ${actionButton}`
-          },
-        },
-        {
-          targets  : 3,
+          targets  : 'status',
           className: 'dt-center',
           render   : function (data, type, full, meta) {
             const status = {
@@ -248,12 +238,12 @@ export default {
           },
         },
         {
-          targets  : 5,
+          targets  : 'type',
           className: 'dt-center',
           render   : function (data, type, full, meta) {
             let productType = ''
             for (const type in PRODUCT_TYPE) {
-              if (PRODUCT_TYPE[type].id === full.type)
+              if (PRODUCT_TYPE[type].id === full.product_type)
                 productType = PRODUCT_TYPE[type].text
             }
 
@@ -261,7 +251,7 @@ export default {
           },
         },
         {
-          targets  : -2,
+          targets  : 'created_at',
           className: 'dt-center',
           render   : function (data, type, full, meta) {
             return moment(data).format('DD/MM/Y HH:mm:ss')
@@ -269,70 +259,17 @@ export default {
         },
       ],
     })
-
-    this.datatable.on('draw.dt', function () {
-      $('.action-button-status').click(function () {
-        const rowData = app.datatable.row($(this).data('index')).data()
-        app.setStatus(rowData)
-      })
-    })
   },
   methods: {
     async getProduct () {
       this.params.search_by = $('#kt_form_filter').val()
       this.datatable.ajax.reload()
     },
-    async setStatus (row) {
-      const app         = this
-      const statusText  = row.status === 1 ? 'Deactivated' : 'Activated'
-      const buttonClass = row.status === 1 ? 'btn btn-danger' : 'btn btn-success'
-      // eslint-disable-next-line no-undef
-      swal.fire({
-        title             : 'Are you sure?',
-        text              : `Product "${row.name}" ${statusText}`,
-        type              : 'question',
-        showCancelButton  : true,
-        confirmButtonText : statusText,
-        buttonsStyling    : false,
-        confirmButtonClass: buttonClass,
-        cancelButtonClass : 'btn btn-default',
-      }).then(function (result) {
-        if (result.value)
-          app.updateStatus(row.id, row)
-      })
-    },
-    async updateStatus (idProduct, param) {
-      try {
-        this.$nuxt.$loading.start()
-        param.status    = param.status === 1 ? 0 : 1
-        await this.$store.dispatch('product/editProduct', { idProduct: idProduct, data: param })
-        const data      = this.$store.getters['product/getEditProduct']
-        const parameter = {
-          alertClass: 'alert-success',
-          message   : `Product ${data.result.name} has been edited`,
-        }
-        this.$nuxt.$emit('alertShow', parameter)
-        this.$nuxt.$loading.finish()
-        // eslint-disable-next-line no-undef
-        KTUtil.scrollTop()
-        this.datatable.ajax.reload()
-      } catch (error) {
-        param.status    = param.status === 1 ? 0 : 1
-        const parameter = {
-          alertClass: 'alert-danger',
-          message   : error.message,
-        }
-        this.$nuxt.$emit('alertShow', parameter)
-        this.$nuxt.$loading.finish()
-        // eslint-disable-next-line no-undef
-        KTUtil.scrollTop()
-      }
-    },
     async clearForm () {
       this.params = {
         keyword  : '',
         search_by: '',
-        filter   : { company_id: atob(this.$route.params.id) },
+        filter   : { warehouse_location_id: atob(this.$route.params.id) },
       }
       this.datatable.ajax.reload()
       $('#kt_form_filter').val('name')
