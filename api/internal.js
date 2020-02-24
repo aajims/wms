@@ -10,7 +10,7 @@ const library = require('./library.js')
 
 app.post('/internal/list', (request, response) => {
   const params = library.generateDatatableParameter(request.body)
-  const token  = request.cookies[`${process.env.APP_ENV}_token`]
+  const token  = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
     url    : `${process.env.API_URL}/v1//job-internal-transfer/`,
@@ -29,7 +29,7 @@ app.post('/internal/list', (request, response) => {
 })
 
 app.post('/internal/add', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'post',
     url    : `${process.env.API_URL}/v1/job-internal-transfer`,
@@ -46,7 +46,7 @@ app.post('/internal/add', (request, response) => {
 })
 
 app.put('/internal/edit', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'put',
     url    : `${process.env.API_URL}/v1/job-internal-transfer/${request.body.id_internal}`,
@@ -63,7 +63,7 @@ app.put('/internal/edit', (request, response) => {
 })
 
 app.get('/internal/detail', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
     url    : `${process.env.API_URL}/v1/job-internal-transfer/${request.query.id_internal}`,

@@ -9,7 +9,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 const library = require('./library.js')
 
 app.get('/product/select', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
     url    : `${process.env.API_URL}/v1/product`,
@@ -33,9 +33,10 @@ app.get('/product/select', (request, response) => {
     response.status(error.response.status).send(error.response.data)
   })
 })
+
 app.post('/product/list', (request, response) => {
   const params = library.generateDatatableParameter(request.body)
-  const token  = request.cookies[`${process.env.APP_ENV}_token`]
+  const token  = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
     url    : `${process.env.API_URL}/v1/product/`,
@@ -54,7 +55,7 @@ app.post('/product/list', (request, response) => {
 })
 
 app.post('/product/add', (request, response) => {
-  const token    = request.cookies[`${process.env.APP_ENV}_token`]
+  const token    = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'post',
     url    : `${process.env.API_URL}/v1/product/`,
@@ -71,7 +72,7 @@ app.post('/product/add', (request, response) => {
 })
 
 app.put('/product/edit', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'put',
     url    : `${process.env.API_URL}/v1/product/${request.body.id_product}`,
@@ -88,7 +89,7 @@ app.put('/product/edit', (request, response) => {
 })
 
 app.get('/product/detail', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
     url    : `${process.env.API_URL}/v1/product/${request.query.id_product}`,
@@ -104,7 +105,7 @@ app.get('/product/detail', (request, response) => {
 })
 
 app.get('/product/select', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
     url    : `${process.env.API_URL}/v1/product`,
@@ -130,7 +131,7 @@ app.get('/product/select', (request, response) => {
 })
 
 app.get('/product/unique-code-first', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
     url    : `${process.env.API_URL}/v1/product-inventory`,
@@ -158,7 +159,7 @@ app.get('/product/unique-code-first', (request, response) => {
 })
 
 app.get('/product/unique-code', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
     url    : `${process.env.API_URL}/v1/product-inventory`,
@@ -180,6 +181,26 @@ app.get('/product/unique-code', (request, response) => {
     },
   }).then(function (responseApi) {
     response.send(responseApi.data)
+  }).catch(function (error) {
+    response.status(error.response.status).send(error.response.data)
+  })
+})
+
+app.post('/product-location/list', (request, response) => {
+  const params = library.generateDatatableParameter(request.body)
+  const token  = request.session[`${process.env.APP_ENV}_token`]
+  axios({
+    method : 'get',
+    url    : `${process.env.API_URL}/v1/product-inventory`,
+    headers: {
+      'Content-Type' : 'application/x-www-form-urlencoded',
+      'Authorization': `Bearer ${token}`,
+    },
+    params: params,
+  }).then(function (responseApi) {
+    // formating data for metronic datatable
+    const data = library.generateDatatableResult(responseApi)
+    response.send(data)
   }).catch(function (error) {
     response.status(error.response.status).send(error.response.data)
   })

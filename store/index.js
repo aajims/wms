@@ -1,7 +1,11 @@
 import axios from 'axios'
-const atob = require('atob')
 
-export const state = () => ({ authToken: null, userProfile: null })
+export const state = () => ({
+  authToken  : null,
+  userProfile: null,
+  menuAccess : null,
+  accessPage : null,
+})
 
 export const mutations = {
   SET_TOKEN (state, token) {
@@ -10,18 +14,30 @@ export const mutations = {
   SET_USER_PROFILE (state, userProfile) {
     state.userProfile = userProfile
   },
+  SET_MENU_ACCESS (state, menuAccess) {
+    state.menuAccess = menuAccess
+  },
+  SET_ACCESS_PAGE (state, accessPage) {
+    state.accessPage = accessPage
+  },
 }
 
 export const actions = {
   // nuxtServerInit is called by Nuxt.js before server-rendering every page
-  nuxtServerInit ({ commit }) {
-    let userProfile = this.$cookies.get(`${process.env.APP_ENV}_user`)
-    if (userProfile) {
-      userProfile     = JSON.parse(atob(userProfile))
+  // eslint-disable-next-line unicorn/prevent-abbreviations
+  nuxtServerInit ({ commit }, { req }) {
+    const userProfile = req.session[`${process.env.APP_ENV}_user`]
+    if (userProfile)
       commit('SET_USER_PROFILE', userProfile)
+
+    // set user privilege
+    const menuAccess = req.session[`${process.env.APP_ENV}_menu_access`]
+    if (menuAccess) {
+      menuAccess['PCK'] = 1
+      commit('SET_MENU_ACCESS', menuAccess)
     }
 
-    const token = this.$cookies.get(`${process.env.APP_ENV}_token`)
+    const token = req.session[`${process.env.APP_ENV}_token`]
     if (token)
       commit('SET_TOKEN', token)
   },
@@ -35,20 +51,9 @@ export const actions = {
         password: password,
       },
     }).then(function (response) {
-      if (response.status === 200 && response.data.general_response.response_status === true) {
-        app.$cookies.set(`${process.env.APP_ENV}_token`, response.data.result.token, {
-          path  : '/',
-          maxAge: 60 * 60 * 24 * 7,
-        })
-        const userInfo = btoa(JSON.stringify(response.data.result.user_info))
-        app.$cookies.set(`${process.env.APP_ENV}_user`, userInfo, {
-          path  : '/',
-          maxAge: 60 * 60 * 24 * 7,
-        })
-        commit('SET_TOKEN', response.data.result.token)
-        // redirect to dashboard
+      if (response.status === 200 && response.data.general_response.response_status === true)
         app.$router.go({ path: '/dashboard' })
-      } else
+      else
         throw new Error(response.data.general_response.response_message)
     }).catch(function (error) {
       if (error.response === undefined)
@@ -78,15 +83,22 @@ export const actions = {
     })
   },
   removeToken ({ commit }) {
-    this.$cookies.remove(`${process.env.APP_ENV}_token`)
-    this.$cookies.remove(`${process.env.APP_ENV}_user`)
     commit('SET_TOKEN', null)
     this.$router.go({ path: '/login' })
+  },
+  setAccessPage ({ commit }, { data }) {
+    commit('SET_ACCESS_PAGE', data)
   },
 }
 
 export const getters = {
   getUserData: (state) => {
     return state.userProfile
+  },
+  getMenuAccess: (state) => {
+    return state.menuAccess
+  },
+  getAccessPage: (state) => {
+    return state.accessPage
   },
 }

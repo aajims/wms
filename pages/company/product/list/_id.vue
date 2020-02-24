@@ -16,6 +16,7 @@
         <div class="kt-portlet__head-wrapper">
           <div class="kt-portlet__head-actions">
             <a
+              v-if="pageAccess.add === statusTrue"
               :href="`/company/product/add/${idCompany}`"
               class="btn btn-brand btn-elevate btn-icon-sm"
             >
@@ -152,7 +153,7 @@
 
 <script>
 import moment from 'moment'
-import { PRODUCT_TYPE } from '@/utils/constants'
+import { PRODUCT_TYPE, STATUS_TRUE } from '@/utils/constants'
 
 export default {
   data () {
@@ -165,9 +166,14 @@ export default {
         search_by: '',
         filter   : { company_id: '' },
       },
+      pageAccess: {},
+      statusTrue: STATUS_TRUE,
     }
   },
   async mounted () {
+    // get page access
+    this.pageAccess = this.$store.getters['getAccessPage']
+
     const param = atob(this.$route.params.id)
     if (this.$route.params.id !== undefined)
       this.params.filter.company_id = param
@@ -226,16 +232,19 @@ export default {
           width    : '110px',
           orderable: false,
           render   : function (data, type, full, meta) {
-            const idEncoded = btoa(full.id)
-            return `<a href="/company/product/detail/${idEncoded}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
-                      <i class="la la-eye"></i>
-                    </a>
-                    <a href="/company/product/edit/${idEncoded}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
+            let actionButton   = ''
+            if (app.pageAccess.edit === app.statusTrue) {
+              actionButton   = `<a href="/company/product/edit/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit Details">
                       <i class="la la-edit"></i>
                     </a>
                     <a class="btn btn-sm btn-clean btn-icon btn-icon-md action-button-status" data-index="${meta.row}" href="javascript:void(0)" title="Update Status">
                         <i class="la la-power-off"></i>
                     </a>`
+            }
+            return `<a href="/company/product/detail/${btoa(full.id)}" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="View Details">
+                      <i class="la la-eye"></i>
+                    </a>
+                    ${actionButton}`
           },
         },
         {

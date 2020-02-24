@@ -10,7 +10,7 @@ const library = require('./library.js')
 
 app.post('/external/list', (request, response) => {
   const params = library.generateDatatableParameter(request.body)
-  const token  = request.cookies[`${process.env.APP_ENV}_token`]
+  const token  = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
     url    : `${process.env.API_URL}/v1//job-external-transfer/`,
@@ -29,7 +29,7 @@ app.post('/external/list', (request, response) => {
 })
 
 app.post('/external/add', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'post',
     url    : `${process.env.API_URL}/v1/job-external-transfer`,
@@ -46,7 +46,7 @@ app.post('/external/add', (request, response) => {
 })
 
 app.put('/external/edit', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'put',
     url    : `${process.env.API_URL}/v1/job-external-transfer/${request.body.id_external}`,
@@ -63,7 +63,7 @@ app.put('/external/edit', (request, response) => {
 })
 
 app.get('/external/detail', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
     url    : `${process.env.API_URL}/v1/job-external-transfer/${request.query.id_external}`,

@@ -18,7 +18,7 @@ app.get('/warehouse/select', (request, response) => {
     'keyword'       : request.query.term,
     'filter[status]': 1,
   }
-  const token  = request.cookies[`${process.env.APP_ENV}_token`]
+  const token  = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
     url    : `${process.env.API_URL}/v1/warehouse`,
@@ -36,7 +36,7 @@ app.get('/warehouse/select', (request, response) => {
 
 app.post('/warehouse/list', (request, response) => {
   const params = library.generateDatatableParameter(request.body)
-  const token  = request.cookies[`${process.env.APP_ENV}_token`]
+  const token  = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
     url    : `${process.env.API_URL}/v1/warehouse/`,
@@ -55,7 +55,7 @@ app.post('/warehouse/list', (request, response) => {
 })
 
 app.post('/warehouse/add', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'post',
     url    : `${process.env.API_URL}/v1/warehouse`,
@@ -72,7 +72,7 @@ app.post('/warehouse/add', (request, response) => {
 })
 
 app.put('/warehouse/edit', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'put',
     url    : `${process.env.API_URL}/v1/warehouse/${request.body.id_warehouse}`,
@@ -89,7 +89,7 @@ app.put('/warehouse/edit', (request, response) => {
 })
 
 app.get('/warehouse/detail', (request, response) => {
-  const token = request.cookies[`${process.env.APP_ENV}_token`]
+  const token = request.session[`${process.env.APP_ENV}_token`]
   axios({
     method : 'get',
     url    : `${process.env.API_URL}/v1/warehouse/${request.query.id_warehouse}`,

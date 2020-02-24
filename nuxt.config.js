@@ -62,6 +62,7 @@ module.exports = {
   serverMiddleware: [{ path: '/api', handler: '~/api/index.js' }],
   buildModules    : ['@nuxtjs/dotenv'],
   modules         : [
+    'nuxt-session',
     '@nuxtjs/axios',
     'nuxt-simple-line-icons',
     'cookie-universal-nuxt',

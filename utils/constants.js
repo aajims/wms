@@ -190,3 +190,12 @@ export const USER_STAFF = 3
 export const CONDITION_GOOD = 1
 export const CONDITION_QUARANTINE = 2
 export const CONDITION_DAMAGED = 3
+
+export const STATUS_TRUE = 1
+export const STATUS_FALSE = 0
+
+export const JOB_INCOMING = 1
+export const JOB_OUTGOING = 2
+export const TRANS_INTERNAL = 3
+export const TRANS_EXTERNAL = 4
+export const JOB_DAMAGE = 5
