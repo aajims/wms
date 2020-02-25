@@ -38,7 +38,7 @@
 
 <script>
 export default {
-  layout: 'admin-blank',
+  layout: 'admin-print',
   data () {
     return {
       location: [],

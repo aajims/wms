@@ -49,7 +49,7 @@
 <script>
 import { STATUS_ACTIVE } from '@/utils/constants'
 export default {
-  layout: 'admin-blank',
+  layout: 'admin-print',
   data () {
     return {
       locations   : [],

@@ -2,17 +2,13 @@
 @import '../css/datatables.bundle.min';
 @import '../css/bootstrap-select.min';
 @import '../css/jquery.bootstrap-touchspin.min';
-@import '../css/bootstrap-datetimepicker.min';
 @import '../css/perfect-scrollbar';
 @import '../css/bootstrap-switch.min';
-@import '../css/select2.min';
 @import '../css/sweetalert2.min';
 @import '../css/header/base/light.min';
 @import '../css/header/menu/light.min';
 @import '../css/brand/dark.min';
 @import '../css/aside/dark.min';
-@import '../css/bootstrap-datepicker.min.css';
-@import '../css/bootstrap-datetimepicker.min.css';
 
 // Components icons
 @import '../css/flaticon/flaticon';
@@ -34,64 +30,6 @@
 .kt-user-card {
   background-image: url(~assets/images/bg-user-menu.jpg);
 }
-
-
-// override css table
-.vgt-table {
-  font-size: 14px !important;
-  border-color: #fff !important;
-  padding: 10px !important;
-
-  thead th{
-    background: #fff !important;
-    border-bottom: 2px solid #ebedf2 !important;
-    padding-left: 25px !important;
-  }
-
-  th.line-numbers {
-    background: #fff !important;
-    border-bottom: 1px solid #ebedf2 !important;
-    border-right: #fff !important;
-  }
-
-  .vgt-checkbox-col {
-    background: #fff !important;
-    border-bottom: 1px solid #ebedf2 !important;
-    border-right: #fff !important;
-    padding-left: 25px !important;
-  }
-
-  td {
-    border-bottom: 1px solid #ebedf2 !important;
-  }
-
-  th:first-child, td:first-child { padding-left: 25px !important; }
-
-  td:last-child { padding-right: 25px !important; }
-  th:last-child { padding-right: 40px !important; }
-
-  th:last-child.sortable:before, th:last-child.sortable:after {
-    right: 25px !important;
-  }
-}
-
-.vgt-wrap__footer {
-  background: #fff !important;
-  border: #fff !important;
-  border-top: 1px solid #ebedf2 !important;
-  padding-left: 25px !important;
-  padding-right: 25px !important;
-}
-
-.actions {
-  overflow: visible;
-  position: relative;
-}
-
-.actions a {
-  cursor: pointer;
-}
-
 
 // loading table
 .loading-table {

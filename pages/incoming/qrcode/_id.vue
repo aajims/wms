@@ -1,9 +1,10 @@
 <style>
-@page {
-  size: auto;
-}
 body {
   color: black;
+}
+canvas {
+  height: 25% !important;
+  width: 25% !important;
 }
 </style>
 <template>
@@ -15,7 +16,6 @@ body {
       >
         <div
           v-if="data.status !== statusCancel"
-          class="container"
           style="margin: 0cm !important; width:100%; font-family: Arial, Helvetica, sans-serif; font-size: 8px; font-weight: bold; page-break-before:always;"
         >
           <div style="background-color: black; color: #fff; padding: 10px;" />
@@ -35,7 +35,7 @@ body {
           <div style="padding: 5px; padding-left: 2px; border: 2px; border-left: 4px; border-right: 4px; border-color: #000; border-style: solid;">
             Company: <br><br>
             <div style="margin-top: -10px;">
-              <center><span style="font-size: 14px;">{{ incoming.company_name }}</span></center>
+              <center><span style="font-size: 10px;">{{ incoming.company_name }}</span></center>
             </div>
           </div>
           <div style="padding: 5px; padding-left: 2px; border: 2px; border-left: 4px; border-right: 4px; border-color: #000; border-style: solid;">
@@ -95,10 +95,27 @@ body {
             </table>
           </div>
           <div style="padding: 5px; padding-left: 2px; border: 2px; border-left: 4px; border-right: 4px; border-color: #000; border-style: solid;">
-            Batch: <br><br>
-            <div style="margin-top: -10px;">
-              <center><span style="font-size: 10px;">{{ data.batch }}</span></center>
-            </div>
+            <table style="width: 100%;">
+              <tr>
+                <td
+                  valign="top"
+                  style="width: 33%; border-right: 2px solid #000; font-family: Arial, Helvetica, sans-serif; font-size: 8px; font-weight: bold;"
+                >
+                  Batch :<br><br>
+                  <div style="margin-top: -10px;">
+                    <center><span style="font-size: 10px;">{{ data.batch }}</span></center>
+                  </div>
+                </td>
+                <td
+                  valign="top"
+                  style="width: 33%; padding: 2px;  border: 2px; border-left: 4px; font-family: Arial, Helvetica, sans-serif; font-size: 8px; font-weight: bold;"
+                >
+                  Parent Job:<br><br> <div style="margin-top: -10px;">
+                    <center><span style="font-size: 10px;">{{ incoming.parent_job_no }}</span></center>
+                  </div>
+                </td>
+              </tr>
+            </table>
           </div>
           <div style="padding: 5px; padding-left: 2px; border: 2px; border-left: 4px; border-right: 4px; border-color: #000; border-style: solid;">
             Product : <br><br>
@@ -117,7 +134,7 @@ import moment from 'moment'
 import { STATUS_CANCEL } from '@/utils/constants'
 
 export default {
-  layout: 'admin-blank',
+  layout: 'admin-print',
   data () {
     return {
       incoming    : [],
@@ -127,7 +144,7 @@ export default {
   },
   async mounted () {
     await this.getData()
-    window.print()
+    // window.print()
   },
   methods: {
     async getData () {

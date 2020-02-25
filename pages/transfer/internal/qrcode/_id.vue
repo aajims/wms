@@ -117,7 +117,7 @@ import moment from 'moment'
 import { STATUS_CANCEL } from '@/utils/constants'
 
 export default {
-  layout: 'admin-blank',
+  layout: 'admin-print',
   data () {
     return {
       internal    : [],
