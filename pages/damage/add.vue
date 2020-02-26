@@ -225,7 +225,7 @@
                 <!--begin: Datatable -->
                 <table
                   id="product_table"
-                  class="table table-hover table-checkable"
+                  class="table table-hover table-checkable nowrap"
                 >
                   <thead>
                     <tr>
@@ -391,6 +391,7 @@
 
 <script>
 import moment from 'moment'
+import { PRODUCT_CONDITION } from '@/utils/constants'
 
 export default {
   data () {
@@ -840,6 +841,7 @@ export default {
       app.uniqueCode          = rowData.unique_code
       app.uniqCodeBefore      = `${rowData.product_id}_${rowData.product_packing_id}_${rowData.from_warehouse_location_id}_${rowData.unique_code}`
       $('#product_id').val(rowData.product_id).trigger('change')
+      $('#type').val(rowData.product_status).trigger('change')
       $('#description_modal').val(rowData.description)
       $('#qty').val(rowData.qty)
       $('#product_modal').modal('show')
@@ -854,6 +856,7 @@ export default {
         to_warehouse_location_id  : { required: true },
         from_warehouse_location_id: { required: true },
         unique_code               : { required: true },
+        type                      : { required: true },
         qty                       : {
           required            : true,
           number              : true,
@@ -994,7 +997,7 @@ export default {
         expired_date              : $('#unique_code').find(':selected').data('expired_date'),
         qty                       : parseInt($('#qty').val()),
         last_stock                : this.qtyPacking - parseInt($('#qty').val()),
-        batch                     : $('#unique_code').find(':selected').data('batch'),
+        batch                     : $('#unique_code').find(':selected').data('batch').toString(),
         description               : $('#description_modal').val(),
       }
       if (this.rowIndex === null)
@@ -1011,6 +1014,7 @@ export default {
       $('#description_modal').val(null)
       $('#qty').val('')
       $('#product_id').val(null).trigger('change')
+      $('#qty').val(null).trigger('change')
       this.productPackingId    = null
       this.warehouseLocationId = null
       this.uniqueCode          = null
