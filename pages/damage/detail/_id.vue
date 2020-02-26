@@ -239,6 +239,7 @@
                     <th>Product Location</th>
                     <th>Product</th>
                     <th>Packing</th>
+                    <th class="statuss">Status</th>
                     <th>Quantity</th>
                     <th class="from_warehouse_location_name">
                       From Location
@@ -279,7 +280,7 @@
 
 <script>
 import moment from 'moment'
-import { EXTERNAL_STATUS, JOB_STATUS } from '@/utils/constants'
+import { EXTERNAL_STATUS, JOB_STATUS, PRODUCT_CONDITION } from '@/utils/constants'
 
 export default {
   data () {
@@ -328,6 +329,7 @@ export default {
         { data: 'unique_code' },
         { data: 'product_name' },
         { data: 'product_packing_name' },
+        { data: 'product_status' },
         { data: 'qty' },
         { data: 'from_warehouse_location_name' },
         { data: 'batch' },
@@ -378,6 +380,17 @@ export default {
             for (const statusIndex in EXTERNAL_STATUS) {
               if (data === EXTERNAL_STATUS[statusIndex].id)
                 return `<span class="kt-badge kt-badge--${EXTERNAL_STATUS[statusIndex].class} kt-badge--inline">${EXTERNAL_STATUS[statusIndex].text}</span>`
+            }
+            return data
+          },
+        },
+        {
+          targets  : 'statuss',
+          className: 'dt-center',
+          render   : function (data, type, full, meta) {
+            for (const statusIndex in PRODUCT_CONDITION) {
+              if (data === PRODUCT_CONDITION[statusIndex].id)
+                return `<span class="kt-badge kt-badge--${PRODUCT_CONDITION[statusIndex].class} kt-badge--inline">${PRODUCT_CONDITION[statusIndex].text}</span>`
             }
             return data
           },
