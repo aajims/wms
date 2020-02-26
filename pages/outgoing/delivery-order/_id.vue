@@ -110,12 +110,6 @@ table.footer-sign tbody td.sig-line {
 table.layout-do td.first-col {
   width: 75px;
 }
-
-@media print {
-  body {
-    margin: 0;
-  }
-}
 </style>
 
 <template>

@@ -144,7 +144,7 @@ export default {
   },
   async mounted () {
     await this.getData()
-    // window.print()
+    window.print()
   },
   methods: {
     async getData () {

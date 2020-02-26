@@ -72,13 +72,16 @@ export const INCOMING_STATUS = [
     id: 4, text: 'Block', class: 'warning',
   },
   {
-    id: 5, text: 'Stored', class: 'primary',
+    id: 5, text: 'Store', class: 'primary',
   },
   {
     id: 9, text: 'Cancel', class: 'danger',
   },
   {
     id: 10, text: 'Close', class: 'dark',
+  },
+  {
+    id: 2, text: 'Delete', class: '',
   },
 ]
 
