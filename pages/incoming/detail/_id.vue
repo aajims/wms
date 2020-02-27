@@ -314,6 +314,9 @@
                     <th class="updated_at">
                       Updated
                     </th>
+                    <th class="actions">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
               </table>
@@ -395,6 +398,7 @@ export default {
         { data: 'status' },
         { data: 'created_at' },
         { data: 'updated_at' },
+        { data: 'actions', responsivePriority: -1 },
       ],
       columnDefs: [
         {
@@ -439,6 +443,14 @@ export default {
                 return `<span class="kt-badge kt-badge--${INCOMING_STATUS[statusIndex].class} kt-badge--inline">${INCOMING_STATUS[statusIndex].text}</span>`
             }
             return data
+          },
+        },
+        {
+          targets: 'actions',
+          render : function (data, type, full, meta) {
+            return `<a href="/incoming/qrcode/${btoa(app.incoming.id)}" target="_blank" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Print QR Code">
+                      <i class="la la-qrcode"></i>
+                    </a>`
           },
         },
       ],

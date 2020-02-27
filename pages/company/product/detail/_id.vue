@@ -67,7 +67,7 @@
           </div>
           <div class="form-group row">
             <div class="col-lg-6">
-              <label>Product Quantity</label>
+              <label>Minimum Stock Alert (Item Quantity)</label>
               <input
                 :value="product.minimum_stock_alert"
                 type="text"
@@ -79,6 +79,66 @@
               <label>HS Code</label>
               <input
                 :value="product.code"
+                type="text"
+                class="form-control"
+                readonly
+              >
+            </div>
+          </div>
+          <div class="form-group row">
+            <div class="col-lg-6">
+              <label>Dimension Type</label>
+              <input
+                :value="product.dimension_type"
+                type="text"
+                class="form-control"
+                readonly
+              >
+            </div>
+            <div class="col-lg-6">
+              <label>Length</label>
+              <input
+                :value="product.length"
+                type="text"
+                class="form-control"
+                readonly
+              >
+            </div>
+          </div>
+          <div class="form-group row">
+            <div class="col-lg-6">
+              <label>Width</label>
+              <input
+                :value="product.width"
+                type="text"
+                class="form-control"
+                readonly
+              >
+            </div>
+            <div class="col-lg-6">
+              <label>Height</label>
+              <input
+                :value="product.height"
+                type="text"
+                class="form-control"
+                readonly
+              >
+            </div>
+          </div>
+          <div class="form-group row">
+            <div class="col-lg-6">
+              <label>Weight Type</label>
+              <input
+                :value="product.weight_type"
+                type="text"
+                class="form-control"
+                readonly
+              >
+            </div>
+            <div class="col-lg-6">
+              <label>Weight</label>
+              <input
+                :value="product.weight"
                 type="text"
                 class="form-control"
                 readonly
@@ -144,11 +204,6 @@
           </div>
           <div class="kt-separator kt-separator--border-dashed kt-separator--space-lg" />
           <div class="form-group row">
-            <div class="col-lg-3">
-              <label>Product Packing Type</label>
-            </div>
-          </div>
-          <div class="form-group row">
             <div class="col-lg-12">
               <!--begin: Datatable -->
               <table
@@ -158,15 +213,31 @@
                 <thead>
                   <tr>
                     <th>Packing Type</th>
-                    <th>Qty Max</th>
-                    <th>Nett Weight</th>
-                    <th>Gross Weight</th>
+                    <th class="number">
+                      Qty Max
+                    </th>
+                    <th class="nett-weight">
+                      Nett Weight
+                    </th>
+                    <th class="gross-weight">
+                      Gross Weight
+                    </th>
+                    <th class="dimension">
+                      Dimension
+                    </th>
+                    <th>UOM</th>
+                    <th class="status">
+                      Status
+                    </th>
                     <th>Description</th>
-                    <th>Status</th>
                     <th>Created By</th>
-                    <th>Created</th>
+                    <th class="date">
+                      Created
+                    </th>
                     <th>Updated By</th>
-                    <th>Updated</th>
+                    <th class="date">
+                      Updated
+                    </th>
                   </tr>
                 </thead>
               </table>
@@ -231,8 +302,10 @@ export default {
         { data: 'qty_max' },
         { data: 'nett_weight' },
         { data: 'gross_weight' },
-        { data: 'description' },
+        { data: 'dimension' },
+        { data: 'uom' },
         { data: 'status' },
+        { data: 'description' },
         { data: 'created_by_name' },
         { data: 'created_at' },
         { data: 'updated_by_name' },
@@ -240,25 +313,32 @@ export default {
       ],
       columnDefs: [
         {
-          targets  : 1,
+          targets  : 'number',
           className: 'dt-right',
         },
         {
-          targets  : 2,
+          targets  : 'nett-weight',
           className: 'dt-center',
           render   : function (data, type, full, meta) {
             return `${full.nett_weight} ${full.nett_weight_type}`
           },
         },
         {
-          targets  : 3,
+          targets  : 'gross-weight',
           className: 'dt-center',
           render   : function (data, type, full, meta) {
             return `${full.gross_weight} ${full.gross_weight_type}`
           },
         },
         {
-          targets  : 5,
+          targets  : 'dimension',
+          className: 'dt-center',
+          render   : function (data, type, full, meta) {
+            return `${full.length} x ${full.width} x ${full.height} ${full.dimension_type}`
+          },
+        },
+        {
+          targets  : 'status',
           className: 'dt-center',
           render   : function (data, type, full, meta) {
             const status = {
@@ -272,16 +352,7 @@ export default {
           },
         },
         {
-          targets  : -1,
-          className: 'dt-center',
-          render   : function (data, type, full, meta) {
-            if (data === '')
-              return data
-            return moment(data).format('DD/MM/Y HH:mm:ss')
-          },
-        },
-        {
-          targets  : -3,
+          targets  : 'date',
           className: 'dt-center',
           render   : function (data, type, full, meta) {
             if (data === '')

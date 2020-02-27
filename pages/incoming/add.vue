@@ -301,6 +301,7 @@
                       <th class="expired_date">
                         Expired
                       </th>
+                      <th>UOM</th>
                       <th>Description</th>
                       <th class="actions">
                         Actions
@@ -801,6 +802,7 @@ export default {
         templateSelection: function (data, container) {
           $(data.element).attr('data-packing-name', data.packing_name)
           $(data.element).attr('data-qty-max', data.qty_max)
+          $(data.element).attr('data-uom', data.uom)
           return data.text
         },
       })
@@ -883,6 +885,7 @@ export default {
         { data: 'location_name' },
         { data: 'batch' },
         { data: 'expired_date' },
+        { data: 'product_packing_uom' },
         { data: 'description' },
         { data: 'actions', responsivePriority: -1 },
       ],
@@ -1034,6 +1037,7 @@ export default {
             text        : `${value.packing_type_name} / Qty Max: ${value.qty_max}`,
             packing_name: value.packing_type_name,
             qty_max     : value.qty_max,
+            uom         : value.uom,
           }
           this.productPackingSelect.push(dataTemporary)
         })
@@ -1103,6 +1107,7 @@ export default {
           qty                     : qtyPerRow,
           batch                   : $('#batch').val(),
           description             : $('#description_modal').val(),
+          product_packing_uom     : $('#product_packing_id').find(':selected').data('uom'),
         }
         if (this.rowIndex === null)
           this.datatable.row.add(product).draw()

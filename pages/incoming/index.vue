@@ -493,7 +493,7 @@ export default {
                           <i class="la la-ellipsis-h"></i>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item" href="javascript:void(0)"><i class="la la-print"></i> Print</a>
+                            <a class="dropdown-item" href="/incoming/print/${btoa(full.id)}" target="_blank"><i class="la la-print"></i> Print</a>
                             ${actionButtonQr}${actionButtonCancel}${actionButtonClose}
                         </div>
                     </span>`
