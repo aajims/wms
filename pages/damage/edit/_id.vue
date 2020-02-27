@@ -242,6 +242,7 @@
                       <th>Product Location</th>
                       <th>Product</th>
                       <th>Packing</th>
+                      <th class="statuss">Status</th>
                       <th>Quantity</th>
                       <th class="location_name">
                         Location
@@ -419,7 +420,7 @@
 
 <script>
 import moment from 'moment'
-import { EXTERNAL_STATUS, STATUS_CANCEL, STATUS_OPEN, STATUS_BLOCK, STATUS_PICK, STATUS_PACK, STATUS_READY_SHIPING } from '@/utils/constants'
+import { EXTERNAL_STATUS, STATUS_CANCEL, STATUS_OPEN, STATUS_BLOCK, STATUS_PICK, STATUS_PACK, STATUS_READY_SHIPING, PRODUCT_CONDITION } from '@/utils/constants'
 
 export default {
   data () {
@@ -525,6 +526,7 @@ export default {
           batch                        : value.batch,
           description                  : value.description,
           status                       : value.status,
+          product_status               : value.product_status,
           created_at                   : value.created_at,
           updated_at                   : value.updated_at,
           created_by_name              : value.created_by_name,
@@ -679,6 +681,12 @@ export default {
       app.setUniqueValue($('#product_id').val(), $('#product_packing_id').val(), $('#from_warehouse_location_id').val())
     })
     $('#product_modal').on('shown.bs.modal', function () {
+      $('#type').select2({
+        data: PRODUCT_CONDITION, placeholder: 'Select a product Status', allowClear: true,
+      })
+      $('#type').on('change', function () {
+        validator.element($(this))
+      })
       $('#product_id').select2({
         placeholder       : 'Select product',
         minimumInputLength: 1,
@@ -787,6 +795,7 @@ export default {
         { data: 'unique_code' },
         { data: 'product_name' },
         { data: 'product_packing_name' },
+        { data: 'product_status' },
         { data: 'qty' },
         { data: 'from_warehouse_location_name' },
         { data: 'batch' },
@@ -930,6 +939,7 @@ export default {
       app.productPackingId    = rowData.product_packing_id
       app.rowId               = rowData.id
       app.statusProduct       = rowData.status
+      app.ProductCondition    = rowData.product_status
       app.createdAt           = rowData.created_at
       app.updateAt            = rowData.updated_at
       app.createdByName       = rowData.created_by_name
@@ -1146,7 +1156,7 @@ export default {
         expired_date                : $('#unique_code').find(':selected').data('expired-date'),
         qty                         : parseInt($('#qty').val()),
         last_stock                  : this.qtyPacking - parseInt($('#qty').val()),
-        batch                       : $('#unique_code').find(':selected').data('batch'),
+        batch                       : $('#unique_code').find(':selected').data('batch').toString(),
         description                 : $('#description_modal').val(),
         status                      : this.statusProduct,
         created_at                  : this.createdAt,
@@ -1215,7 +1225,7 @@ export default {
           this.$nuxt.$loading.finish()
           // eslint-disable-next-line no-undef
           KTUtil.scrollTop()
-          setTimeout(function () { window.location.href = '/damage' }, 3000)
+          // setTimeout(function () { window.location.href = '/damage' }, 3000)
         } catch (error) {
           const parameter = {
             alertClass: 'alert-danger',
