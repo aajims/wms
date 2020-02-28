@@ -228,6 +228,9 @@
             <th>
               Last Stock
             </th>
+            <th class="product">
+              Product Status
+            </th>
             <th>
               Reserved Stock
             </th>
@@ -265,7 +268,7 @@
 
 <script>
 import moment from 'moment'
-import { STATUS } from '@/utils/constants'
+import { STATUS, PRODUCT_CONDITION } from '@/utils/constants'
 
 export default {
   data () {
@@ -393,6 +396,7 @@ export default {
         { data: 'first_stock' },
         { data: 'out_stock' },
         { data: 'last_stock' },
+        { data: 'product_status' },
         { data: 'reserved_stock' },
         { data: 'total_m3' },
         { data: 'status' },
@@ -412,6 +416,17 @@ export default {
             for (const statusIndex in STATUS) {
               if (data === STATUS[statusIndex].id)
                 return `<span class="kt-badge kt-badge--${STATUS[statusIndex].class} kt-badge--inline">${STATUS[statusIndex].text}</span>`
+            }
+            return data
+          },
+        },
+        {
+          targets  : 'product',
+          className: 'dt-center',
+          render   : function (data, type, full, meta) {
+            for (const statusIndex in PRODUCT_CONDITION) {
+              if (data === PRODUCT_CONDITION[statusIndex].id)
+                return `<span class="kt-badge kt-badge--${PRODUCT_CONDITION[statusIndex].class} kt-badge--inline">${PRODUCT_CONDITION[statusIndex].text}</span>`
             }
             return data
           },
