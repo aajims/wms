@@ -31,6 +31,19 @@ export const WEIGHT_TYPE = [
   },
 ]
 
+export const UOM = [
+  { id: 'box', text: 'box' },
+  { id: 'drum', text: 'drum' },
+  { id: 'ball', text: 'ball' },
+  { id: 'batang', text: 'batang' },
+  { id: 'gulung', text: 'gulung' },
+  { id: 'lembar', text: 'lembar' },
+  { id: 'roll', text: 'roll' },
+  { id: 'sak', text: 'sak' },
+  { id: 'unit', text: 'unit' },
+  { id: 'pcs', text: 'pcs' },
+]
+
 export const PRODUCT_TYPE = [
   { id: 1, text: 'FIFO' },
   { id: 2, text: 'LIFO' },
@@ -72,13 +85,16 @@ export const INCOMING_STATUS = [
     id: 4, text: 'Block', class: 'warning',
   },
   {
-    id: 5, text: 'Stored', class: 'primary',
+    id: 5, text: 'Store', class: 'primary',
   },
   {
     id: 9, text: 'Cancel', class: 'danger',
   },
   {
     id: 10, text: 'Close', class: 'dark',
+  },
+  {
+    id: 2, text: 'Delete', class: '',
   },
 ]
 

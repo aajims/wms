@@ -294,6 +294,25 @@
               </div>
             </div>
             <div class="form-group row">
+              <div class="col-lg-3" />
+              <div class="col-lg-3" />
+              <div class="col-lg-3" />
+              <div class="col-lg-3">
+                <select
+                  id="actions"
+                  style="width: 60%"
+                  name="actions"
+                  class="form-control kt-select2"
+                >
+                  <option />
+                </select>
+                <a
+                  href="javascript:;"
+                  class="btn btn-bold btn-sm btn-label-success"
+                  style="margin-left: 10px; width: 30%"
+                  @click="updateMultpleStatus"
+                >Apply</a>
+              </div>
               <div class="col-lg-12">
                 <!--begin: Datatable -->
                 <table
@@ -302,6 +321,12 @@
                 >
                   <thead>
                     <tr>
+                      <th class="checkbox">
+                        ID
+                      </th>
+                      <th class="row_number">
+                        #
+                      </th>
                       <th>SKU Number</th>
                       <th>Product Location</th>
                       <th>Product</th>
@@ -311,13 +336,14 @@
                         Location
                       </th>
                       <th>Batch</th>
-                      <th class="expired_date">
-                        Expired
-                      </th>
-                      <th>Description</th>
                       <th class="status">
                         Status
                       </th>
+                      <th class="expired_date">
+                        Expired
+                      </th>
+                      <th>UOM</th>
+                      <th>Description</th>
                       <th class="created_at">
                         Created
                       </th>
@@ -496,7 +522,7 @@
 
 <script>
 import moment from 'moment'
-import { TRANSPORT_TYPE, INCOMING_STATUS, STATUS_OPEN, STATUS_BLOCK, STATUS_STORED, STATUS_CANCEL } from '@/utils/constants'
+import { TRANSPORT_TYPE, INCOMING_STATUS, STATUS_OPEN, STATUS_BLOCK, STATUS_STORED, STATUS_CANCEL, STATUS_DELETED } from '@/utils/constants'
 
 export default {
   data () {
@@ -540,7 +566,6 @@ export default {
       updateAt            : '',
       createdByName       : '',
       updatedByName       : '',
-      modalHasOpen        : false,
       isRestore           : false,
       formChanged         : false,
       parentId            : 0,
@@ -609,6 +634,7 @@ export default {
           updated_at                    : value.updated_at,
           created_by_name               : value.created_by_name,
           updated_by_name               : value.updated_by_name,
+          product_packing_uom           : value.product_packing_uom,
         }
 
         if (value.status === STATUS_CANCEL)
@@ -754,6 +780,14 @@ export default {
       },
     })
 
+    // actions multiple select
+    $('#actions').select2({
+      placeholder            : 'Select actions',
+      allowClear             : true,
+      minimumResultsForSearch: -1,
+      data                   : INCOMING_STATUS,
+    })
+
     // form modal
     $('#product_modal').modal({
       backdrop: 'static',
@@ -778,7 +812,6 @@ export default {
     })
 
     $('#product_modal').on('shown.bs.modal', function () {
-      app.modalHasOpen = true
       $('#product_id').select2({
         placeholder       : 'Select product',
         minimumInputLength: 1,
@@ -816,6 +849,7 @@ export default {
         templateSelection: function (data, container) {
           $(data.element).attr('data-packing-name', data.packing_name)
           $(data.element).attr('data-qty-max', data.qty_max)
+          $(data.element).attr('data-uom', data.uom)
           return data.text
         },
       })
@@ -890,6 +924,8 @@ export default {
       searching : false,
       data      : this.incoming.products,
       columns   : [
+        { data: 'id' },
+        { data: 'rownumber' },
         { data: 'product_sku' },
         { data: 'unique_code' },
         { data: 'product_name' },
@@ -897,13 +933,26 @@ export default {
         { data: 'qty' },
         { data: 'to_warehouse_location_name' },
         { data: 'batch' },
-        { data: 'expired_date' },
-        { data: 'description' },
         { data: 'status' },
+        { data: 'expired_date' },
+        { data: 'product_packing_uom' },
+        { data: 'description' },
         { data: 'created_at' },
         { data: 'updated_at' },
         { data: 'actions', responsivePriority: -1 },
       ],
+      rowCallback: function (nRow, aData, iDisplayIndex) {
+        const index = iDisplayIndex + 1
+        $('td:eq(1)', nRow).html(index)
+        return nRow
+      },
+      headerCallback: function (thead, data, start, end, display) {
+        thead.querySelectorAll('th')[0].innerHTML = `
+                    <label class="kt-group-checkable kt-checkbox kt-checkbox--single kt-checkbox--solid">
+                        <input type="checkbox" value="" class="m-group-checkable">
+                        <span></span>
+                    </label>`
+      },
       drawCallback: function () {
         $('.popoverButton').popover({
           title    : 'Insufficient Capacity',
@@ -924,23 +973,41 @@ export default {
           },
         })
         $('.status-open').click(function () {
-          const rowData = app.datatable.row($(this).data('index')).data()
-          app.updateStatus(STATUS_OPEN, $(this).data('index'), rowData)
+          app.updateStatus(STATUS_OPEN, $(this).data('index'))
         })
         $('.status-block').click(function () {
-          const rowData = app.datatable.row($(this).data('index')).data()
-          app.updateStatus(STATUS_BLOCK, $(this).data('index'), rowData)
+          app.updateStatus(STATUS_BLOCK, $(this).data('index'))
         })
         $('.status-store').click(function () {
-          const rowData = app.datatable.row($(this).data('index')).data()
-          app.updateStatus(STATUS_STORED, $(this).data('index'), rowData)
+          app.updateStatus(STATUS_STORED, $(this).data('index'))
         })
         $('.status-cancel').click(function () {
-          const rowData = app.datatable.row($(this).data('index')).data()
-          app.updateStatus(STATUS_CANCEL, $(this).data('index'), rowData)
+          app.updateStatus(STATUS_CANCEL, $(this).data('index'))
         })
       },
       columnDefs: [
+        {
+          targets  : 'checkbox',
+          width    : '30px',
+          className: 'dt-right',
+          orderable: false,
+          render   : function (data, type, full, meta) {
+            if (full.status !== STATUS_CANCEL) {
+              return `<label class="kt-checkbox kt-checkbox--single kt-checkbox--solid">
+                          <input type="checkbox" value="" class="m-checkable">
+                          <span></span>
+                      </label>`
+            }
+            return ''
+          },
+        },
+        {
+          targets  : 'row_number',
+          orderable: false,
+          render   : function (data, type, full, meta) {
+            return ''
+          },
+        },
         {
           targets  : 'location_name',
           className: 'dt-center',
@@ -1035,6 +1102,38 @@ export default {
       ],
     })
 
+    // checkbox function
+    this.datatable.on('change', '.m-group-checkable', function () {
+      const set     = $(this).closest('table').find('td:first-child .m-checkable')
+      const checked = $(this).is(':checked')
+
+      $(set).each(function () {
+        const index   = app.datatable.row($(this).parents('tr')).index()
+        const rowData = app.datatable.row(index).data()
+        if (checked) {
+          $(this).prop('checked', true)
+          if (rowData.id === 0)
+            $(this).closest('tr').addClass('active-new')
+          else
+            $(this).closest('tr').addClass('active')
+        } else {
+          $(this).prop('checked', false)
+          if (rowData.id === 0)
+            $(this).closest('tr').removeClass('active-new')
+          else
+            $(this).closest('tr').removeClass('active')
+        }
+      })
+    })
+    this.datatable.on('change', 'tbody tr .kt-checkbox', function () {
+      const index   = app.datatable.row($(this).parents('tr')).index()
+      const rowData = app.datatable.row(index).data()
+      if (rowData.id === 0)
+        $(this).parents('tr').toggleClass('active-new')
+      else
+        $(this).parents('tr').toggleClass('active')
+    })
+
     // add popover
     $('#product_table').on('mouseover', '.flaticon2-information', function () {
       $($(this).parents('.popoverButton')).popover('show')
@@ -1075,24 +1174,19 @@ export default {
       app.locationName  = rowData.to_warehouse_location_name
       app.locationLevel = rowData.to_warehouse_location_level
 
-      if (app.modalHasOpen === true) {
-        $('#product_id').val(rowData.product_id).trigger('change')
-        $('#to_warehouse_location_id').val(rowData.to_warehouse_location_id).trigger('change')
-      } else {
-        const newOptionProduct  = new Option(rowData.product_name, rowData.product_id, true, true)
-        newOptionProduct.setAttribute('data-product-sku', rowData.product_sku)
-        $('#product_id').append(newOptionProduct).trigger('change')
+      const newOptionProduct  = new Option(rowData.product_name, rowData.product_id, true, true)
+      newOptionProduct.setAttribute('data-product-sku', rowData.product_sku)
+      $('#product_id').append(newOptionProduct).trigger('change')
 
-        if (rowData.to_warehouse_location_id !== 0) {
-          const locationName      = `${rowData.to_warehouse_location_name} - Level ${rowData.to_warehouse_location_level} 
+      if (rowData.to_warehouse_location_id !== 0) {
+        const locationName      = `${rowData.to_warehouse_location_name} - Level ${rowData.to_warehouse_location_level} 
                                   (${rowData.to_warehouse_location_usage} / ${rowData.to_warehouse_location_capacity})`
-          const newOptionLocation = new Option(locationName, rowData.to_warehouse_location_id, true, true)
-          newOptionLocation.setAttribute('data-location-name', rowData.to_warehouse_location_name)
-          newOptionLocation.setAttribute('data-location-level', rowData.to_warehouse_location_level)
-          newOptionLocation.setAttribute('data-usage', rowData.to_warehouse_location_usage)
-          newOptionLocation.setAttribute('data-capacity', rowData.to_warehouse_location_capacity)
-          $('#to_warehouse_location_id').append(newOptionLocation).trigger('change')
-        }
+        const newOptionLocation = new Option(locationName, rowData.to_warehouse_location_id, true, true)
+        newOptionLocation.setAttribute('data-location-name', rowData.to_warehouse_location_name)
+        newOptionLocation.setAttribute('data-location-level', rowData.to_warehouse_location_level)
+        newOptionLocation.setAttribute('data-usage', rowData.to_warehouse_location_usage)
+        newOptionLocation.setAttribute('data-capacity', rowData.to_warehouse_location_capacity)
+        $('#to_warehouse_location_id').append(newOptionLocation).trigger('change')
       }
 
       $('#description_modal').val(rowData.description)
@@ -1171,6 +1265,7 @@ export default {
             text        : `${value.packing_type_name} / Qty Max: ${value.qty_max}`,
             packing_name: value.packing_type_name,
             qty_max     : value.qty_max,
+            uom         : value.uom,
           }
           this.productPackingSelect.push(dataTemporary)
         })
@@ -1186,6 +1281,7 @@ export default {
           templateSelection: function (data, container) {
             $(data.element).attr('data-packing-name', data.packing_name)
             $(data.element).attr('data-qty-max', data.qty_max)
+            $(data.element).attr('data-uom', data.uom)
             return data.text
           },
         })
@@ -1266,6 +1362,7 @@ export default {
           updated_at                    : this.updateAt,
           created_by_name               : this.createdByName,
           updated_by_name               : this.updatedByName,
+          product_packing_uom           : $('#product_packing_id').find(':selected').data('uom'),
         }
         if (this.rowIndex === null)
           this.datatable.row.add(product).draw()
@@ -1377,10 +1474,42 @@ export default {
           this.remainingLocation[key].usage = this.remainingLocation[key].usage + 1
       })
     },
-    async updateStatus (statusId, rowIndex, data) {
+    async updateStatus (statusId, rowIndex) {
       this.formChanged = true
-      data.status      = statusId
-      setTimeout(() => this.datatable.row(rowIndex).data(data).draw(), 100)
+      setTimeout(() => this.datatable.cell(rowIndex, '.status').data(statusId).draw(), 100)
+    },
+    async updateMultpleStatus () {
+      const app      = this
+      const statusId = parseInt($('#actions').val())
+      if (!isNaN(statusId)) {
+        const text        = $('#actions option:selected').text().toLowerCase()
+        const lastChar    = text.substr(text.length - 1)
+        const textDisplay = lastChar === 'e' ? `${text}d` : `${text}ed`
+        // eslint-disable-next-line no-undef
+        swal.fire({
+          title             : 'Are you sure?',
+          text              : `All selected data will be ${textDisplay}`,
+          type              : 'question',
+          showCancelButton  : true,
+          buttonsStyling    : false,
+          confirmButtonText : 'Ok',
+          confirmButtonClass: 'btn btn-success',
+          cancelButtonClass : 'btn btn-default',
+        }).then(function (result) {
+          if (result.value) {
+            app.formChanged = false
+            if (statusId === STATUS_DELETED)
+              setTimeout(() => app.datatable.rows('.active-new').remove().draw(), 100)
+            else {
+              app.datatable.rows('.active').every(function (rowIdx, tableLoop, rowLoop) {
+                setTimeout(() => app.datatable.cell(rowIdx, '.status').data(statusId).draw(), 100)
+              })
+            }
+            $('#actions').val(null).trigger('change')
+          }
+        })
+        return false
+      }
     },
   },
 }

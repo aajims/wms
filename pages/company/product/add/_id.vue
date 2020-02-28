@@ -107,6 +107,74 @@
             </div>
             <div class="form-group row">
               <div class="col-lg-6">
+                <label>Dimension Type <span style="color:red">*</span></label>
+                <select
+                  id="dimension_type"
+                  class="form-control kt-select2"
+                  name="dimension_type"
+                >
+                  <option />
+                </select>
+                <span class="form-text text-muted" />
+              </div>
+              <div class="col-lg-6">
+                <label>Length <span style="color:red">*</span></label>
+                <input
+                  v-model="product.length"
+                  type="text"
+                  class="form-control"
+                  name="length"
+                  placeholder="Enter product length"
+                >
+              </div>
+            </div>
+            <div class="form-group row">
+              <div class="col-lg-6">
+                <label>Width <span style="color:red">*</span></label>
+                <input
+                  v-model="product.width"
+                  type="text"
+                  class="form-control"
+                  name="width"
+                  placeholder="Enter product width"
+                >
+              </div>
+              <div class="col-lg-6">
+                <label>Height <span style="color:red">*</span></label>
+                <input
+                  v-model="product.height"
+                  type="text"
+                  class="form-control"
+                  name="height"
+                  placeholder="Enter product height"
+                >
+              </div>
+            </div>
+            <div class="form-group row">
+              <div class="col-lg-6">
+                <label>Weight Type <span style="color:red">*</span></label>
+                <select
+                  id="weight_type"
+                  class="form-control kt-select"
+                  name="weight_type"
+                >
+                  <option />
+                </select>
+                <span class="form-text text-muted" />
+              </div>
+              <div class="col-lg-6">
+                <label>Weight <span style="color:red">*</span></label>
+                <input
+                  v-model="product.weight"
+                  type="text"
+                  class="form-control"
+                  name="weight"
+                  placeholder="Enter product weight"
+                >
+              </div>
+            </div>
+            <div class="form-group row">
+              <div class="col-lg-6">
                 <label for="description">Description</label>
                 <textarea
                   v-model="product.description"
@@ -133,7 +201,7 @@
               </div>
             </div>
             <div class="form-group row">
-              <div class="col-lg-8">
+              <div class="col-lg-12">
                 <!--begin: Datatable -->
                 <table
                   id="packing_table"
@@ -142,11 +210,23 @@
                   <thead>
                     <tr>
                       <th>Packing Type</th>
-                      <th>Qty Max</th>
-                      <th>Nett Weight</th>
-                      <th>Gross Weight</th>
+                      <th class="number">
+                        Qty Max
+                      </th>
+                      <th class="nett-weight">
+                        Nett Weight
+                      </th>
+                      <th class="gross-weight">
+                        Gross Weight
+                      </th>
+                      <th class="dimension">
+                        Dimension
+                      </th>
+                      <th>UOM</th>
                       <th>Description</th>
-                      <th>Actions</th>
+                      <th class="actions">
+                        Actions
+                      </th>
                     </tr>
                   </thead>
                 </table>
@@ -209,7 +289,7 @@
                   <label>Quantity Max</label>
                   <input
                     id="qty_max"
-                    value="0"
+                    value="1"
                     name="qty_max"
                     class="form-control"
                   >
@@ -232,7 +312,7 @@
                   <label>Nett Weight</label>
                   <input
                     id="nett_weight"
-                    value="0"
+                    value="1"
                     name="nett_weight"
                     class="form-control"
                   >
@@ -254,14 +334,67 @@
                   <label>Gross Weight</label>
                   <input
                     id="gross_weight"
-                    value="0"
+                    value="1"
                     name="gross_weight"
                     class="form-control"
                   >
                 </div>
               </div>
               <div class="form-group row">
-                <div class="col-lg-12">
+                <div class="col-lg-6">
+                  <label>Dimension Type <span style="color:red">*</span></label>
+                  <select
+                    id="dimension_type_modal"
+                    name="dimension_type_modal"
+                    class="form-control kt-select2"
+                  >
+                    <option />
+                  </select>
+                  <span class="form-text text-muted" />
+                </div>
+                <div class="col-lg-6">
+                  <label>Length <span style="color:red">*</span></label>
+                  <input
+                    id="length_modal"
+                    value="1"
+                    name="length_modal"
+                    class="form-control"
+                  >
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-lg-6">
+                  <label>Width <span style="color:red">*</span></label>
+                  <input
+                    id="width_modal"
+                    value="1"
+                    name="width_modal"
+                    class="form-control"
+                  >
+                </div>
+                <div class="col-lg-6">
+                  <label>Height <span style="color:red">*</span></label>
+                  <input
+                    id="height_modal"
+                    value="1"
+                    name="height_modal"
+                    class="form-control"
+                  >
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-lg-6">
+                  <label>UOM <span style="color:red">*</span></label>
+                  <select
+                    id="uom"
+                    name="uom"
+                    class="form-control kt-select2"
+                  >
+                    <option />
+                  </select>
+                  <span class="form-text text-muted" />
+                </div>
+                <div class="col-lg-6">
                   <label>Description</label>
                   <textarea
                     id="description"
@@ -300,7 +433,7 @@
 </template>
 
 <script>
-import { PRODUCT_TYPE, WEIGHT_TYPE } from '@/utils/constants'
+import { PRODUCT_TYPE, WEIGHT_TYPE, DIMENSION_TYPE, UOM } from '@/utils/constants'
 
 export default {
   data () {
@@ -368,6 +501,20 @@ export default {
       validator.element($(this))
     })
 
+    $('#dimension_type').select2({
+      data: DIMENSION_TYPE, placeholder: 'Select a dimension type', allowClear: true,
+    })
+    $('#dimension_type').on('change', function () {
+      validator.element($(this))
+    })
+
+    $('#weight_type').select2({
+      data: WEIGHT_TYPE, placeholder: 'Select a weight type', allowClear: true,
+    })
+    $('#weight_type').on('change', function () {
+      validator.element($(this))
+    })
+
     const validator = $('#product_form').validate({
       // define validation rules
       rules: {
@@ -380,6 +527,28 @@ export default {
           number        : true,
           positiveNumber: true,
         },
+        length: {
+          required       : true,
+          number         : true,
+          greaterThanZero: true,
+        },
+        width: {
+          required       : true,
+          number         : true,
+          greaterThanZero: true,
+        },
+        height: {
+          required       : true,
+          number         : true,
+          greaterThanZero: true,
+        },
+        weight: {
+          required       : true,
+          number         : true,
+          greaterThanZero: true,
+        },
+        dimension_type: { required: true },
+        weight_type   : { required: true },
       },
       invalidHandler: function (event, validator) {
         // eslint-disable-next-line no-undef
@@ -406,6 +575,10 @@ export default {
       function (value) {
         return Number(value) >= 0
       }, 'Enter a positive number.')
+    $.validator.addMethod('greaterThanZero',
+      function (value) {
+        return Number(value) > 0
+      }, 'Enter value greater than 0.')
 
     // form modal
     const app = this
@@ -430,6 +603,18 @@ export default {
       $('#packing_type').on('change', function () {
         validatorModal.element($(this))
       })
+      $('#dimension_type_modal').select2({
+        data: DIMENSION_TYPE, placeholder: 'Select a dimension type', allowClear: true,
+      })
+      $('#dimension_type_modal').on('change', function () {
+        validator.element($(this))
+      })
+      $('#uom').select2({
+        data: UOM, placeholder: 'Select a uom', allowClear: true,
+      })
+      $('#uom').on('change', function () {
+        validator.element($(this))
+      })
     })
     $('#packing_modal').on('hidden.bs.modal', function () {
       app.clearForm()
@@ -447,30 +632,39 @@ export default {
         { data: 'qty_max' },
         { data: 'nett_weight' },
         { data: 'gross_weight' },
+        { data: 'dimension' },
+        { data: 'uom' },
         { data: 'description' },
         { data: 'actions', responsivePriority: -1 },
       ],
       columnDefs: [
         {
-          targets  : 1,
+          targets  : 'number',
           className: 'dt-right',
         },
         {
-          targets  : 2,
+          targets  : 'nett-weight',
           className: 'dt-center',
           render   : function (data, type, full, meta) {
             return `${full.nett_weight} ${full.nett_weight_type}`
           },
         },
         {
-          targets  : 3,
+          targets  : 'gross-weight',
           className: 'dt-center',
           render   : function (data, type, full, meta) {
             return `${full.gross_weight} ${full.gross_weight_type}`
           },
         },
         {
-          targets: -1,
+          targets  : 'dimension',
+          className: 'dt-center',
+          render   : function (data, type, full, meta) {
+            return `${full.length} x ${full.width} x ${full.height} ${full.dimension_type}`
+          },
+        },
+        {
+          targets: 'actions',
           render : function (data, type, full, meta) {
             return `<a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit">
                       <i class="la la-edit"></i>
@@ -497,9 +691,14 @@ export default {
       $('#qty_max').val(rowData.qty_max)
       $('#nett_weight').val(rowData.nett_weight)
       $('#gross_weight').val(rowData.gross_weight)
+      $('#length_modal').val(rowData.length)
+      $('#width_modal').val(rowData.width)
+      $('#height_modal').val(rowData.height)
       $('#packing_type').val(rowData.packing_type_id).trigger('change')
       $('#nett_weight_type').val(rowData.nett_weight_type).trigger('change')
       $('#gross_weight_type').val(rowData.gross_weight_type).trigger('change')
+      $('#dimension_type_modal').val(rowData.dimension_type).trigger('change')
+      $('#uom').val(rowData.uom).trigger('change')
       $('#packing_modal').modal('show')
     })
 
@@ -509,6 +708,8 @@ export default {
         packing_type     : { required: true },
         nett_weight_type : { required: true },
         gross_weight_type: { required: true },
+        dimension_type_modal: { required: true },
+        uom                 : { required: true },
         qty_max          : {
           required      : true,
           number        : true,
@@ -523,6 +724,21 @@ export default {
           required      : true,
           number        : true,
           positiveNumber: true,
+        },
+        length_modal: {
+          required       : true,
+          number         : true,
+          greaterThanZero: true,
+        },
+        width_modal: {
+          required       : true,
+          number         : true,
+          greaterThanZero: true,
+        },
+        height_modal: {
+          required       : true,
+          number         : true,
+          greaterThanZero: true,
         },
       },
       invalidHandler: function (event, validator) {
@@ -544,6 +760,11 @@ export default {
         nett_weight      : parseInt($('#nett_weight').val()),
         gross_weight_type: $('#gross_weight_type').val(),
         gross_weight     : parseInt($('#gross_weight').val()),
+        dimension_type   : $('#dimension_type_modal').val(),
+        uom              : $('#uom').val(),
+        length           : parseFloat($('#length_modal').val()),
+        width            : parseFloat($('#width_modal').val()),
+        height           : parseFloat($('#height_modal').val()),
         description      : $('#description').val(),
       }
       if ($('#row_index').val().trim() === '')
@@ -556,9 +777,14 @@ export default {
       $('#packing_type').val(null).trigger('change')
       $('#nett_weight_type').val(null).trigger('change')
       $('#gross_weight_type').val(null).trigger('change')
+      $('#dimension_type_modal').val(null).trigger('change')
+      $('#uom').val(null).trigger('change')
       $('#qty_max').val(0)
       $('#nett_weight').val(0)
       $('#gross_weight').val(0)
+      $('#length_modal').val(1)
+      $('#width_modal').val(1)
+      $('#height_modal').val(1)
       $('#description').val(null)
       $('#row_index').val('')
     },
@@ -568,6 +794,12 @@ export default {
         this.product.minimum_stock_alert = parseInt(this.product.minimum_stock_alert)
         this.product.product_category_id = parseInt($('#category').val())
         this.product.type                = parseInt($('#type').val())
+        this.product.length              = parseFloat(this.product.length)
+        this.product.width               = parseFloat(this.product.width)
+        this.product.height              = parseFloat(this.product.height)
+        this.product.weight              = parseFloat(this.product.weight)
+        this.product.dimension_type      = $('#dimension_type').val()
+        this.product.weight_type         = $('#weight_type').val()
         this.product.products_packing    = data
         try {
           this.$nuxt.$loading.start()

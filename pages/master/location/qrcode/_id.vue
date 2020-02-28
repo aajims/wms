@@ -1,33 +1,31 @@
 <style>
-.table td, .table th {
-    border-top: 1px solid black;
+canvas {
+  height: 60% !important;
+  width: 60% !important;
 }
 </style>
 <template>
   <client-only>
     <div style="padding: 10px">
-      <table
-        border="1"
-        class="table"
-      >
+      <table style="padding:1px; !important; border: 2px; border-color: #000; border-style: solid; width: 100%;">
         <tbody>
           <tr>
             <td>
-              Location:<br>
-              <h4>{{ location.name }}</h4><br>
-              Level:<br>
-              <h4>{{ location.level }}</h4>
+              <span style="font-size: 0.575em;">Location:</span><br>
+              <span style="font-size: 0.875em;"><strong>{{ location.name }}</strong></span><br><br>
+              <span style="font-size: 0.575em;">Level:</span><br>
+              <span style="font-size: 0.875em;"><strong>{{ location.level }}</strong></span>
             </td>
             <td
               align="center"
-              style="width:20%;"
+              style="width:10%; padding-top: 10px"
             >
               <qrcode-vue
                 :value="location.unique_code"
                 :size="size"
                 level="H"
               />
-              <br><h5>{{ location.unique_code }}</h5>
+              <span style="font-size: 0.575em;">{{ location.unique_code }}</span>
             </td>
           </tr>
         </tbody>
@@ -38,7 +36,7 @@
 
 <script>
 export default {
-  layout: 'admin-blank',
+  layout: 'admin-print',
   data () {
     return {
       location: [],

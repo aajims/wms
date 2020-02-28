@@ -59,7 +59,7 @@ export default [
     folder      : false,
     childDisplay: false,
     children    : [],
-  },
+  },/* 
   {
     name        : 'Damage Stock',
     moduleCode  : 'JDM',
@@ -68,7 +68,7 @@ export default [
     folder      : false,
     childDisplay: false,
     children    : [],
-  },
+  }, */
   {
     name        : 'Transfer Stock',
     moduleCode  : 'JTF',
