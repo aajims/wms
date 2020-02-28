@@ -187,6 +187,32 @@
                 </div>
               </div>
             </div>
+            <div class="col-md-2 kt-margin-b-20-tablet-and-mobile">
+              <div class="kt-form__group">
+                <div class="kt-form__label">
+                  <label>Product Status:</label>
+                </div>
+                <div class="kt-form__control">
+                  <select
+                    id="kt_form_product_status"
+                    class="form-control bootstrap-select selectpicker"
+                  >
+                    <option value="">
+                      All
+                    </option>
+                    <option value="1">
+                      Good
+                    </option>
+                    <option value="2">
+                      Quarantine
+                    </option>
+                    <option value="3">
+                      Damaged
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -352,6 +378,14 @@ export default {
         app.params.filter.status = $('#kt_form_status').val()
       else
         app.$delete(app.params.filter, 'status')
+      app.getBalance()
+    })
+
+    $('#kt_form_product_status').on('change', function () {
+      if ($('#kt_form_product_status').val() !== '' && $('#kt_form_product_status').val() !== null)
+        app.params.filter.product_status = $('#kt_form_product_status').val()
+      else
+        app.$delete(app.params.filter, 'product_status')
       app.getBalance()
     })
 
