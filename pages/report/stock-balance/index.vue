@@ -89,26 +89,29 @@
                     <select
                       id="warehouse"
                       class="form-control kt-select2"
-                      name="to_warehouse_id"
+                      name="warehouse_id"
                     >
                       <option />
                     </select>
                   </div>
                 </div>
               </div>
-              <div class="col-md-2 kt-margin-b-20-tablet-and-mobile">
+              <div
+                id="kt-form_warehouse_location"
+                class="col-md-2 kt-margin-b-20-tablet-and-mobile"
+              >
                 <div class="kt-form__group">
                   <div class="kt-form__label">
-                    <label>&nbsp;</label>
+                    <label>Location:</label>
                   </div>
                   <div class="kt-form__control">
-                    <a
-                      href="javascript:void(0)"
-                      class="btn btn-default"
-                      @click="clearForm"
+                    <select
+                      id="warehouse_location"
+                      class="form-control kt-select2"
+                      name="warehouse_location"
                     >
-                      <i class="flaticon2-circular-arrow" /> Clear
-                    </a>
+                      <option />
+                    </select>
                   </div>
                 </div>
               </div>
@@ -210,6 +213,22 @@
                       Damaged
                     </option>
                   </select>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-2 kt-margin-b-20-tablet-and-mobile">
+              <div class="kt-form__group">
+                <div class="kt-form__label">
+                  <label>&nbsp;</label>
+                </div>
+                <div class="kt-form__control">
+                  <a
+                    href="javascript:void(0)"
+                    class="btn btn-default"
+                    @click="clearForm"
+                  >
+                    <i class="flaticon2-circular-arrow" /> Clear
+                  </a>
                 </div>
               </div>
             </div>
@@ -315,6 +334,7 @@ export default {
   },
   async mounted () {
     const app = this
+    $('#kt-form_warehouse_location').hide()
     $('#warehouse').select2({
       placeholder       : 'Select warehouse',
       minimumInputLength: 1,
@@ -337,13 +357,23 @@ export default {
       },
     })
     $('#warehouse').on('change', function () {
-      if ($('#warehouse').val() !== '' && $('#warehouse').val() !== null)
-        app.params.filter.to_warehouse_id = $('#warehouse').val()
+      if ($('#warehouse').val() !== '' && $('#warehouse').val() !== null) {
+        app.params.filter.warehouse_id = $('#warehouse').val()
+        $('#kt-form_warehouse_location').show()
+      } else {
+        app.$delete(app.params.filter, 'warehouse_id')
+        $('#kt-form_warehouse_location').hide()
+      }
+      app.getBalance()
+      app.getLocation()
+    })
+    $('#warehouse_location').on('change', function () {
+      if ($('#warehouse_location').val() !== '' && $('#warehouse_location').val() !== null)
+        app.params.filter.warehouse_location_id = $('#warehouse_location').val()
       else
-        app.$delete(app.params.filter, 'to_warehouse_id')
+        app.$delete(app.params.filter, 'warehouse_location_id')
       app.getBalance()
     })
-
     $('#company').select2({
       placeholder       : 'Select company',
       minimumInputLength: 1,
@@ -365,6 +395,7 @@ export default {
         },
       },
     })
+
     $('#company').on('change', function () {
       if ($('#company').val() !== '' && $('#company').val() !== null)
         app.params.filter.company_id = $('#company').val()
@@ -499,6 +530,43 @@ export default {
     async getBalance () {
       this.params.search_by = $('#kt_form_filter').val()
       this.datatable.ajax.reload()
+    },
+    async getLocation () {
+      $('#warehouse_location').select2({
+        placeholder       : 'Select location',
+        minimumInputLength: 1,
+        width             : '100%',
+        allowClear        : true,
+        ajax              : {
+          type          : 'GET',
+          url           : `/api/location/select?id_warehouse=${$('#warehouse').val()}`,
+          cache         : true,
+          processResults: function (data) {
+            return {
+              results: $.map(data.result, function (object) {
+                return {
+                  id  : object.id,
+                  text: object.name,
+                }
+              }),
+            }
+          },
+        },
+      })
+    },
+    async clearForm () {
+      this.params = {
+        keyword  : '',
+        search_by: '',
+        filter   : {},
+      }
+      this.datatable.ajax.reload()
+      $('#warehouse').val(null).trigger('change')
+      $('#warehouse_location').val(null).trigger('change')
+      $('#kt_form_filter_date').val('created_at')
+      $('#kt_form_status').val('')
+      $('#kt_form_product_status').val('')
+      $('.selectpicker').selectpicker('refresh')
     },
   },
 }
