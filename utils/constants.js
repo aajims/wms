@@ -11,6 +11,9 @@ export const DIMENSION_TYPE = [
   {
     id: 'sqm', text: 'sqm', long_name: 'kilo_meter',
   },
+  {
+    id: 'pallet', text: 'pallet', long_name: 'pallet',
+  },
 ]
 
 export const WEIGHT_TYPE = [

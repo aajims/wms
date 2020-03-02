@@ -29,16 +29,16 @@
             <div class="col-lg-6">
               <label>Name</label>
               <input
-                v-model="location.name"
+                :value="location.name"
                 type="text"
                 class="form-control"
                 readonly
               >
             </div>
             <div class="col-lg-6">
-              <label>Code</label>
+              <label>Warehouse</label>
               <input
-                v-model="location.code"
+                :value="location.warehouse_name"
                 type="text"
                 class="form-control"
                 readonly
@@ -49,7 +49,7 @@
             <div class="col-lg-6">
               <label>Capacity Dimension</label>
               <input
-                v-model="location.capacity_dimension_type"
+                :value="location.capacity_dimension_type"
                 type="text"
                 class="form-control"
                 readonly
@@ -58,7 +58,7 @@
             <div class="col-lg-6">
               <label>Capacity</label>
               <input
-                v-model="location.capacity"
+                :value="location.capacity"
                 type="text"
                 class="form-control"
                 readonly
@@ -69,7 +69,7 @@
             <div class="col-lg-6">
               <label>Level</label>
               <input
-                v-model="location.level"
+                :value="location.level"
                 type="text"
                 class="form-control"
                 placeholder="Enter level"
@@ -77,21 +77,10 @@
                 readonly
               >
             </div>
-            <div class="col-lg-6">
-              <label>Warehouse</label>
-              <input
-                v-model="location.warehouse_name"
-                type="text"
-                class="form-control"
-                readonly
-              >
-            </div>
-          </div>
-          <div class="form-group row">
             <div class="col-lg-6">
               <label>Weight Type</label>
               <input
-                v-model="location.weight_type"
+                :value="location.weight_type"
                 type="text"
                 class="form-control"
                 placeholder="Enter level"
@@ -99,10 +88,21 @@
                 readonly
               >
             </div>
+          </div>
+          <div class="form-group row">
             <div class="col-lg-6">
               <label>Max Weight</label>
               <input
-                v-model="location.weight_max"
+                :value="location.weight_max"
+                type="text"
+                class="form-control"
+                readonly
+              >
+            </div>
+            <div class="col-lg-6">
+              <label>Blocked By</label>
+              <input
+                :value="location.company_name"
                 type="text"
                 class="form-control"
                 readonly
@@ -111,13 +111,14 @@
           </div>
           <div class="form-group row">
             <div class="col-lg-6">
-              <label>Blocked By</label>
-              <input
-                v-model="location.company_name"
-                type="text"
+              <label for="description">Description</label>
+              <textarea
+                id="description"
+                :value="location.description"
                 class="form-control"
+                rows="3"
                 readonly
-              >
+              />
             </div>
             <div class="col-lg-2">
               <label>&nbsp;</label>
@@ -148,39 +149,18 @@
           </div>
           <div class="form-group row">
             <div class="col-lg-6">
-              <label for="description">Description</label>
-              <textarea
-                id="description"
-                v-model="location.description"
-                class="form-control"
-                rows="3"
-                readonly
-              />
-            </div>
-            <div class="col-lg-6">
               <label>Created By</label>
               <input
-                v-model="location.created_by_name"
+                :value="location.created_by_name"
                 type="text"
                 class="form-control"
                 readonly
               >
             </div>
-          </div>
-          <div class="form-group row">
             <div class="col-lg-6">
               <label>Created Date</label>
               <input
-                v-model="createdDate"
-                type="text"
-                class="form-control"
-                readonly
-              >
-            </div>
-            <div class="col-lg-6">
-              <label>Updated By</label>
-              <input
-                v-model="location.updated_by_name"
+                :value="createdDate"
                 type="text"
                 class="form-control"
                 readonly
@@ -189,9 +169,18 @@
           </div>
           <div class="form-group row">
             <div class="col-lg-6">
+              <label>Updated By</label>
+              <input
+                :value="location.updated_by_name"
+                type="text"
+                class="form-control"
+                readonly
+              >
+            </div>
+            <div class="col-lg-6">
               <label>Updated Date</label>
               <input
-                v-model="updatedDate"
+                :value="updatedDate"
                 type="text"
                 class="form-control"
                 readonly
