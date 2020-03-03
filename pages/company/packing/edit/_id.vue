@@ -261,10 +261,10 @@ export default {
     async editPacking () {
       const app = this
       if ($('#packing_form').valid()) {
-        this.packing.length         = parseInt(this.packing.length)
-        this.packing.width          = parseInt(this.packing.width)
-        this.packing.height         = parseInt(this.packing.height)
-        this.packing.weight         = parseInt(this.packing.weight)
+        this.packing.length         = parseFloat(this.packing.length)
+        this.packing.width          = parseFloat(this.packing.width)
+        this.packing.height         = parseFloat(this.packing.height)
+        this.packing.weight         = parseFloat(this.packing.weight)
         this.packing.weight_type    = $('#weight_type').val()
         this.packing.dimension_type = $('#dimension_type').val()
         try {

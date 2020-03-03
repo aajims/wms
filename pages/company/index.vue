@@ -125,15 +125,30 @@
       >
         <thead>
           <tr>
-            <th>#</th>
-            <th>Company Name</th>
+            <th class="no-order">
+              #
+            </th>
+            <th>Code</th>
+            <th>Name</th>
             <th>Address</th>
-            <th>City</th>
-            <th>Country</th>
-            <th>Status</th>
-            <th>Create By</th>
-            <th>Created</th>
-            <th>Actions</th>
+            <th class="no-order">
+              City
+            </th>
+            <th class="no-order">
+              Country
+            </th>
+            <th class="status">
+              Status
+            </th>
+            <th class="no-order">
+              Create By
+            </th>
+            <th class="created">
+              Created
+            </th>
+            <th class="actions">
+              Actions
+            </th>
           </tr>
         </thead>
       </table>
@@ -193,9 +208,10 @@ export default {
           d.params = app.params
         },
       },
-      order  : [[7, 'desc']],
+      order  : [[8, 'desc']],
       columns: [
         { data: 'row_number' },
+        { data: 'code' },
         { data: 'name' },
         { data: 'address' },
         { data: 'city_name' },
@@ -207,15 +223,11 @@ export default {
       ],
       columnDefs: [
         {
-          targets  : 0,
+          targets  : 'no-order',
           orderable: false,
         },
         {
-          targets  : 1,
-          orderable: true,
-        },
-        {
-          targets  : -1,
+          targets  : 'actions',
           title    : 'Actions',
           className: 'dt-center',
           width    : '110px',
@@ -247,14 +259,14 @@ export default {
           },
         },
         {
-          targets  : -2,
+          targets  : 'created',
           className: 'dt-center',
           render   : function (data, type, full, meta) {
             return moment(data).format('DD/MM/Y HH:mm:ss')
           },
         },
         {
-          targets  : -4,
+          targets  : 'status',
           className: 'dt-center',
           render   : function (data, type, full, meta) {
             const status = {

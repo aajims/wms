@@ -216,7 +216,7 @@
                     <th class="number">
                       Qty Max
                     </th>
-                    <th class="nett-weight">
+                    <!-- <th class="nett-weight">
                       Nett Weight
                     </th>
                     <th class="gross-weight">
@@ -224,7 +224,7 @@
                     </th>
                     <th class="dimension">
                       Dimension
-                    </th>
+                    </th> -->
                     <th>UOM</th>
                     <th class="status">
                       Status
@@ -300,9 +300,9 @@ export default {
       columns   : [
         { data: 'packing_type_name' },
         { data: 'qty_max' },
-        { data: 'nett_weight' },
+        /* { data: 'nett_weight' },
         { data: 'gross_weight' },
-        { data: 'dimension' },
+        { data: 'dimension' }, */
         { data: 'uom' },
         { data: 'status' },
         { data: 'description' },
@@ -316,7 +316,7 @@ export default {
           targets  : 'number',
           className: 'dt-right',
         },
-        {
+        /* {
           targets  : 'nett-weight',
           className: 'dt-center',
           render   : function (data, type, full, meta) {
@@ -336,7 +336,7 @@ export default {
           render   : function (data, type, full, meta) {
             return `${full.length} x ${full.width} x ${full.height} ${full.dimension_type}`
           },
-        },
+        }, */
         {
           targets  : 'status',
           className: 'dt-center',

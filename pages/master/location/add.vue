@@ -50,14 +50,15 @@
                 >
               </div>
               <div class="col-lg-6">
-                <label>Code <span style="color:red">*</span></label>
-                <input
-                  v-model="location.code"
-                  type="text"
-                  class="form-control"
-                  name="code"
-                  placeholder="Enter code"
+                <label for="country">Warehouse <span style="color:red">*</span></label>
+                <select
+                  id="warehouse"
+                  class="form-control kt-select2"
+                  name="warehouse_id"
                 >
+                  <option />
+                </select>
+                <span class="form-text text-muted" />
               </div>
             </div>
             <div class="form-group row">
@@ -99,19 +100,6 @@
                 >
               </div>
               <div class="col-lg-6">
-                <label for="country">Warehouse <span style="color:red">*</span></label>
-                <select
-                  id="warehouse"
-                  class="form-control kt-select2"
-                  name="warehouse_id"
-                >
-                  <option />
-                </select>
-                <span class="form-text text-muted" />
-              </div>
-            </div>
-            <div class="form-group row">
-              <div class="col-lg-6">
                 <label>Weight Type <span style="color:red">*</span></label>
                 <select
                   id="weight_type"
@@ -122,6 +110,8 @@
                 </select>
                 <span class="form-text text-muted" />
               </div>
+            </div>
+            <div class="form-group row">
               <div class="col-lg-6">
                 <label>Max Weight <span style="color:red">*</span></label>
                 <input
@@ -132,8 +122,6 @@
                   placeholder="Enter max weight"
                 >
               </div>
-            </div>
-            <div class="form-group row">
               <div class="col-lg-6">
                 <label for="country">Blocked By</label>
                 <select
@@ -143,6 +131,18 @@
                 >
                   <option />
                 </select>
+              </div>
+            </div>
+            <div class="form-group row">
+              <div class="col-lg-6">
+                <label for="description">Description</label>
+                <textarea
+                  id="description"
+                  v-model="location.description"
+                  class="form-control"
+                  rows="3"
+                  name="description"
+                />
               </div>
               <div class="col-lg-2">
                 <label>&nbsp;</label>
@@ -167,18 +167,6 @@
                     <span />
                   </label>
                 </div>
-              </div>
-            </div>
-            <div class="form-group row">
-              <div class="col-lg-6">
-                <label for="description">Description</label>
-                <textarea
-                  id="description"
-                  v-model="location.description"
-                  class="form-control"
-                  rows="3"
-                  name="description"
-                />
               </div>
             </div>
           </div>
@@ -206,7 +194,6 @@ export default {
       warehouseData: [],
       location     : {
         name                   : null,
-        code                   : null,
         level                  : null,
         capacity_dimension_type: null,
         capacity               : null,
@@ -286,7 +273,6 @@ export default {
       // define validation rules
       rules: {
         name                   : { required: true },
-        code                   : { required: true },
         level                  : { required: true },
         warehouse_id           : { required: true },
         capacity               : { required: true, digits: true },

@@ -247,7 +247,7 @@
         </div>
         <br>
         <div class="row align-items-center">
-          <div class="col-xl-8 order-2 order-xl-1">
+          <div class="col-xl-6 order-2 order-xl-1">
             <a
               style="margin-top: 5px"
               href="javascript:void(0)"
@@ -273,6 +273,14 @@
               @click="getLocationCapacity('>=90')"
             >Hit the Maximum Capacity 90%</a>
           </div>
+          <div
+            class="col-xl-6 order-2 order-xl-1"
+            style="text-align: right; margin-top: 5px;"
+          >
+            <span class="kt-badge kt-badge--warning kt-badge--dot kt-badge--xl" /> Stock Quarantine &nbsp;&nbsp;
+            <span class="kt-badge kt-badge--dark kt-badge--dot kt-badge--xl" /> Bonded Location &nbsp;&nbsp;
+            <span class="kt-badge kt-badge--danger kt-badge--dot kt-badge--xl" /> Blocked Location &nbsp;&nbsp;
+          </div>
         </div>
       </div>
       <!--end: Search Form -->
@@ -282,21 +290,38 @@
       <!--begin: Datatable -->
       <table
         id="location_table"
-        class="table table-hover table-checkable"
+        class="table table-hover table-checkable nowrap"
       >
         <thead>
           <tr>
-            <th>#</th>
+            <th class="no-order">
+              #
+            </th>
             <th>Warehouse</th>
-            <th>Location</th>
-            <th>Code</th>
-            <th>Company</th>
-            <th>Usage</th>
-            <th>Level</th>
-            <th>Capacity</th>
-            <th>Status</th>
-            <th>Created</th>
-            <th>Actions</th>
+            <th class="location">
+              Location
+            </th>
+            <th class="no-order">
+              Company
+            </th>
+            <th class="usage">
+              Usage
+            </th>
+            <th class="align-right">
+              Level
+            </th>
+            <th class="align-right">
+              Capacity
+            </th>
+            <th class="status">
+              Status
+            </th>
+            <th class="created">
+              Created
+            </th>
+            <th class="actions">
+              Actions
+            </th>
           </tr>
         </thead>
       </table>
@@ -439,12 +464,11 @@ export default {
           d.params = app.params
         },
       },
-      order  : [[9, 'desc']],
+      order  : [[8, 'desc']],
       columns: [
         { data: 'row_number' },
         { data: 'warehouse_name' },
         { data: 'name' },
-        { data: 'code' },
         { data: 'company_name' },
         { data: 'usage' },
         { data: 'level' },
@@ -455,19 +479,30 @@ export default {
       ],
       columnDefs: [
         {
-          targets  : 0,
+          targets  : 'no-order',
           orderable: false,
         },
         {
-          targets  : 1,
-          orderable: false,
-        },
-        {
-          targets  : 6,
+          targets  : 'align-right',
           className: 'dt-right',
         },
         {
-          targets    : 5,
+          targets  : 'location',
+          orderable: false,
+          render   : function (data, type, full, meta) {
+            let dataPrint = ''
+            if (full.stock_quarantine === STATUS_TRUE)
+              dataPrint += '<span class="kt-badge kt-badge--warning kt-badge--dot kt-badge--xl"></span>&nbsp'
+            if (full.bonded_location === STATUS_TRUE)
+              dataPrint += '<span class="kt-badge kt-badge--dark kt-badge--dot kt-badge--xl"></span>&nbsp'
+            if (full.blocked_status === STATUS_TRUE)
+              dataPrint += '<span class="kt-badge kt-badge--danger kt-badge--dot kt-badge--xl"></span>'
+
+            return `${data}&nbsp${dataPrint}`
+          },
+        },
+        {
+          targets    : 'usage',
           className  : 'dt-right',
           createdCell: function (td, cellData, rowData, row, col) {
             if (rowData.usage_percentage === 0)
@@ -497,11 +532,7 @@ export default {
           },
         },
         {
-          targets  : 7,
-          className: 'dt-right',
-        },
-        {
-          targets  : -1,
+          targets  : 'actions',
           title    : 'Actions',
           className: 'dt-center',
           width    : '110px',
@@ -530,7 +561,7 @@ export default {
           },
         },
         {
-          targets  : -3,
+          targets  : 'status',
           className: 'dt-center',
           render   : function (data, type, full, meta) {
             const status = {
@@ -544,7 +575,7 @@ export default {
           },
         },
         {
-          targets  : -2,
+          targets  : 'created',
           className: 'dt-center',
           render   : function (data, type, full, meta) {
             return moment(data).format('DD/MM/Y HH:mm:ss')

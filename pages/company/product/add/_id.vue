@@ -213,7 +213,7 @@
                       <th class="number">
                         Qty Max
                       </th>
-                      <th class="nett-weight">
+                      <!-- <th class="nett-weight">
                         Nett Weight
                       </th>
                       <th class="gross-weight">
@@ -221,7 +221,7 @@
                       </th>
                       <th class="dimension">
                         Dimension
-                      </th>
+                      </th> -->
                       <th>UOM</th>
                       <th>Description</th>
                       <th class="actions">
@@ -296,7 +296,7 @@
                   <span class="form-text text-muted" />
                 </div>
               </div>
-              <div class="form-group row">
+              <!-- <div class="form-group row">
                 <div class="col-lg-6">
                   <label>Nett Weight Type <span style="color:red">*</span></label>
                   <select
@@ -381,7 +381,7 @@
                     class="form-control"
                   >
                 </div>
-              </div>
+              </div> -->
               <div class="form-group row">
                 <div class="col-lg-6">
                   <label>UOM <span style="color:red">*</span></label>
@@ -583,7 +583,7 @@ export default {
     // form modal
     const app = this
     $('#packing_modal').on('shown.bs.modal', function () {
-      $('#gross_weight_type').select2({
+      /* $('#gross_weight_type').select2({
         data: WEIGHT_TYPE, placeholder: 'Select a gross weight type', allowClear: true,
       })
       $('#gross_weight_type').on('change', function () {
@@ -594,7 +594,7 @@ export default {
       })
       $('#nett_weight_type').on('change', function () {
         validatorModal.element($(this))
-      })
+      }) */
       $('#packing_type').select2({
         placeholder: 'Select a packing type',
         allowClear : true,
@@ -603,12 +603,12 @@ export default {
       $('#packing_type').on('change', function () {
         validatorModal.element($(this))
       })
-      $('#dimension_type_modal').select2({
+      /* $('#dimension_type_modal').select2({
         data: DIMENSION_TYPE, placeholder: 'Select a dimension type', allowClear: true,
       })
       $('#dimension_type_modal').on('change', function () {
         validator.element($(this))
-      })
+      }) */
       $('#uom').select2({
         data: UOM, placeholder: 'Select a uom', allowClear: true,
       })
@@ -630,9 +630,9 @@ export default {
       columns   : [
         { data: 'packing_type_name' },
         { data: 'qty_max' },
-        { data: 'nett_weight' },
+        /* { data: 'nett_weight' },
         { data: 'gross_weight' },
-        { data: 'dimension' },
+        { data: 'dimension' }, */
         { data: 'uom' },
         { data: 'description' },
         { data: 'actions', responsivePriority: -1 },
@@ -642,7 +642,7 @@ export default {
           targets  : 'number',
           className: 'dt-right',
         },
-        {
+        /* {
           targets  : 'nett-weight',
           className: 'dt-center',
           render   : function (data, type, full, meta) {
@@ -662,7 +662,7 @@ export default {
           render   : function (data, type, full, meta) {
             return `${full.length} x ${full.width} x ${full.height} ${full.dimension_type}`
           },
-        },
+        }, */
         {
           targets: 'actions',
           render : function (data, type, full, meta) {
@@ -689,15 +689,15 @@ export default {
       $('#row_index').val(rowIndex)
       $('#description').val(rowData.description)
       $('#qty_max').val(rowData.qty_max)
-      $('#nett_weight').val(rowData.nett_weight)
+      /* $('#nett_weight').val(rowData.nett_weight)
       $('#gross_weight').val(rowData.gross_weight)
       $('#length_modal').val(rowData.length)
       $('#width_modal').val(rowData.width)
-      $('#height_modal').val(rowData.height)
+      $('#height_modal').val(rowData.height) */
       $('#packing_type').val(rowData.packing_type_id).trigger('change')
-      $('#nett_weight_type').val(rowData.nett_weight_type).trigger('change')
+      /* $('#nett_weight_type').val(rowData.nett_weight_type).trigger('change')
       $('#gross_weight_type').val(rowData.gross_weight_type).trigger('change')
-      $('#dimension_type_modal').val(rowData.dimension_type).trigger('change')
+      $('#dimension_type_modal').val(rowData.dimension_type).trigger('change') */
       $('#uom').val(rowData.uom).trigger('change')
       $('#packing_modal').modal('show')
     })
@@ -705,17 +705,17 @@ export default {
     // validator modal #qty_max, #nett_weight, #gross_weight
     const validatorModal = $('#packing_form').validate({
       rules: {
-        packing_type     : { required: true },
-        nett_weight_type : { required: true },
+        packing_type: { required: true },
+        /* nett_weight_type : { required: true },
         gross_weight_type: { required: true },
-        dimension_type_modal: { required: true },
-        uom                 : { required: true },
-        qty_max          : {
+        dimension_type_modal: { required: true }, */
+        uom         : { required: true },
+        qty_max     : {
           required      : true,
           number        : true,
           positiveNumber: true,
         },
-        nett_weight: {
+        /* nett_weight: {
           required      : true,
           number        : true,
           positiveNumber: true,
@@ -739,7 +739,7 @@ export default {
           required       : true,
           number         : true,
           greaterThanZero: true,
-        },
+        }, */
       },
       invalidHandler: function (event, validator) {
         event.preventDefault()
