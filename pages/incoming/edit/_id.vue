@@ -455,7 +455,16 @@
                 </div>
               </div>
               <div class="form-group row">
-                <div class="col-lg-6">
+                <div class="col-lg-3">
+                  <label>Capacity</label>
+                  <input
+                    id="capacity"
+                    type="text"
+                    class="form-control"
+                    disabled="disabled"
+                  >
+                </div>
+                <div class="col-lg-3">
                   <label>Batch <span style="color:red">*</span></label>
                   <input
                     id="batch"
@@ -522,7 +531,7 @@
 
 <script>
 import moment from 'moment'
-import { TRANSPORT_TYPE, INCOMING_STATUS, STATUS_OPEN, STATUS_BLOCK, STATUS_STORED, STATUS_CANCEL, STATUS_DELETED } from '@/utils/constants'
+import { TRANSPORT_TYPE, INCOMING_STATUS, STATUS_OPEN, STATUS_BLOCK, STATUS_STORED, STATUS_CANCEL, STATUS_DELETED, STATUS_CLOSE } from '@/utils/constants'
 
 export default {
   data () {
@@ -561,6 +570,7 @@ export default {
       warehouseName       : '',
       rowId               : 0,
       locationIdBefore    : '',
+      locationIdFirst     : '',
       statusProduct       : STATUS_OPEN,
       createdAt           : '',
       updateAt            : '',
@@ -571,6 +581,7 @@ export default {
       parentId            : 0,
       fromLocationId      : 0,
       uniqueCode          : 0,
+      isSave              : false,
     }
   },
   async mounted () {
@@ -620,7 +631,7 @@ export default {
           from_warehouse_location_id    : value.from_warehouse_location_id,
           product_name                  : value.product_name,
           product_sku                   : value.product_sku,
-          product_packing_name          : value.product_packing_name,
+          product_packing_name          : value.packing_type_name,
           to_warehouse_location_name    : value.to_warehouse_location_name,
           to_warehouse_location_level   : value.to_warehouse_location_level,
           to_warehouse_location_usage   : value.to_warehouse_location_usage,
@@ -786,7 +797,12 @@ export default {
       allowClear             : true,
       minimumResultsForSearch: -1,
       data                   : INCOMING_STATUS,
+      templateResult         : formatStatus,
     })
+    function formatStatus (status) {
+      if ((parseInt(status.id) !== STATUS_CLOSE && parseInt(status.id) !== STATUS_DELETED) || (parseInt(status.id) === STATUS_DELETED && app.parentId === 0))
+        return status.text
+    };
 
     // form modal
     $('#product_modal').modal({
@@ -803,11 +819,20 @@ export default {
 
     $('#to_warehouse_location_id').on('change', function () {
       validatorModal.element($(this))
-      if (app.rowIndex !== null) {
-        if (app.locationIdBefore === parseInt($(this).val()))
-          app.addRemainingUsage(app.locationIdBefore)
-        else
-          app.deleteRemainingUsage(app.locationIdBefore)
+      if ($(this).val() !== '') {
+        setTimeout(function () {
+          const capacity =  $('#to_warehouse_location_id').find(':selected').data('capacity')
+          let usage      = $('#to_warehouse_location_id').find(':selected').data('usage')
+          if (app.locationIdBefore !== '')
+            app.deleteRemainingUsage(app.locationIdBefore)
+          app.locationIdBefore = parseInt($('#to_warehouse_location_id').val())
+          app.addRemainingUsage(app.locationIdBefore, usage + 1)
+          app.remainingLocation.forEach((value, key) => {
+            if (parseInt(value.location_id) === parseInt(app.locationIdBefore))
+              usage = value.usage
+          })
+          $('#capacity').val(`${usage} / ${capacity}`)
+        }, 100)
       }
     })
 
@@ -828,7 +853,8 @@ export default {
               results: $.map(data.result, function (object) {
                 return {
                   id         : object.id,
-                  text       : object.name,
+                  text       : `${object.sku} / ${object.name}`,
+                  name       : object.name,
                   product_sku: object.sku,
                 }
               }),
@@ -836,8 +862,12 @@ export default {
           },
         },
         templateSelection: function (data, container) {
+          $(data.element).attr('data-product-name', data.name)
           $(data.element).attr('data-product-sku', data.product_sku)
-          return data.text
+          const textArray = data.text.split('/')
+          if (textArray[1] === undefined)
+            return data.text
+          return textArray[1]
         },
       })
 
@@ -855,8 +885,6 @@ export default {
       })
       $('#product_packing_id').on('change', function () {
         validatorModal.element($(this))
-        if (this.productPackingOption !== null && app.parentId === 0)
-          $('#qty_max').val($('#product_packing_id').find(':selected').data('qty-max'))
       })
 
       $('#expired_date').datetimepicker({
@@ -883,7 +911,7 @@ export default {
           processResults: function (data) {
             return {
               results: $.map(data.result, function (object) {
-                let usageRemaining = 0
+                let usageRemaining = object.usage
                 app.remainingLocation.forEach((value, key) => {
                   if (parseInt(value.location_id) === parseInt(object.id))
                     usageRemaining = value.usage
@@ -891,7 +919,7 @@ export default {
                 if (object.usage !== object.capacity && usageRemaining < object.capacity) {
                   return {
                     id            : object.id,
-                    text          : `${object.name} - Level ${object.level} (${object.usage} / ${object.capacity})`,
+                    text          : `${object.name} - Level ${object.level} | (${usageRemaining} / ${object.capacity})`,
                     location_name : `${object.name}`,
                     location_level: `${object.level}`,
                     usage         : object.usage,
@@ -907,7 +935,10 @@ export default {
           $(data.element).attr('data-location-level', data.location_level)
           $(data.element).attr('data-usage', data.usage)
           $(data.element).attr('data-capacity', data.capacity)
-          return data.text
+          const textArray = data.text.split('|')
+          if (textArray[1] === undefined)
+            return data.text
+          return textArray[0]
         },
       })
     })
@@ -1166,6 +1197,7 @@ export default {
       app.createdByName    = rowData.created_by_name
       app.updatedByName    = rowData.updated_by_name
       app.locationIdBefore = rowData.to_warehouse_location_id
+      app.locationIdFirst  = rowData.to_warehouse_location_id
       app.fromLocationId   = rowData.from_warehouse_location_id
       app.uniqueCode       = rowData.unique_code
 
@@ -1174,13 +1206,13 @@ export default {
       app.locationName  = rowData.to_warehouse_location_name
       app.locationLevel = rowData.to_warehouse_location_level
 
-      const newOptionProduct  = new Option(rowData.product_name, rowData.product_id, true, true)
+      const newOptionProduct     = new Option(rowData.product_name, rowData.product_id, true, true)
       newOptionProduct.setAttribute('data-product-sku', rowData.product_sku)
+      newOptionProduct.setAttribute('data-product-name', rowData.product_name)
       $('#product_id').append(newOptionProduct).trigger('change')
 
       if (rowData.to_warehouse_location_id !== 0) {
-        const locationName      = `${rowData.to_warehouse_location_name} - Level ${rowData.to_warehouse_location_level} 
-                                  (${rowData.to_warehouse_location_usage} / ${rowData.to_warehouse_location_capacity})`
+        const locationName      = `${rowData.to_warehouse_location_name} - Level ${rowData.to_warehouse_location_level}`
         const newOptionLocation = new Option(locationName, rowData.to_warehouse_location_id, true, true)
         newOptionLocation.setAttribute('data-location-name', rowData.to_warehouse_location_name)
         newOptionLocation.setAttribute('data-location-level', rowData.to_warehouse_location_level)
@@ -1191,13 +1223,19 @@ export default {
 
       $('#description_modal').val(rowData.description)
       $('#qty').val(rowData.qty)
-      if (app.productPackingOption === null)
-        $('#qty_max').val(rowData.to_warehouse_location_capacity)
       if (app.parentId !== 0)
         $('#qty_max').val(rowData.qty)
       if (rowData.expired_date !== '')
         $('#expired_date').val(moment(rowData.expired_date).format('DD/MM/Y'))
       $('#batch').val(rowData.batch)
+
+      let usageRemaining = rowData.to_warehouse_location_usage
+      app.remainingLocation.forEach((value, key) => {
+        if (parseInt(value.location_id) === parseInt(rowData.to_warehouse_location_id))
+          usageRemaining = value.usage
+      })
+      $('#capacity').val(`${usageRemaining} / ${rowData.to_warehouse_location_capacity}`)
+
       $('#product_modal').modal('show')
       app.rowIndex = app.datatable.row($(this).parents('tr')).index()
     })
@@ -1219,6 +1257,7 @@ export default {
         event.preventDefault()
       },
       submitHandler: function (form) {
+        app.isSave      = true
         app.saveProduct()
         app.formChanged = true
         return false
@@ -1239,6 +1278,8 @@ export default {
         $('#product_packing_id').prop('disabled', false)
         if (this.productPackingId !== null) {
           $('#product_packing_id').val(this.productPackingId).trigger('change')
+          if (this.parentId === 0)
+            $('#qty_max').val($('#product_packing_id').find(':selected').data('qty-max'))
           if (this.parentId !== 0) {
             $('#product_id').prop('disabled', true)
             $('#product_packing_id').prop('disabled', true)
@@ -1262,7 +1303,7 @@ export default {
         productDetail.products_packing.forEach((value) => {
           dataTemporary = {
             id          : value.id,
-            text        : `${value.packing_type_name} / Qty Max: ${value.qty_max}`,
+            text        : value.packing_type_name,
             packing_name: value.packing_type_name,
             qty_max     : value.qty_max,
             uom         : value.uom,
@@ -1320,13 +1361,13 @@ export default {
       const location = locationId
 
       // -1 usage location id before
-      if (this.locationIdBefore !== '')
+      if (this.locationIdBefore !== '' && this.locationIdBefore === locationId)
         this.deleteRemainingUsage(this.locationIdBefore)
 
       // add existing usage
       this.remainingLocation.forEach((value) => {
         if (parseInt(value.location_id) === location)
-          usage = usage + value.usage
+          usage = value.usage
       })
 
       for (let i = 0; i < totalRow; i++) {
@@ -1346,7 +1387,7 @@ export default {
           to_warehouse_location_id      : locationId,
           from_warehouse_location_id    : this.fromLocationId,
           unique_code                   : this.uniqueCode,
-          product_name                  : $('#product_id option:selected').text(),
+          product_name                  : $('#product_id').find(':selected').data('product-name'),
           product_sku                   : $('#product_id').find(':selected').data('product-sku'),
           product_packing_name          : $('#product_packing_id').find(':selected').data('packing-name'),
           to_warehouse_location_name    : $('#to_warehouse_location_id').find(':selected').data('location-name'),
@@ -1392,10 +1433,15 @@ export default {
       this.rowIndex         = null
       $('#description_modal').val(null)
       $('#qty').val('')
+      $('#capacity').val('')
       $('#product_id').val(null).trigger('change')
       $('#to_warehouse_location_id').val(null).trigger('change')
       $('#expired_date').val('')
       $('#batch').val('')
+      if (this.isSave === false) {
+        this.deleteRemainingUsage(this.locationIdBefore)
+        this.addRemainingUsage(this.locationIdFirst, 0)
+      }
       this.productPackingId = null
       this.statusProduct    = STATUS_OPEN
       this.createdAt        = ''
@@ -1411,6 +1457,7 @@ export default {
       this.capacity      = 0
       this.locationName  = ''
       this.locationLevel = ''
+      this.isSave        = false
     },
     setDataPost (data) {
       this.$delete(this.incoming, 'unique_code')
@@ -1468,15 +1515,32 @@ export default {
           this.remainingLocation[key].usage = this.remainingLocation[key].usage - 1
       })
     },
-    addRemainingUsage (locationId) {
+    addRemainingUsage (locationId, usage) {
+      let found = false
       this.remainingLocation.forEach((value, key) => {
         if (parseInt(value.location_id) === locationId)
-          this.remainingLocation[key].usage = this.remainingLocation[key].usage + 1
+          found = true
       })
+      if (found === false)
+        this.remainingLocation.push({ location_id: locationId, usage: usage })
+      else {
+        this.remainingLocation.forEach((value, key) => {
+          if (parseInt(value.location_id) === locationId)
+            this.remainingLocation[key].usage = this.remainingLocation[key].usage + 1
+        })
+      }
     },
     async updateStatus (statusId, rowIndex) {
       this.formChanged = true
       setTimeout(() => this.datatable.cell(rowIndex, '.status').data(statusId).draw(), 100)
+    },
+    async removeMultipleRow () {
+      const app = this
+      await app.datatable.rows('.active-new').every(function (rowIdx, tableLoop, rowLoop) {
+        const rowData = app.datatable.row(rowIdx).data()
+        app.deleteRemainingUsage(rowData.to_warehouse_location_id)
+      })
+      setTimeout(() => app.datatable.rows('.active-new').remove().draw(), 100)
     },
     async updateMultpleStatus () {
       const app      = this
@@ -1499,10 +1563,11 @@ export default {
           if (result.value) {
             app.formChanged = false
             if (statusId === STATUS_DELETED)
-              setTimeout(() => app.datatable.rows('.active-new').remove().draw(), 100)
+              app.removeMultipleRow()
             else {
               app.datatable.rows('.active').every(function (rowIdx, tableLoop, rowLoop) {
                 setTimeout(() => app.datatable.cell(rowIdx, '.status').data(statusId).draw(), 100)
+                setTimeout(() => app.datatable.cell(rowIdx, '.actions').data(statusId).draw(), 100)
               })
             }
             $('#actions').val(null).trigger('change')

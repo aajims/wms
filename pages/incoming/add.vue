@@ -396,6 +396,37 @@
                   >
                 </div>
                 <div class="col-lg-6">
+                  <label>Location <span style="color:red">*</span></label>
+                  <select
+                    id="to_warehouse_location_id"
+                    name="to_warehouse_location_id"
+                    class="form-control kt-select2"
+                  >
+                    <option />
+                  </select>
+                  <span class="form-text text-muted" />
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-lg-3">
+                  <label>Capacity</label>
+                  <input
+                    id="capacity"
+                    type="text"
+                    class="form-control"
+                    disabled="disabled"
+                  >
+                </div>
+                <div class="col-lg-3">
+                  <label>Batch <span style="color:red">*</span></label>
+                  <input
+                    id="batch"
+                    name="batch"
+                    type="text"
+                    class="form-control"
+                  >
+                </div>
+                <div class="col-lg-6">
                   <div class="kt-form__label">
                     <label>Expired Date</label>
                   </div>
@@ -415,28 +446,6 @@
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
-              <div class="form-group row">
-                <div class="col-lg-6">
-                  <label>Batch <span style="color:red">*</span></label>
-                  <input
-                    id="batch"
-                    name="batch"
-                    type="text"
-                    class="form-control"
-                  >
-                </div>
-                <div class="col-lg-6">
-                  <label>Location <span style="color:red">*</span></label>
-                  <select
-                    id="to_warehouse_location_id"
-                    name="to_warehouse_location_id"
-                    class="form-control kt-select2"
-                  >
-                    <option />
-                  </select>
-                  <span class="form-text text-muted" />
                 </div>
               </div>
               <div class="form-group row">
@@ -509,10 +518,12 @@ export default {
       productPackingId    : null,
       remainingLocation   : [],
       locationIdBefore    : '',
+      locationIdFirst     : '',
       toWarehouseIdBefore : '',
       toCompanyIdBefore   : '',
       isRestore           : false,
       formChanged         : false,
+      isSave              : false,
     }
   },
   async mounted () {
@@ -756,11 +767,20 @@ export default {
     })
     $('#to_warehouse_location_id').on('change', function () {
       validatorModal.element($(this))
-      if (app.rowIndex !== null) {
-        if (app.locationIdBefore === parseInt($(this).val()))
-          app.addRemainingUsage(app.locationIdBefore)
-        else
-          app.deleteRemainingUsage(app.locationIdBefore)
+      if ($(this).val() !== '') {
+        setTimeout(function () {
+          const capacity =  $('#to_warehouse_location_id').find(':selected').data('capacity')
+          let usage      = $('#to_warehouse_location_id').find(':selected').data('usage')
+          if (app.locationIdBefore !== '')
+            app.deleteRemainingUsage(app.locationIdBefore)
+          app.locationIdBefore = parseInt($('#to_warehouse_location_id').val())
+          app.addRemainingUsage(app.locationIdBefore, usage + 1)
+          app.remainingLocation.forEach((value, key) => {
+            if (parseInt(value.location_id) === parseInt(app.locationIdBefore))
+              usage = value.usage
+          })
+          $('#capacity').val(`${usage} / ${capacity}`)
+        }, 100)
       }
     })
     $('#product_packing_id').prop('disabled', true)
@@ -781,7 +801,8 @@ export default {
               results: $.map(data.result, function (object) {
                 return {
                   id         : object.id,
-                  text       : object.name,
+                  text       : `${object.sku} / ${object.name}`,
+                  name       : object.name,
                   product_sku: object.sku,
                 }
               }),
@@ -789,8 +810,12 @@ export default {
           },
         },
         templateSelection: function (data, container) {
+          $(data.element).attr('data-product-name', data.name)
           $(data.element).attr('data-product-sku', data.product_sku)
-          return data.text
+          const textArray = data.text.split('/')
+          if (textArray[1] === undefined)
+            return data.text
+          return textArray[1]
         },
       })
 
@@ -835,23 +860,19 @@ export default {
           processResults: function (data) {
             return {
               results: $.map(data.result, function (object) {
-                let usageRemaining = 0
+                let usageRemaining = object.usage
                 app.remainingLocation.forEach((value, key) => {
                   if (parseInt(value.location_id) === parseInt(object.id))
                     usageRemaining = value.usage
                 })
-                let usagePrint     = 0
-                if (usageRemaining === 0)
-                  usagePrint = object.usage
-                else
-                  usagePrint = usageRemaining
                 if (object.usage !== object.capacity && usageRemaining < object.capacity) {
                   return {
-                    id           : object.id,
-                    text         : `${object.name} - Level ${object.level} (${usagePrint} / ${object.capacity})`,
-                    location_name: `${object.name} - Level ${object.level}`,
-                    usage        : object.usage,
-                    capacity     : object.capacity,
+                    id            : object.id,
+                    text          : `${object.name} - Level ${object.level} | (${usageRemaining} / ${object.capacity})`,
+                    location_name : `${object.name}`,
+                    location_level: `${object.level}`,
+                    usage         : object.usage,
+                    capacity      : object.capacity,
                   }
                 }
               }),
@@ -860,9 +881,13 @@ export default {
         },
         templateSelection: function (data, container) {
           $(data.element).attr('data-location-name', data.location_name)
+          $(data.element).attr('data-location-level', data.location_level)
           $(data.element).attr('data-usage', data.usage)
           $(data.element).attr('data-capacity', data.capacity)
-          return data.text
+          const textArray = data.text.split('|')
+          if (textArray[1] === undefined)
+            return data.text
+          return textArray[0]
         },
       })
     })
@@ -960,6 +985,7 @@ export default {
       const rowData        = app.datatable.row($(this).parents('tr')).data()
       app.productPackingId = rowData.product_packing_id
       app.locationIdBefore = rowData.to_warehouse_location_id
+      app.locationIdFirst  = rowData.to_warehouse_location_id
       $('#product_id').val(rowData.product_id).trigger('change')
       $('#description_modal').val(rowData.description)
       $('#qty').val(rowData.qty)
@@ -967,6 +993,14 @@ export default {
       if (rowData.expired_date !== '')
         $('#expired_date').val(moment(rowData.expired_date).format('DD/MM/Y'))
       $('#batch').val(rowData.batch)
+
+      let usageRemaining = rowData.to_warehouse_location_usage
+      app.remainingLocation.forEach((value, key) => {
+        if (parseInt(value.location_id) === parseInt(rowData.to_warehouse_location_id))
+          usageRemaining = value.usage
+      })
+      $('#capacity').val(`${usageRemaining} / ${rowData.to_warehouse_location_capacity}`)
+
       $('#product_modal').modal('show')
       app.rowIndex  = app.datatable.row($(this).parents('tr')).index()
     })
@@ -988,6 +1022,7 @@ export default {
         event.preventDefault()
       },
       submitHandler: function (form) {
+        app.isSave      = true
         app.saveProduct()
         app.formChanged = true
         return false
@@ -1034,7 +1069,7 @@ export default {
         productDetail.products_packing.forEach((value) => {
           dataTemporary = {
             id          : value.id,
-            text        : `${value.packing_type_name} / Qty Max: ${value.qty_max}`,
+            text        : value.packing_type_name,
             packing_name: value.packing_type_name,
             qty_max     : value.qty_max,
             uom         : value.uom,
@@ -1099,7 +1134,7 @@ export default {
           product_id              : parseInt($('#product_id').val()),
           product_packing_id      : parseInt($('#product_packing_id').val()),
           to_warehouse_location_id: locationId,
-          product_name            : $('#product_id option:selected').text(),
+          product_name            : $('#product_id').find(':selected').data('product-name'),
           product_sku             : $('#product_id').find(':selected').data('product-sku'),
           packing_name            : $('#product_packing_id').find(':selected').data('packing-name'),
           location_name           : $('#to_warehouse_location_id').find(':selected').data('location-name'),
@@ -1142,8 +1177,14 @@ export default {
       $('#product_packing_id').val(null).trigger('change')
       $('#expired_date').val('')
       $('#batch').val('')
+      $('#capacity').val('')
+      if (this.isSave === false) {
+        this.deleteRemainingUsage(this.locationIdBefore)
+        this.addRemainingUsage(this.locationIdFirst, 0)
+      }
       this.productPackingId = null
       this.locationIdBefore = ''
+      this.isSave           = false
     },
     setDataPost (data) {
       this.incoming.company_id = parseInt($('#company_id').val())
@@ -1196,11 +1237,20 @@ export default {
           this.remainingLocation[key].usage = this.remainingLocation[key].usage - 1
       })
     },
-    addRemainingUsage (locationId) {
+    addRemainingUsage (locationId, usage) {
+      let found = false
       this.remainingLocation.forEach((value, key) => {
         if (parseInt(value.location_id) === locationId)
-          this.remainingLocation[key].usage = this.remainingLocation[key].usage + 1
+          found = true
       })
+      if (found === false)
+        this.remainingLocation.push({ location_id: locationId, usage: usage })
+      else {
+        this.remainingLocation.forEach((value, key) => {
+          if (parseInt(value.location_id) === locationId)
+            this.remainingLocation[key].usage = this.remainingLocation[key].usage + 1
+        })
+      }
     },
   },
 }
