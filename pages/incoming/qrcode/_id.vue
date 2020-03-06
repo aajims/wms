@@ -1,129 +1,203 @@
 <style>
 body {
   color: black;
+  font-size: 10px;
 }
 canvas {
   height: 25% !important;
   width: 25% !important;
 }
+table td {
+  padding: 5px;
+}
+table tr{
+  border: 1px solid black;
+}
+.separate{
+  border-left: 1px solid black;
+}
 </style>
 <template>
   <client-only>
-    <div>
+    <div style="margin:1% !important; width:98%;">
       <div
         v-for="data in incoming.products"
         :key="data.id"
       >
-        <div
+        <table
           v-if="data.status !== statusCancel"
-          style="margin: 0cm !important; width:100%; font-family: Arial, Helvetica, sans-serif; font-size: 8px; font-weight: bold; page-break-before:always;"
+          class="table"
+          style="page-break-before:always;"
         >
-          <div style="background-color: black; color: #fff; padding: 10px;" />
-          <div style="padding: 5px; padding-left: 2px; border: 2px; border-left: 4px; border-right: 4px; border-color: #000; border-style: solid;">
-            <center>
-              <span><font size="4">{{ data.unique_code }}</font></span>
-              <br><br><br>
+          <tr>
+            <td
+              colspan="6"
+              align="center"
+            >
+              <b style="font-size: 12px">{{ data.unique_code }}</b>
+              <br><br>
               <qrcode-vue
                 :value="data.unique_code"
                 :size="size"
                 level="H"
               />
-              <br><br><br>
-              <span><font size="10">{{ data.id }}</font></span>
-            </center>
-          </div>
-          <div style="padding: 5px; padding-left: 2px; border: 2px; border-left: 4px; border-right: 4px; border-color: #000; border-style: solid;">
-            Company: <br><br>
-            <div style="margin-top: -10px;">
-              <center><span style="font-size: 10px;">{{ incoming.company_name }}</span></center>
-            </div>
-          </div>
-          <div style="padding: 5px; padding-left: 2px; border: 2px; border-left: 4px; border-right: 4px; border-color: #000; border-style: solid;">
-            <table style="width: 100%;">
-              <tr>
-                <td
-                  valign="top"
-                  style="width: 33%; border-right: 2px solid #000; font-family: Arial, Helvetica, sans-serif; font-size: 8px; font-weight: bold;"
-                >
-                  Job Number :<br><br>
-                  <div style="margin-top: -10px;">
-                    <center><span style="font-size: 10px;">{{ incoming.job_no }}</span></center>
-                  </div>
-                </td>
-                <td
-                  valign="top"
-                  style="width: 33%; padding: 2px;  border: 2px; border-left: 4px; font-family: Arial, Helvetica, sans-serif; font-size: 8px; font-weight: bold; border-right: 2px solid #000;"
-                >
-                  Quantity:<br><br>
-                  <div style="margin-top: -10px;">
-                    <center><span style="font-size: 10px;">{{ data.qty }}</span></center>
-                  </div>
-                </td>
-                <td
-                  valign="top"
-                  style="width: 33%; padding: 2px;  border: 2px; border-left: 4px; font-family: Arial, Helvetica, sans-serif; font-size: 8px; font-weight: bold;"
-                >
-                  Created:<br><br>
-                  <div style="margin-top: -10px;">
-                    <center><span style="font-size: 10px;">{{ date(incoming.created_at) }}</span></center>
-                  </div>
-                </td>
-              </tr>
-            </table>
-          </div>
-          <div style="padding: 5px; padding-left: 2px; border: 2px; border-left: 4px; border-right: 4px; border-color: #000; border-style: solid;">
-            <table style="width: 100%;">
-              <tr>
-                <td
-                  valign="top"
-                  style="width: 33%; border-right: 2px solid #000; font-family: Arial, Helvetica, sans-serif; font-size: 8px; font-weight: bold;"
-                >
-                  SKU Number :<br><br>
-                  <div style="margin-top: -10px;">
-                    <center><span style="font-size: 10px;">{{ data.product_sku }}</span></center>
-                  </div>
-                </td>
-                <td
-                  valign="top"
-                  style="width: 33%; padding: 2px;  border: 2px; border-left: 4px; font-family: Arial, Helvetica, sans-serif; font-size: 8px; font-weight: bold;"
-                >
-                  Expire Date:<br><br> <div style="margin-top: -10px;">
-                    <center><span style="font-size: 10px;">{{ date(incoming.expired_date) }}</span></center>
-                  </div>
-                </td>
-              </tr>
-            </table>
-          </div>
-          <div style="padding: 5px; padding-left: 2px; border: 2px; border-left: 4px; border-right: 4px; border-color: #000; border-style: solid;">
-            <table style="width: 100%;">
-              <tr>
-                <td
-                  valign="top"
-                  style="width: 33%; border-right: 2px solid #000; font-family: Arial, Helvetica, sans-serif; font-size: 8px; font-weight: bold;"
-                >
-                  Batch :<br><br>
-                  <div style="margin-top: -10px;">
-                    <center><span style="font-size: 10px;">{{ data.batch }}</span></center>
-                  </div>
-                </td>
-                <td
-                  valign="top"
-                  style="width: 33%; padding: 2px;  border: 2px; border-left: 4px; font-family: Arial, Helvetica, sans-serif; font-size: 8px; font-weight: bold;"
-                >
-                  Parent Job:<br><br> <div style="margin-top: -10px;">
-                    <center><span style="font-size: 10px;">{{ incoming.parent_job_no }}</span></center>
-                  </div>
-                </td>
-              </tr>
-            </table>
-          </div>
-          <div style="padding: 5px; padding-left: 2px; border: 2px; border-left: 4px; border-right: 4px; border-color: #000; border-style: solid;">
-            Product : <br><br>
-            <div style="margin-top: -10px;">
-              <center><span style="font-size: 10px;">{{ data.product_name }}</span></center>
-            </div>
-          </div>
-        </div>
+              <br>
+            </td>
+          </tr>
+          <tr>
+            <td style="width: 20%">
+              <b>Company</b>
+            </td>
+            <td style="width: 1%;">
+              <b>:</b>
+            </td>
+            <td colspan="4">
+              {{ incoming.company_name }}
+            </td>
+          </tr>
+          <tr>
+            <td style="width: 20%">
+              <b>Pallet ID</b>
+            </td>
+            <td style="width: 1%;">
+              <b>:</b>
+            </td>
+            <td colspan="4">
+              {{ data.id }}
+            </td>
+          </tr>
+          <tr>
+            <td style="width: 20%">
+              <b>SKU Number</b>
+            </td>
+            <td style="width: 1%;">
+              <b>:</b>
+            </td>
+            <td>{{ data.product_sku }}</td>
+            <td
+              class="separate"
+              style="width: 10%"
+            >
+              <b>QTY</b>
+            </td>
+            <td style="width: 1%">
+              <b>:</b>
+            </td>
+            <td>{{ data.qty }} {{ data.product_packing_uom }}</td>
+          </tr>
+          <tr>
+            <td style="width: 20%">
+              <b>Product</b>
+            </td>
+            <td style="width: 1%;">
+              <b>:</b>
+            </td>
+            <td colspan="4">
+              {{ data.product_name }}
+            </td>
+          </tr>
+          <tr>
+            <td style="width: 20%">
+              <b>Batch</b>
+            </td>
+            <td style="width: 1%;">
+              <b>:</b>
+            </td>
+            <td>{{ data.batch }}</td>
+            <td
+              class="separate"
+              style="width: 10%"
+            >
+              <b>Nett Weight</b>
+            </td>
+            <td style="width: 1%">
+              <b>:</b>
+            </td>
+            <td>{{ data.product_weight * data.qty }} {{ data.product_weight_type }}</td>
+          </tr>
+          <tr>
+            <td style="width: 20%">
+              <b>Created</b>
+            </td>
+            <td style="width: 1%;">
+              <b>:</b>
+            </td>
+            <td>{{ date(incoming.created_at) }}</td>
+            <td
+              class="separate"
+              style="width: 10%"
+            >
+              <b>Gross Weight</b>
+            </td>
+            <td style="width: 1%">
+              <b>:</b>
+            </td>
+            <td>{{ (data.product_weight * data.qty) + data.packing_type_weight }} {{ data.packing_type_weight_type }}</td>
+          </tr>
+          <tr>
+            <td style="width: 20%">
+              <b>Expired</b>
+            </td>
+            <td style="width: 1%;">
+              <b>:</b>
+            </td>
+            <td>{{ date(data.expired_date) }}</td>
+            <td
+              class="separate"
+              style="width: 10%"
+            >
+              <b>Volume</b>
+            </td>
+            <td style="width: 1%">
+              <b>:</b>
+            </td>
+            <td>{{ data.packing_type_length * data.packing_type_width * data.packing_type_height }} {{ data.packing_type_dimension_type }} <sup>3</sup></td>
+          </tr>
+          <tr>
+            <td style="width: 20%">
+              <b>Job Number</b>
+            </td>
+            <td style="width: 1%;">
+              <b>:</b>
+            </td>
+            <td colspan="4">
+              {{ incoming.job_no }}
+            </td>
+          </tr>
+          <tr>
+            <td style="width: 20%">
+              <b>Parent Job</b>
+            </td>
+            <td style="width: 1%;">
+              <b>:</b>
+            </td>
+            <td colspan="4">
+              {{ incoming.parent_job_no }}
+            </td>
+          </tr>
+          <tr>
+            <td style="width: 20%">
+              <b>Order Number</b>
+            </td>
+            <td style="width: 1%;">
+              <b>:</b>
+            </td>
+            <td colspan="4">
+              {{ incoming.order_no }}
+            </td>
+          </tr>
+          <tr>
+            <td style="width: 20%">
+              <b>Description</b>
+            </td>
+            <td style="width: 1%;">
+              <b>:</b>
+            </td>
+            <td colspan="4">
+              {{ data.description }}
+            </td>
+          </tr>
+        </table>
       </div>
     </div>
   </client-only>
